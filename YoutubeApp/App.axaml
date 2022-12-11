@@ -1,0 +1,56 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:YoutubeApp"
+             xmlns:vm="using:YoutubeApp.ViewModels"
+             x:Class="YoutubeApp.App"
+             x:DataType="vm:ApplicationViewModel"
+             x:CompileBindings="True"
+             RequestedThemeVariant="Dark">
+
+    <Application.DataTemplates>
+        <local:ViewLocator />
+    </Application.DataTemplates>
+
+    <Application.Styles>
+        <FluentTheme>
+            <FluentTheme.Palettes>
+                <ColorPaletteResources x:Key="Dark"
+                                       Accent="DodgerBlue"
+                                       RegionColor="#18191d"
+                                       ChromeMediumLow="#282e33" />
+            </FluentTheme.Palettes>
+        </FluentTheme>
+        <StyleInclude Source="avares://YoutubeApp/Icons.axaml" />
+        <StyleInclude Source="avares://YoutubeApp/Styles.axaml" />
+        <StyleInclude Source="avares://AvaloniaProgressRing/Styles/ProgressRing.xaml" />
+    </Application.Styles>
+
+    <Application.Resources>
+        <SolidColorBrush x:Key="TabItemHeaderSelectedPipeFill" Color="Transparent" />
+        <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeUnchecked" Color="#66FFFFFF" />
+    </Application.Resources>
+
+    <TrayIcon.Icons>
+        <TrayIcons>
+            <TrayIcon Icon="/Assets/app-logo.ico" ToolTipText="Avalonia Tray Icon ToolTip"
+                      Command="{Binding TrayIconClickedCommand}">
+                <TrayIcon.Menu>
+                    <NativeMenu>
+                        <NativeMenuItem Header="Show" Command="{Binding TrayIconClickedCommand}" />
+                        <NativeMenuItem Header="Exit" Command="{Binding ExitCommand}" />
+                        <!--
+						<NativeMenuItem Header="Settings">
+							<NativeMenu>
+								<NativeMenuItem Header="Option 1" ToggleType="Radio" IsChecked="True" />
+								<NativeMenuItem Header="Option 2" ToggleType="Radio" IsChecked="True" />
+								<NativeMenuItemSeparator />
+								<NativeMenuItem Header="Option 3" ToggleType="CheckBox" IsChecked="True" />
+							</NativeMenu>
+						</NativeMenuItem>
+						-->
+                    </NativeMenu>
+                </TrayIcon.Menu>
+            </TrayIcon>
+        </TrayIcons>
+    </TrayIcon.Icons>
+</Application>

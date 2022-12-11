@@ -1,0 +1,82 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:YoutubeApp"
+        xmlns:vm="using:YoutubeApp.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="680" d:DesignHeight="360"
+        MinWidth="680" MinHeight="360"
+        Width="540" Height="360"
+        x:Class="YoutubeApp.Views.AddLinkWindow"
+        x:DataType="vm:AddLinkWindowViewModel"
+        x:CompileBindings="True"
+        d:DataContext="{x:Static local:DesignViewModels.AddLinkWindow}"
+        Title="Add Link"
+        Icon="/Assets/app-logo.ico"
+        WindowStartupLocation="CenterOwner">
+
+    <Grid Margin="10" RowDefinitions="Auto, *, Auto, Auto, Auto">
+        <Panel Grid.Row="1">
+            <!--Input Page-->
+            <Grid RowDefinitions="*, Auto, Auto" IsVisible="{Binding !CurrentPage}">
+                <TextBox Grid.Row="0" Text="{Binding Links}" Watermark="Links" AcceptsReturn="True" />
+                <Label Grid.Row="1" Content="Save to:" Margin="0,4,0,0" />
+                <Grid Grid.Row="2" ColumnDefinitions="*,Auto">
+                    <TextBox Grid.Column="0" Text="{Binding SaveTo}" Margin="0 0 6 0" />
+                    <Button Grid.Column="1" Command="{Binding BrowseButtonPressedCommand}">
+                        <PathIcon Data="{StaticResource folder}" />
+                    </Button>
+                </Grid>
+            </Grid>
+
+            <!--Selection Page-->
+            <Grid RowDefinitions="Auto, *" IsVisible="{Binding CurrentPage}">
+                <Label Grid.Row="0" Content="{Binding Stats}" FontSize="18" HorizontalAlignment="Center" />
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Visible" Margin="0 10 0 0">
+                    <ItemsControl ItemsSource="{Binding VideosWithPlaylist}" Grid.IsSharedSizeScope="True"
+                                  HorizontalAlignment="Center">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel>
+                                    <ItemsControl ItemsSource="{Binding VideoIds}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition SharedSizeGroup="v" />
+                                                        <ColumnDefinition Width="6" />
+                                                        <ColumnDefinition SharedSizeGroup="p" />
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <RadioButton Grid.Column="0"
+                                                                 IsChecked="{Binding $parent[ItemsControl].((vm:VideoWithPlaylist)DataContext).VideoIsSelected}"
+                                                                 Content="{Binding ., StringFormat=Video ({0})}"
+                                                                 Command="{Binding $parent[Window].((vm:AddLinkWindowViewModel)DataContext).RadioButtonClickedCommand}"
+                                                                 Margin="8" />
+                                                    <RadioButton Grid.Column="2"
+                                                                 IsChecked="{Binding $parent[ItemsControl].((vm:VideoWithPlaylist)DataContext).PlaylistIsSelected}"
+                                                                 Content="{Binding $parent[ItemsControl].((vm:VideoWithPlaylist)DataContext).PlaylistId, StringFormat=Playlist ({0})}"
+                                                                 Command="{Binding $parent[Window].((vm:AddLinkWindowViewModel)DataContext).RadioButtonClickedCommand}"
+                                                                 Margin="8" />
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                    <Rectangle Fill="#1aaf" Height="2" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+        </Panel>
+
+        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="6" Margin="0,10,0,0">
+            <Button Content="Continue" IsDefault="True" Command="{Binding ContinueButtonClickedCommand}"
+                    CommandParameter="{Binding $parent[Window]}" Width="80" HorizontalContentAlignment="Center"
+                    IsEnabled="{Binding ContinueButtonEnabled}" Classes="Primary" />
+            <Button Content="Cancel" IsCancel="True" Command="{Binding $parent[Window].Close}" Width="80"
+                    HorizontalContentAlignment="Center" />
+        </StackPanel>
+    </Grid>
+</Window>

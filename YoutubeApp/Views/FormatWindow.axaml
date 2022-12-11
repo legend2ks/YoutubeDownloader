@@ -1,0 +1,226 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:YoutubeApp"
+        xmlns:vm="using:YoutubeApp.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="720" d:DesignHeight="450"
+        MinWidth="720" MinHeight="300"
+        Width="780" Height="400"
+        x:Class="YoutubeApp.Views.FormatWindow"
+        x:DataType="vm:FormatWindowViewModel"
+        x:CompileBindings="True"
+        d:DataContext="{x:Static local:DesignViewModels.FormatWindow}"
+        Title="Choose Format"
+        Icon="/Assets/app-logo.ico"
+        WindowStartupLocation="CenterOwner">
+
+    <Window.Styles>
+        <Styles>
+            <Style Selector="CheckBox">
+                <Setter Property="IsVisible" Value="False" />
+            </Style>
+            <Style Selector="ComboBoxItem > CheckBox">
+                <Setter Property="IsVisible" Value="True" />
+            </Style>
+            <Style Selector="CheckBox Grid#RootGrid > Grid">
+                <Setter Property="ColumnSpan" Value="2" />
+                <Setter Property="HorizontalAlignment" Value="Left" />
+            </Style>
+            <Style Selector="CheckBox Grid#RootGrid > ContentPresenter">
+                <Setter Property="Padding" Value="6,0,0,0" />
+            </Style>
+            <Style Selector="ComboBoxItem">
+                <Setter Property="IsEnabled" Value="{ReflectionBinding Value.DownloadIds.Count}" />
+                <Setter Property="Focusable" Value="False" />
+            </Style>
+            <Style Selector="ComboBox.cb > ComboBoxItem">
+                <Setter Property="Padding" Value="0" />
+            </Style>
+        </Styles>
+    </Window.Styles>
+
+    <Grid Margin="10" RowDefinitions="*, Auto">
+        <ScrollViewer>
+            <StackPanel HorizontalAlignment="Center">
+                <ItemsControl ItemsSource="{Binding ComposedVariants}" Grid.IsSharedSizeScope="True">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Spacing="6" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Padding="10" Background="#282e33" CornerRadius="4">
+                                <Grid RowDefinitions="Auto, 2, Auto">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition MinWidth="120" SharedSizeGroup="vc" />
+                                        <ColumnDefinition Width="6" />
+                                        <ColumnDefinition MinWidth="140" SharedSizeGroup="res" />
+                                        <ColumnDefinition Width="6" />
+                                        <ColumnDefinition MinWidth="100" SharedSizeGroup="fps" />
+                                        <ColumnDefinition Width="6" />
+                                        <ColumnDefinition MinWidth="120" SharedSizeGroup="ac" />
+                                        <ColumnDefinition Width="6" />
+                                        <ColumnDefinition MinWidth="116" SharedSizeGroup="abr" />
+                                        <ColumnDefinition Width="10" />
+                                        <ColumnDefinition MinWidth="50" SharedSizeGroup="st" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Video Codec" FontSize="12"
+                                               Foreground="#bbb" />
+                                    <TextBlock Grid.Row="0" Grid.Column="2" Text="Resolution" FontSize="12"
+                                               Foreground="#bbb" />
+                                    <TextBlock Grid.Row="0" Grid.Column="4" Text="FPS" FontSize="12" Foreground="#bbb" />
+                                    <TextBlock Grid.Row="0" Grid.Column="6" Text="Audio Codec" FontSize="12"
+                                               Foreground="#bbb" />
+                                    <TextBlock Grid.Row="0" Grid.Column="8" Text="Audio Bitrate" FontSize="12"
+                                               Foreground="#bbb" />
+                                    <!--Video Codec-->
+                                    <ComboBox Grid.Column="0" Grid.Row="2" Classes="cb"
+                                              ItemsSource="{Binding VideoCodecs}"
+                                              IsDropDownOpen="{Binding VideoCodecListOpen, Mode=TwoWay}"
+                                              IsEnabled="{Binding VideoCodecListEnabled}"
+                                              PlaceholderText="{Binding VideoCodecListText}"
+                                              HorizontalAlignment="Stretch" SelectedIndex="{Binding NoSelection}">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <CheckBox HorizontalAlignment="Stretch"
+                                                          IsChecked="{ReflectionBinding Value.Checked}">
+                                                    <StackPanel Orientation="Horizontal" Spacing="4">
+                                                        <TextBlock Text="{ReflectionBinding Key}" />
+                                                        <TextBlock
+                                                            Text="{ReflectionBinding Value.DownloadIds.Count, StringFormat=({0})}" />
+                                                    </StackPanel>
+                                                </CheckBox>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+                                    <!--Resolution-->
+                                    <ComboBox Grid.Column="2" Grid.Row="2" ItemsSource="{Binding Resolutions}"
+                                              SelectedIndex="{Binding SelectedResolution}"
+                                              IsEnabled="{Binding ResolutionListEnabled}" PlaceholderText="Highest"
+                                              HorizontalAlignment="Stretch">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Horizontal" Spacing="4">
+                                                    <TextBlock Text="{ReflectionBinding Key}" />
+                                                    <TextBlock
+                                                        Text="{ReflectionBinding Value.DownloadIds.Count, StringFormat=({0})}" />
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+                                    <!--FPS-->
+                                    <ComboBox Grid.Column="4" Grid.Row="2" ItemsSource="{Binding FpsList}"
+                                              SelectedIndex="{Binding SelectedFps}"
+                                              IsEnabled="{Binding FpsListEnabled}" PlaceholderText="Highest"
+                                              HorizontalAlignment="Stretch">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Horizontal" Spacing="4">
+                                                    <TextBlock Text="{ReflectionBinding Key}" />
+                                                    <TextBlock
+                                                        Text="{ReflectionBinding Value.DownloadIds.Count, StringFormat=({0})}" />
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+                                    <!--Audio Codec-->
+                                    <ComboBox Grid.Column="6" Grid.Row="2" Classes="cb"
+                                              ItemsSource="{Binding AudioCodecs}"
+                                              IsDropDownOpen="{Binding AudioCodecListOpen, Mode=TwoWay}"
+                                              IsEnabled="{Binding AudioCodecListEnabled}"
+                                              PlaceholderText="{Binding AudioCodecListText}"
+                                              HorizontalAlignment="Stretch" SelectedIndex="{Binding NoSelection}">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <CheckBox HorizontalAlignment="Stretch"
+                                                          IsChecked="{ReflectionBinding Value.Checked}">
+                                                    <StackPanel Orientation="Horizontal" Spacing="4">
+                                                        <TextBlock Text="{ReflectionBinding Key}" />
+                                                        <TextBlock
+                                                            Text="{ReflectionBinding Value.DownloadIds.Count, StringFormat=({0})}" />
+                                                    </StackPanel>
+                                                </CheckBox>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+                                    <!--Audio Bitrate-->
+                                    <ComboBox Grid.Column="8" Grid.Row="2" ItemsSource="{Binding AudioBitrates}"
+                                              SelectedIndex="{Binding SelectedAudioBitrate}"
+                                              IsEnabled="{Binding AudioBitrateListEnabled}" PlaceholderText="Highest"
+                                              HorizontalAlignment="Stretch">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Horizontal" Spacing="4">
+                                                    <TextBlock Text="{ReflectionBinding Key}" />
+                                                    <TextBlock
+                                                        Text="{ReflectionBinding Value.DownloadIds.Count, StringFormat=({0})}" />
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+                                    <!--Count-->
+                                    <TextBlock Grid.Row="0" Grid.Column="10" Text="{Binding DownloadCountStats}"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    <!--Reset-->
+                                    <Button Grid.Column="10" Grid.Row="1" Grid.RowSpan="2"
+                                            IsVisible="{Binding UndoVisible}"
+                                            Command="{Binding UndoButtonPressedCommand}" Padding="4"
+                                            HorizontalAlignment="Center" VerticalAlignment="Bottom"
+                                            Background="Transparent">
+                                        <TextBlock Foreground="DarkKhaki">
+                                            <PathIcon Data="{StaticResource undo}" />
+                                        </TextBlock>
+                                    </Button>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <Button Command="{Binding AddVariantButtonClickedCommand}" IsVisible="{Binding RemainingVideoCount}"
+                        HorizontalAlignment="Center" Margin="0,8,0,0">
+                    <StackPanel Orientation="Horizontal">
+                        <PathIcon Data="{StaticResource add}" Width="18" Height="18" />
+                        <TextBlock Text="{Binding RemainingVideoCount, StringFormat='{}{0} Unchanged'}"
+                                   VerticalAlignment="Center" Margin="10,0,0,0" />
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!--Bottom Row-->
+        <Grid Grid.Row="1" ColumnDefinitions="*, Auto, *, Auto, Auto" Margin="0,10,0,0">
+            <!--Containers-->
+            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                <TextBlock Text="Container Preference:" VerticalAlignment="Center" Margin="0,0,8,0" />
+                <ItemsControl ItemsSource="{Binding ContainerPreference}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" Spacing="2" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" Spacing="2">
+                                <PathIcon Data="{StaticResource caret_right}" Width="14" Height="14"
+                                          IsVisible="{Binding Index}" />
+                                <Button Content="{Binding Name}" Width="60" Background="Transparent"
+                                        HorizontalContentAlignment="Center"
+                                        Command="{Binding $parent[Window].((vm:FormatWindowViewModel)DataContext).ContainerClickedCommand}"
+                                        CommandParameter="{Binding Index}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+            <!--Buttons-->
+            <Button Grid.Column="3" Content="Apply" Command="{Binding ApplyButtonClickedCommand}"
+                    CommandParameter="{Binding $parent[Window]}" Width="80" HorizontalContentAlignment="Center"
+                    Margin="0 0 6 0" Classes="Primary" />
+            <Button Grid.Column="4" Content="Cancel" Command="{Binding $parent[Window].Close}" Width="80"
+                    HorizontalContentAlignment="Center" />
+        </Grid>
+    </Grid>
+</Window>

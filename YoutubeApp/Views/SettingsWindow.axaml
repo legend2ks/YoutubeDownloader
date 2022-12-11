@@ -1,0 +1,156 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:YoutubeApp.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="680" d:DesignHeight="480"
+        MinWidth="580" MinHeight="480"
+        Width="680" Height="480"
+        x:Class="YoutubeApp.Views.SettingsWindow"
+        x:DataType="vm:SettingsWindowViewModel"
+        x:CompileBindings="True"
+        Title="Settings"
+        Icon="/Assets/app-logo.ico"
+        WindowStartupLocation="CenterOwner">
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid.Styles>
+            <Styles>
+                <Style Selector="HeaderedContentControl">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate>
+                                <Border>
+                                    <Panel>
+                                        <ContentPresenter Content="{TemplateBinding Header}" Background="#18191d"
+                                                          Margin="10 0 0 0" Padding="6 0" VerticalAlignment="Top"
+                                                          HorizontalAlignment="Left" ZIndex="1" />
+                                        <Border
+                                            BorderBrush="{TemplateBinding Background}"
+                                            BorderThickness="1"
+                                            CornerRadius="5"
+                                            Padding="12"
+                                            Margin="0 10 0 0"
+                                            VerticalAlignment="Top">
+                                            <ContentPresenter Content="{TemplateBinding Content}" />
+                                        </Border>
+                                    </Panel>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Styles>
+        </Grid.Styles>
+
+        <!--Filename-->
+        <HeaderedContentControl Grid.Row="0" Header="Filename" Background="#5fff">
+            <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="Auto,*,Auto,Auto">
+                <Grid Grid.Column="0" Grid.ColumnSpan="4" ColumnDefinitions="*,*" Margin="0 8">
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+
+                    <Grid.Styles>
+                        <Styles>
+                            <Style Selector="TextBlock">
+                                <Setter Property="Foreground" Value="#9fff" />
+                            </Style>
+                        </Styles>
+                    </Grid.Styles>
+
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="*TITLE*" />
+                    <TextBlock Grid.Row="0" Grid.Column="1" Text="Video Title" />
+
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="*VIDEOID*" />
+                    <TextBlock Grid.Row="1" Grid.Column="1" Text="Video ID" />
+
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="*UPYEAR*" />
+                    <TextBlock Grid.Row="2" Grid.Column="1" Text="Upload Date (Year)" />
+
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="*UPMONTH*" />
+                    <TextBlock Grid.Row="3" Grid.Column="1" Text="Upload Date (Month)" />
+
+                    <TextBlock Grid.Row="4" Grid.Column="0" Text="*UPDAY*" />
+                    <TextBlock Grid.Row="4" Grid.Column="1" Text="Upload Date (Day)" />
+
+                    <TextBlock Grid.Row="5" Grid.Column="0" Text="*CHANNEL*" />
+                    <TextBlock Grid.Row="5" Grid.Column="1" Text="Channel Name" />
+
+                    <TextBlock Grid.Row="6" Grid.Column="0" Text="*W*" />
+                    <TextBlock Grid.Row="6" Grid.Column="1" Text="Video resolution width in pixels" />
+
+                    <TextBlock Grid.Row="7" Grid.Column="0" Text="*H*" />
+                    <TextBlock Grid.Row="7" Grid.Column="1" Text="Video resolution height in pixels" />
+
+                    <TextBlock Grid.Row="8" Grid.Column="0" Text="*FPS*" />
+                    <TextBlock Grid.Row="8" Grid.Column="1" Text="Video Framerate" />
+
+                    <TextBlock Grid.Row="9" Grid.Column="0" Text="*AUDIO_CODEC*" />
+                    <TextBlock Grid.Row="9" Grid.Column="1" Text="Audio Codec" />
+
+                    <TextBlock Grid.Row="10" Grid.Column="0" Text="*VIDEO_CODEC*" />
+                    <TextBlock Grid.Row="10" Grid.Column="1" Text="Video Codec" />
+
+                    <TextBlock Grid.Row="11" Grid.Column="0" Text="*AUDIO_BITRATE*" />
+                    <TextBlock Grid.Row="11" Grid.Column="1" Text="Audio Bitrate" />
+                </Grid>
+
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="Template:" Margin="0 0 10 0" VerticalAlignment="Center" />
+                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding FilenameTemplate}" HorizontalAlignment="Stretch" />
+                <TextBlock Grid.Row="1" Grid.Column="2" Text=".*ext*" Margin="4 0 0 0" VerticalAlignment="Center" />
+                <Button Grid.Row="1" Grid.Column="3" Background="Transparent" Margin="8 0 0 0" Command="{Binding ResetFilenameTemplateButtonPressedCommand}"
+                        Padding="5" >
+                   <TextBlock Foreground="DarkKhaki">
+                       <PathIcon Data="{StaticResource undo}" />
+                   </TextBlock>
+                </Button>
+            </Grid>
+        </HeaderedContentControl>
+
+        <!--Connections-->
+        <HeaderedContentControl Grid.Row="1" Header="Connection" Background="#5fff">
+            <Grid ColumnDefinitions="Auto,Auto">
+                <TextBlock Grid.Column="0" Text="Max. connections:" Margin="0 0 10 0" VerticalAlignment="Center" />
+                <ItemsControl Grid.Column="1" ItemsSource="{Binding MaxConnections}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" Spacing="16" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <RadioButton Content="{Binding MaxCount}" GroupName="maxConn" IsChecked="{Binding Checked}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Grid>
+        </HeaderedContentControl>
+
+        <!--Action Buttons-->
+        <Grid Grid.Row="2" ColumnDefinitions="*,Auto,Auto">
+            <Button Grid.Column="1" Content="Apply" Command="{Binding ApplyButtonClickedCommand}"
+                    CommandParameter="{Binding $parent[Window]}" IsEnabled="{Binding ApplyButtonEnabled}" Width="80"
+                    HorizontalContentAlignment="Center" Margin="0,0,6,0" Classes="Primary" />
+            <Button Grid.Column="2" Content="Cancel" Command="{Binding $parent[Window].Close}" Width="80"
+                    HorizontalContentAlignment="Center" />
+        </Grid>
+    </Grid>
+</Window>

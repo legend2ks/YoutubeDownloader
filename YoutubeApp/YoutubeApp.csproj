@@ -1,0 +1,56 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <Version>0.0.1</Version>
+        <TargetFramework>net7.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+        <ApplicationManifest>app.manifest</ApplicationManifest>
+        <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+        <ApplicationIcon>Assets/app-logo.ico</ApplicationIcon>
+        <PathMap Condition="'$(Configuration)' == 'Release'">$(MSBuildProjectDirectory)=/_</PathMap> <!-- PDB Path -->
+    </PropertyGroup>
+
+    <ItemGroup>
+        <AvaloniaResource Include="Assets\**"/>
+        <None Remove=".gitignore"/>
+        <None Update="appsettings.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
+
+    <ItemGroup>
+        <TrimmerRootDescriptor Include="Roots.xml"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Avalonia" Version="11.0.0-rc2.1"/>
+        <PackageReference Include="Avalonia.Controls.ItemsRepeater" Version="11.0.0-rc2.1"/>
+        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.0-rc2.1"/>
+        <PackageReference Include="Avalonia.Desktop" Version="11.0.0-rc2.1"/>
+        <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.0-rc2.1"/>
+        <PackageReference Include="CliWrap" Version="3.6.4"/>
+        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0"/>
+        <PackageReference Include="Dapper" Version="2.0.143"/>
+        <PackageReference Include="DataBox" Version="11.0.0-preview8"/>
+        <PackageReference Include="Deadpikle.AvaloniaProgressRing" Version="0.10.0-preview20230601001"/>
+        <PackageReference Include="FluentValidation" Version="11.5.2"/>
+        <PackageReference Include="Humanizer.Core" Version="2.14.1"/>
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1"/>
+        <PackageReference Include="Nanoid" Version="2.1.0"/>
+        <PackageReference Include="Serilog.Expressions" Version="3.4.1"/>
+        <PackageReference Include="Serilog.Extensions.Hosting" Version="7.0.0"/>
+        <PackageReference Include="Serilog.Settings.Configuration" Version="7.0.0"/>
+        <PackageReference Include="Serilog.Sinks.Debug" Version="2.0.0"/>
+        <PackageReference Include="Serilog.Sinks.File" Version="5.0.0"/>
+        <PackageReference Include="StreamJsonRpc" Version="2.15.29"/>
+        <PackageReference Include="System.Data.SQLite.Core" Version="1.0.117"/>
+        <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
+        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.0-rc2.1"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\MessageBox.Avalonia\src\MessageBox.Avalonia\MessageBox.Avalonia.csproj"/>
+    </ItemGroup>
+
+</Project>

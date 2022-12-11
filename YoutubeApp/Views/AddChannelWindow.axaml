@@ -1,0 +1,52 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:progRing="clr-namespace:AvaloniaProgressRing;assembly=AvaloniaProgressRing"
+        xmlns:vm="using:YoutubeApp.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="540" d:DesignHeight="280"
+        MinWidth="540" MinHeight="280"
+        Width="540" Height="280"
+        x:Class="YoutubeApp.Views.AddChannelWindow"
+        x:DataType="vm:AddChannelWindowViewModel"
+        x:CompileBindings="True"
+        Title="Add Channel"
+        Icon="/Assets/app-logo.ico"
+        WindowStartupLocation="CenterOwner">
+
+    <Grid RowDefinitions="Auto,*,Auto" Margin="10">
+        <StackPanel Grid.Row="0">
+            <TextBlock Text="Channel Link:" Margin="0 0 0 4" />
+            <TextBox Text="{Binding Link}" Margin="0 0 0 8" IsEnabled="{Binding LinkBoxIsEnabled}" />
+            <TextBlock Text="Save To:" Margin="0 0 0 4" />
+            <Grid ColumnDefinitions="*,Auto" Margin="0 0 0 8" IsEnabled="{Binding Success}">
+                <TextBox Grid.Column="0" Text="{Binding SaveTo}" Margin="0 0 6 0" />
+                <Button Grid.Column="1" Command="{Binding BrowseButtonPressedCommand}"
+                        CommandParameter="{Binding $parent[Window]}">
+                    <PathIcon Data="{StaticResource folder}" />
+                </Button>
+            </Grid>
+        </StackPanel>
+
+        <StackPanel Grid.Row="1" IsVisible="{Binding DetailsIsVisible}" HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
+            <TextBlock Text="Channel already exists:" Foreground="#d27570" IsVisible="{Binding Exists}" />
+            <TextBlock Text="{Binding Title}" FontSize="16" />
+            <TextBlock Text="{Binding ListId}" FontSize="12" Foreground="#cfff" />
+            <TextBlock Text="{Binding VideoCount, StringFormat={}{0} Video(s)}" Foreground="#cfff" />
+        </StackPanel>
+        <progRing:ProgressRing Grid.Row="1" Width="50" Height="50" IsActive="{Binding Loading}" />
+        <Border Grid.Row="1" IsVisible="{Binding Error}" BorderThickness="1" BorderBrush="#d27570" CornerRadius="6"
+                Padding="6" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBlock Text="Failed" Foreground="#d27570" />
+        </Border>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="6" Margin="0,10,0,0">
+            <Button Content="{Binding PrimaryButtonText}" Command="{Binding AddButtonPressedCommand}"
+                    CommandParameter="{Binding $parent[Window]}" Width="80" HorizontalContentAlignment="Center"
+                    IsEnabled="{Binding !Loading}" Classes="Primary" />
+            <Button Content="Cancel" Command="{Binding $parent[Window].Close}" Width="80"
+                    HorizontalContentAlignment="Center" />
+        </StackPanel>
+    </Grid>
+</Window>

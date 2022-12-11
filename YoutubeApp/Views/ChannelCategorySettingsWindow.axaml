@@ -1,0 +1,53 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:YoutubeApp.ViewModels"
+        xmlns:local="clr-namespace:YoutubeApp"
+        mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="400"
+        Width="600" Height="400"
+        MinWidth="600" MinHeight="320"
+        x:Class="YoutubeApp.Views.ChannelCategorySettingsWindow"
+        x:DataType="vm:ChannelCategorySettingsWindowViewModel"
+        x:CompileBindings="True"
+        d:DataContext="{x:Static local:DesignViewModels.ChannelCategorySettingsWindow}"
+        Title="ChannelCategorySettingsWindow"
+        Icon="/Assets/app-logo.ico"
+        WindowStartupLocation="CenterOwner">
+
+    <Grid RowDefinitions="*,Auto" ColumnDefinitions="*,*">
+        <ListBox Grid.Column="0" Grid.RowSpan="2" ItemsSource="{Binding CategoryListItems}"
+                 Selection="{Binding Selection}"
+                 Margin="10">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <TextBlock Text="{Binding Title}" />
+                        <TextBlock Text="{Binding ChannelCategory.Channels.Count, StringFormat=({0})}" />
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <StackPanel Grid.Row="0" Grid.Column="1" Margin="10" Spacing="8">
+            <TextBox Text="{Binding Selection.SelectedItem.Title}" Watermark="Title" IsEnabled="{Binding Editable}" />
+            <Button Command="{Binding MoveUpCommand}" IsEnabled="{Binding Editable}">
+                <PathIcon Data="{StaticResource arrow_up}" />
+            </Button>
+            <Button Command="{Binding MoveDownCommand}" IsEnabled="{Binding Editable}">
+                <PathIcon Data="{StaticResource arrow_down}" />
+            </Button>
+            <Button Content="Add" Command="{Binding AddCategoryCommand}" />
+            <Button Content="Remove" Command="{Binding RemoveCategoryCommand}" IsEnabled="{Binding Editable}" />
+        </StackPanel>
+
+        <!--Action Buttons-->
+        <Grid Grid.Row="1" Grid.Column="1" ColumnDefinitions="*,Auto,Auto" Margin="10">
+            <Button Grid.Column="1" Content="Apply" Command="{Binding ApplyCommand}"
+                    CommandParameter="{Binding $parent[Window]}" Width="80" HorizontalContentAlignment="Center"
+                    Margin="0,0,6,0" Classes="Primary" />
+            <Button Grid.Column="2" Content="Cancel" Command="{Binding $parent[Window].Close}" Width="80"
+                    HorizontalContentAlignment="Center" />
+        </Grid>
+    </Grid>
+</Window>

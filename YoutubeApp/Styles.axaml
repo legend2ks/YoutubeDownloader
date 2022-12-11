@@ -1,0 +1,73 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Design.PreviewWith>
+        <Border Padding="20">
+            <StackPanel Spacing="8">
+                <StackPanel Orientation="Horizontal" Spacing="2">
+                    <Button Content="Primary" Classes="Primary" />
+                    <Button Content="Primary" Classes="Primary" IsEnabled="False" />
+                </StackPanel>
+                <StackPanel Spacing="2">
+                    <ProgressBar Classes="Downloading" Value="100" Height="20" CornerRadius="7" ShowProgressText="True"/>
+                    <ProgressBar Classes="Completed" Value="100" Height="20" CornerRadius="7" ShowProgressText="True"/>
+                    <ProgressBar Classes="Error" Value="100" Height="20" CornerRadius="7" ShowProgressText="True"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+    </Design.PreviewWith>
+
+    <Style Selector="Button.TopbarButton">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="FontSize" Value="22" />
+        <Setter Property="Height" Value="36" />
+        <Setter Property="Width" Value="36" />
+        <Setter Property="CornerRadius" Value="20" />
+    </Style>
+    <Style Selector="Button.TopbarButton:disabled /template/ ContentPresenter">
+        <Setter Property="Background" Value="Transparent" />
+    </Style>
+    
+    <!-- Button Primary -->
+    <Style Selector="Button.Primary /template/ ContentPresenter">
+        <Setter Property="Background" Value="#3F51B5" />
+    </Style>
+    <Style Selector="Button.Primary:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="#303F9F" />
+    </Style>
+    <Style Selector="Button.Primary:pressed /template/ ContentPresenter">
+        <Setter Property="Background" Value="#7986CB" />
+    </Style>
+    
+    <!-- ProgressBar Colors -->
+    <Style Selector="ProgressBar.Downloading">
+        <Setter Property="Foreground">
+            <LinearGradientBrush StartPoint="0%,50%" EndPoint="100%,50%">
+                <LinearGradientBrush.GradientStops>
+                    <GradientStop Offset="0" Color="#1976D2"/>
+                    <GradientStop Offset="1" Color="#2196F3"/>
+                </LinearGradientBrush.GradientStops>
+            </LinearGradientBrush>
+        </Setter>
+    </Style>
+    <Style Selector="ProgressBar.Completed">
+        <Setter Property="Foreground">
+            <LinearGradientBrush StartPoint="0%,50%" EndPoint="100%,50%">
+                <LinearGradientBrush.GradientStops>
+                    <GradientStop Offset="0" Color="#388E3C"/>
+                    <GradientStop Offset="1" Color="#4CAF50"/>
+                </LinearGradientBrush.GradientStops>
+            </LinearGradientBrush>
+        </Setter>
+    </Style>
+    <Style Selector="ProgressBar.Error">
+        <Setter Property="Foreground">
+            <LinearGradientBrush StartPoint="0%,50%" EndPoint="100%,50%">
+                <LinearGradientBrush.GradientStops>
+                    <GradientStop Offset="0" Color="#C62828"/>
+                    <GradientStop Offset="1" Color="#E53935"/>
+                </LinearGradientBrush.GradientStops>
+            </LinearGradientBrush>
+        </Setter>
+    </Style>
+</Styles>

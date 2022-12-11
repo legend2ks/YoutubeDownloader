@@ -1,0 +1,364 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:YoutubeApp.ViewModels"
+             xmlns:local="clr-namespace:YoutubeApp"
+             xmlns:valueConverters="clr-namespace:YoutubeApp.ValueConverters"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="YoutubeApp.Views.DownloadsView"
+             x:DataType="vm:DownloadsViewModel"
+             d:DataContext="{x:Static local:DesignViewModels.DownloadsView}">
+    <UserControl.Resources>
+        <valueConverters:IntFilesizeConverter x:Key="IntFilesizeConverter" />
+        <valueConverters:LongFilesizeConverter x:Key="LongFilesizeConverter" />
+    </UserControl.Resources>
+
+    <Grid RowDefinitions="Auto,*">
+        <!--Toolbar-->
+        <Grid Grid.Row="0" Height="38" Background="#1976d2"
+              ColumnDefinitions="Auto, Auto, *, Auto, Auto, Auto, Auto, Auto">
+            <Grid.Styles>
+                <Styles>
+                    <Style Selector="Button">
+                        <Setter Property="Background" Value="Transparent" />
+                        <Setter Property="FontSize" Value="20" />
+                    </Style>
+                    <Style Selector="Button:disabled /template/ ContentPresenter">
+                        <Setter Property="Background" Value="Transparent" />
+                    </Style>
+                </Styles>
+            </Grid.Styles>
+
+            <Button Grid.Column="0" ToolTip.Tip="Start Download" IsEnabled="{Binding StartButtonEnabled}"
+                    Margin="5,0,0,0" Command="{Binding StartButtonClickedCommand}">
+                <PathIcon Data="{StaticResource play_regular}" />
+            </Button>
+            <Button Grid.Column="1" ToolTip.Tip="Stop Download"
+                    IsEnabled="{Binding DownloadManager.ActiveDownloads.Count}"
+                    Margin="2,0,0,0" Command="{Binding StopButtonClickedCommand}">
+                <PathIcon Data="{StaticResource stop_regular}" />
+            </Button>
+
+            <Button Grid.Column="3" ToolTip.Tip="Choose Variant" Margin="0,0,2,0"
+                    IsEnabled="{Binding ChooseFormatButtonEnabled}"
+                    Command="{Binding ChooseFormatButtonPressedCommand}">
+                <PathIcon Data="{StaticResource resize_video_regular}" />
+            </Button>
+            <Button Grid.Column="4" ToolTip.Tip="Refresh Information" Margin="0,0,2,0"
+                    IsEnabled="{Binding RefreshButtonEnabled}"
+                    Command="{Binding RefreshButtonClickedCommand}">
+                <PathIcon Data="{StaticResource rotate}" />
+            </Button>
+            <Button Grid.Column="5" ToolTip.Tip="Move Up" IsEnabled="True" Margin="0,0,2,0"
+                    Command="{Binding MoveUpButtonClickedCommand}">
+                <PathIcon Data="{StaticResource arrow_up}" />
+            </Button>
+            <Button Grid.Column="6" ToolTip.Tip="Move Down" IsEnabled="True" Margin="0,0,2,0"
+                    Command="{Binding MoveDownButtonClickedCommand}">
+                <PathIcon Data="{StaticResource arrow_down}" />
+            </Button>
+            <Button Grid.Column="7" ToolTip.Tip="Remove" IsEnabled="{Binding RemoveButtonEnabled}"
+                    Margin="0,0,5,0" HotKey="Delete"
+                    Command="{Binding RemoveButtonPressedCommand}">
+                <PathIcon Data="{StaticResource delete_outlined}" />
+            </Button>
+        </Grid>
+
+        <!--Downloads List-->
+        <Grid Grid.Row="1" RowDefinitions="Auto, *" Grid.IsSharedSizeScope="True">
+            <!--Header-->
+            <ScrollViewer Grid.Row="0" Name="HeaderSV" Background="#18191d"
+                          HorizontalScrollBarVisibility="Hidden" Padding="12 0 0 0">
+                <ScrollViewer.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Columns..."
+                                  Command="{Binding ColumnSettingsButtonPressedCommand}" />
+                    </ContextMenu>
+                </ScrollViewer.ContextMenu>
+
+                <Grid Height="28">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition SharedSizeGroup="c1"
+                                          Width="{Binding ColumnOrdered[0].Width, Mode=TwoWay}" />
+                        <ColumnDefinition SharedSizeGroup="c2"
+                                          Width="{Binding ColumnOrdered[1].Width, Mode=TwoWay}" />
+                        <ColumnDefinition SharedSizeGroup="c3"
+                                          Width="{Binding ColumnOrdered[2].Width, Mode=TwoWay}" />
+                        <ColumnDefinition SharedSizeGroup="c4"
+                                          Width="{Binding ColumnOrdered[3].Width, Mode=TwoWay}" />
+                        <ColumnDefinition SharedSizeGroup="c5"
+                                          Width="{Binding ColumnOrdered[4].Width, Mode=TwoWay}" />
+                        <ColumnDefinition SharedSizeGroup="c6"
+                                          Width="{Binding ColumnOrdered[5].Width, Mode=TwoWay}" />
+                        <ColumnDefinition SharedSizeGroup="c7"
+                                          Width="{Binding ColumnOrdered[6].Width, Mode=TwoWay}" />
+                        <ColumnDefinition SharedSizeGroup="c8"
+                                          Width="{Binding ColumnOrdered[7].Width, Mode=TwoWay}" />
+                        <ColumnDefinition SharedSizeGroup="c9"
+                                          Width="{Binding ColumnOrdered[8].Width, Mode=TwoWay}" />
+                        <ColumnDefinition SharedSizeGroup="c10"
+                                          Width="{Binding ColumnOrdered[9].Width, Mode=TwoWay}" />
+                        <ColumnDefinition SharedSizeGroup="c11"
+                                          Width="{Binding ColumnOrdered[10].Width, Mode=TwoWay}" />
+                        <ColumnDefinition SharedSizeGroup="c12"
+                                          Width="{Binding ColumnOrdered[11].Width, Mode=TwoWay}" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.Styles>
+                        <Style Selector="TextBlock">
+                            <Setter Property="Foreground" Value="#ccc" />
+                        </Style>
+                    </Grid.Styles>
+
+                    <!--Columns-->
+                    <TextBlock
+                        Grid.Column="{Binding GridConfig[en].Order}"
+                        Text="" HorizontalAlignment="Left" VerticalAlignment="Center" />
+
+                    <TextBlock
+                        Grid.Column="{Binding GridConfig[tl].Order}"
+                        Text="Title" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                    <GridSplitter Grid.Column="1" ResizeBehavior="CurrentAndNext" Background="Transparent"
+                                  ResizeDirection="Columns" HorizontalAlignment="Right" Width="20" />
+
+                    <TextBlock
+                        Grid.Column="{Binding GridConfig[fn].Order}"
+                        Text="File Name" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                    <GridSplitter Grid.Column="2" ResizeBehavior="CurrentAndNext" Background="Transparent"
+                                  ResizeDirection="Columns" HorizontalAlignment="Right" Width="20" />
+
+                    <TextBlock
+                        Grid.Column="{Binding GridConfig[vr].Order}"
+                        Text="Variant" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                    <GridSplitter Grid.Column="3" ResizeBehavior="CurrentAndNext" Background="Transparent"
+                                  ResizeDirection="Columns" HorizontalAlignment="Right" Width="20" />
+
+                    <TextBlock
+                        Grid.Column="{Binding GridConfig[fs].Order}"
+                        Text="Size" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                    <GridSplitter Grid.Column="4" ResizeBehavior="CurrentAndNext" Background="Transparent"
+                                  ResizeDirection="Columns" HorizontalAlignment="Right" Width="20" />
+
+                    <TextBlock
+                        Grid.Column="{Binding GridConfig[pr].Order}"
+                        Text="Status" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                    <GridSplitter Grid.Column="5" ResizeBehavior="CurrentAndNext" Background="Transparent"
+                                  ResizeDirection="Columns" HorizontalAlignment="Right" Width="20" />
+
+                    <TextBlock
+                        Grid.Column="{Binding GridConfig[sp].Order}"
+                        Text="Speed" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                    <GridSplitter Grid.Column="6" ResizeBehavior="CurrentAndNext" Background="Transparent"
+                                  ResizeDirection="Columns" HorizontalAlignment="Right" Width="20" />
+
+                    <TextBlock
+                        Grid.Column="{Binding GridConfig[eta].Order}"
+                        Text="ETA" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                    <GridSplitter Grid.Column="7" ResizeBehavior="CurrentAndNext" Background="Transparent"
+                                  ResizeDirection="Columns" HorizontalAlignment="Right" Width="20" />
+
+                    <TextBlock
+                        Grid.Column="{Binding GridConfig[ld].Order}"
+                        Text="Bytes Loaded" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                    <GridSplitter Grid.Column="8" ResizeBehavior="CurrentAndNext" Background="Transparent"
+                                  ResizeDirection="Columns" HorizontalAlignment="Right" Width="20" />
+
+                    <TextBlock
+                        Grid.Column="{Binding GridConfig[sv].Order}"
+                        Text="Save To" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                    <GridSplitter Grid.Column="9" ResizeBehavior="CurrentAndNext" Background="Transparent"
+                                  ResizeDirection="Columns" HorizontalAlignment="Right" Width="20" />
+
+                    <TextBlock
+                        Grid.Column="{Binding GridConfig[dr].Order}"
+                        Text="Duration" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                    <GridSplitter Grid.Column="10" ResizeBehavior="CurrentAndNext" Background="Transparent"
+                                  ResizeDirection="Columns" HorizontalAlignment="Right" Width="20" />
+
+                    <TextBlock
+                        Grid.Column="{Binding GridConfig[ch].Order}"
+                        Text="Channel" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                    <GridSplitter Grid.Column="11" ResizeBehavior="CurrentAndNext" Background="Transparent"
+                                  ResizeDirection="Columns" HorizontalAlignment="Right" Width="20" />
+
+                    <Rectangle Grid.Column="12" Width="40" HorizontalAlignment="Left" />
+                </Grid>
+            </ScrollViewer>
+
+            <!--Items-->
+            <ListBox Grid.Row="1" Name="DownloadList" ItemsSource="{Binding Downloads}"
+                     SelectionMode="Multiple"
+                     Selection="{Binding Selection}" ScrollViewer.AllowAutoHide="False"
+                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                     ScrollViewer.VerticalScrollBarVisibility="Auto" Padding="0 0 0 30">
+                <ListBox.Styles>
+                    <Style Selector="ListBoxItem">
+                        <Setter Property="Padding" Value="12, 4" />
+                        <Setter Property="ContextMenu">
+                            <ContextMenu>
+                                <MenuItem Header="Open"
+                                          Command="{Binding $parent[UserControl].((vm:DownloadsViewModel)DataContext).MenuOpenPressedCommand}"
+                                          IsEnabled="{Binding $parent[UserControl].((vm:DownloadsViewModel)DataContext).OpenIsEnabled}" />
+                                <MenuItem Header="Open folder"
+                                          Command="{Binding $parent[UserControl].((vm:DownloadsViewModel)DataContext).MenuOpenFolderPressedCommand}"
+                                          IsEnabled="{Binding $parent[UserControl].((vm:DownloadsViewModel)DataContext).OpenFolderIsEnabled}" />
+                                <MenuItem Header="Copy link address"
+                                          Command="{Binding $parent[UserControl].((vm:DownloadsViewModel)DataContext).MenuCopyLinkPressedCommand}" />
+                                <MenuItem Header="Refresh filename"
+                                          Command="{Binding $parent[UserControl].((vm:DownloadsViewModel)DataContext).RefreshFilenameCommand}"
+                                          IsEnabled="{Binding $parent[UserControl].((vm:DownloadsViewModel)DataContext).ChangeDirectoryIsEnabled}" />
+                                <MenuItem Header="Change download directory..."
+                                          Command="{Binding $parent[UserControl].((vm:DownloadsViewModel)DataContext).MenuChangeDirectoryPressedCommand}"
+                                          IsEnabled="{Binding $parent[UserControl].((vm:DownloadsViewModel)DataContext).ChangeDirectoryIsEnabled}" />
+                                <MenuItem Header="Choose variant..."
+                                          Command="{Binding $parent[UserControl].((vm:DownloadsViewModel)DataContext).ChooseFormatButtonPressedCommand}"
+                                          IsEnabled="{Binding $parent[UserControl].((vm:DownloadsViewModel)DataContext).ChooseFormatButtonEnabled}" />
+                                <Separator />
+                                <MenuItem Header="Enable"
+                                          Command="{Binding $parent[UserControl].((vm:DownloadsViewModel)DataContext).MenuEnablePressedCommand}" />
+                                <MenuItem Header="Disable"
+                                          Command="{Binding $parent[UserControl].((vm:DownloadsViewModel)DataContext).MenuDisablePressedCommand}" />
+                                <Separator />
+                                <MenuItem Header="Remove"
+                                          Command="{Binding $parent[UserControl].((vm:DownloadsViewModel)DataContext).RemoveButtonPressedCommand}"
+                                          IsEnabled="{Binding $parent[UserControl].((vm:DownloadsViewModel)DataContext).RemoveButtonEnabled}" />
+                            </ContextMenu>
+                        </Setter>
+                    </Style>
+                    <Style Selector="ListBoxItem:nth-child(2n)">
+                        <Setter Property="Background" Value="#30373d" />
+                    </Style>
+                    <Style Selector="TextBlock">
+                        <Setter Property="VerticalAlignment" Value="Center" />
+                    </Style>
+                    <Style Selector="Button">
+                        <Setter Property="Background" Value="Transparent" />
+                        <Setter Property="BorderBrush" Value="#4fff" />
+                    </Style>
+                    <Style Selector="Button.novariant /template/ ContentPresenter">
+                        <Setter Property="Foreground" Value="#f44" />
+                    </Style>
+                    <Style Selector="Button:disabled /template/ ContentPresenter">
+                        <Setter Property="Background" Value="Transparent" />
+                    </Style>
+                </ListBox.Styles>
+
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition SharedSizeGroup="c1" />
+                                <ColumnDefinition SharedSizeGroup="c2" />
+                                <ColumnDefinition SharedSizeGroup="c3" />
+                                <ColumnDefinition SharedSizeGroup="c4" />
+                                <ColumnDefinition SharedSizeGroup="c5" />
+                                <ColumnDefinition SharedSizeGroup="c6" />
+                                <ColumnDefinition SharedSizeGroup="c7" />
+                                <ColumnDefinition SharedSizeGroup="c8" />
+                                <ColumnDefinition SharedSizeGroup="c9" />
+                                <ColumnDefinition SharedSizeGroup="c10" />
+                                <ColumnDefinition SharedSizeGroup="c11" />
+                                <ColumnDefinition SharedSizeGroup="c12" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.Styles>
+                                <Styles>
+                                    <Style Selector="ProgressBar">
+                                        <Setter Property="Foreground" Value="Gray" />
+                                    </Style>
+                                </Styles>
+                            </Grid.Styles>
+
+                            <ToggleSwitch
+                                Grid.Column="{Binding $parent[UserControl].((vm:DownloadsViewModel)DataContext).GridConfig[en].Order}"
+                                IsChecked="{Binding Enabled}"
+                                Command="{Binding $parent[UserControl].((vm:DownloadsViewModel)DataContext).ChangeEnabledStateCommand}"
+                                CommandParameter="{Binding}"
+                                IsEnabled="{Binding EnabledSwitchEnabled}" OnContent="" OffContent="" />
+                            <Border
+                                Grid.Column="{Binding $parent[UserControl].((vm:DownloadsViewModel)DataContext).GridConfig[tl].Order}"
+                                Padding="0 0 10 0">
+                                <TextBlock Text="{Binding Title}" />
+                            </Border>
+                            <Border
+                                Grid.Column="{Binding $parent[UserControl].((vm:DownloadsViewModel)DataContext).GridConfig[fn].Order}"
+                                Padding="0 0 10 0">
+                                <TextBlock Text="{Binding Filename}" />
+                            </Border>
+                            <Button
+                                Grid.Column="{Binding $parent[UserControl].((vm:DownloadsViewModel)DataContext).GridConfig[vr].Order}"
+                                Margin="0 0 10 0" Content="{Binding SelectedVariantDescription}"
+                                IsEnabled="{Binding VariantButtonEnabled}"
+                                Command="{Binding $parent[UserControl].((vm:DownloadsViewModel)DataContext).ChooseSingleFormatButtonPressedCommand}"
+                                CommandParameter="{Binding}" HorizontalContentAlignment="Center"
+                                HorizontalAlignment="Stretch" FontSize="12.4" Padding="3"
+                                Classes.novariant="{Binding NoVariant}" />
+                            <Border
+                                Grid.Column="{Binding $parent[UserControl].((vm:DownloadsViewModel)DataContext).GridConfig[fs].Order}"
+                                Padding="0 0 10 0">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock IsVisible="{Binding SelectedVariant.IsApproxFilesize}"
+                                               Text="~" />
+                                    <TextBlock
+                                        Text="{Binding Filesize, Converter={StaticResource LongFilesizeConverter}}" />
+                                </StackPanel>
+                            </Border>
+                            <Panel
+                                Grid.Column="{Binding $parent[UserControl].((vm:DownloadsViewModel)DataContext).GridConfig[pr].Order}"
+                                Margin="0 0 10 0">
+                                <ProgressBar Classes.Downloading="{Binding Downloading}"
+                                             Classes.Completed="{Binding Completed}"
+                                             Classes.Error="{Binding HasError}"
+                                             IsIndeterminate="{Binding ProgressIndeterminate}"
+                                             Value="{Binding Progress}" MinWidth="10" CornerRadius="8"
+                                             Height="20" />
+                                <TextBlock Text="{Binding ProgressText}" HorizontalAlignment="Center" />
+                            </Panel>
+                            <Border
+                                Grid.Column="{Binding $parent[UserControl].((vm:DownloadsViewModel)DataContext).GridConfig[sp].Order}"
+                                Padding="0 0 10 0">
+                                <StackPanel Orientation="Horizontal" Spacing="8"
+                                            IsVisible="{Binding Downloading}">
+                                    <Border Background="#3fff" CornerRadius="6" VerticalAlignment="Center">
+                                        <TextBlock Width="22" Height="20" TextAlignment="Center"
+                                                   Text="{Binding Connections}" />
+                                    </Border>
+                                    <TextBlock
+                                        Text="{Binding Speed, Converter={StaticResource IntFilesizeConverter}, StringFormat={}{0}/s}" />
+                                </StackPanel>
+                            </Border>
+                            <Border
+                                Grid.Column="{Binding $parent[UserControl].((vm:DownloadsViewModel)DataContext).GridConfig[eta].Order}"
+                                Padding="0 0 10 0">
+                                <TextBlock IsVisible="{Binding Downloading}" Text="{Binding Eta}" />
+                            </Border>
+                            <Border
+                                Grid.Column="{Binding $parent[UserControl].((vm:DownloadsViewModel)DataContext).GridConfig[ld].Order}"
+                                Padding="0 0 10 0">
+                                <TextBlock
+                                    Text="{Binding BytesLoaded, Converter={StaticResource LongFilesizeConverter}}" />
+                            </Border>
+                            <Border
+                                Grid.Column="{Binding $parent[UserControl].((vm:DownloadsViewModel)DataContext).GridConfig[sv].Order}"
+                                Padding="0 0 10 0">
+                                <TextBlock Text="{Binding SaveTo}" />
+                            </Border>
+                            <Border
+                                Grid.Column="{Binding $parent[UserControl].((vm:DownloadsViewModel)DataContext).GridConfig[dr].Order}"
+                                Padding="0 0 10 0">
+                                <TextBlock Text="{Binding Duration}" />
+                            </Border>
+                            <Border
+                                Grid.Column="{Binding $parent[UserControl].((vm:DownloadsViewModel)DataContext).GridConfig[ch].Order}"
+                                Padding="0 0 10 0">
+                                <TextBlock Text="{Binding ChannelTitle}" />
+                            </Border>
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Grid>
+    </Grid>
+</UserControl>

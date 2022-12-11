@@ -1,0 +1,33 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:YoutubeApp"
+        xmlns:vm="clr-namespace:YoutubeApp.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="680" d:DesignHeight="360"
+        Width="680" Height="360"
+        MinWidth="460" MinHeight="280"
+        x:Class="YoutubeApp.Views.LogWindow"
+        x:DataType="vm:LogWindowViewModel"
+        x:CompileBindings="True"
+        d:DataContext="{x:Static local:DesignViewModels.LogWindow}"
+        Title="{Binding Title}"
+        Icon="/Assets/app-logo.ico"
+        WindowStartupLocation="CenterOwner">
+
+    <Border Padding="10">
+        <Grid RowDefinitions="*,Auto">
+            <ListBox ItemsSource="{Binding Items}" Grid.Row="0" CornerRadius="4">
+                <ListBox.Styles>
+                    <Styles>
+                        <Style Selector="ListBoxItem">
+                            <Setter Property="Padding" Value="8 6" />
+                        </Style>
+                    </Styles>
+                </ListBox.Styles>
+            </ListBox>
+            <Button Grid.Row="1" Content="OK" Command="{Binding $parent[Window].Close}" Width="80"
+                    HorizontalContentAlignment="Center" HorizontalAlignment="Right" Margin="0 8 0 0" />
+        </Grid>
+    </Border>
+</Window>

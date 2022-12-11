@@ -1,0 +1,81 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:YoutubeApp.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="440" d:DesignHeight="320"
+        MinWidth="440" MinHeight="330"
+        Width="440" Height="330"
+        x:Class="YoutubeApp.Views.AboutWindow"
+        x:DataType="vm:AboutWindowViewModel"
+        x:CompileBindings="True"
+        Title="About"
+        Icon="/Assets/app-logo.ico"
+        WindowStartupLocation="CenterOwner">
+
+    <Window.Styles>
+        <Styles>
+            <Style Selector="TextBlock">
+                <Setter Property="Foreground" Value="#cfff" />
+            </Style>
+        </Styles>
+    </Window.Styles>
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0">
+            <TextBlock Text="Youtube Downloader" FontSize="22" Foreground="LightSteelBlue" FontWeight="Medium" />
+
+            <TextBlock Text="Version 0.0.1" FontSize="16" />
+
+            <TextBlock Text="Free and open source YouTube video downloader." FontSize="16" Margin="0 8 0 0" />
+
+            <StackPanel Orientation="Horizontal" Spacing="4" Margin="0 2 0 0">
+                <TextBlock Text="Copyright (c) Hossein Saniei" FontSize="16" FontWeight="SemiLight" />
+            </StackPanel>
+
+            <Button Padding="4" Background="Transparent" Margin="0 10 0 0" Command="{Binding OpenGithubPageCommand}">
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                    <PathIcon Data="{StaticResource github}"/>
+                    <TextBlock Text="github.com/legend2ks/YoutubeDownloader" FontSize="15" FontWeight="SemiLight" />
+                </StackPanel>
+            </Button>
+        </StackPanel>
+
+        <Border Grid.Row="3" BorderBrush="#5fff" BorderThickness="1" Padding="6" Margin="0 12 0 0">
+            <StackPanel>
+                <TextBlock Text="This project uses:" />
+                <TextBlock>
+                    Avalonia UI (avaloniaui.net)
+                    <LineBreak />
+                    YT-DLP (github.com/yt-dlp/yt-dlp)
+                    <LineBreak />
+                    Aria2 (github.com/aria2/aria2)
+                    <LineBreak />
+                    FFmpeg (ffmpeg.org)
+                </TextBlock>
+            </StackPanel>
+        </Border>
+
+        <Grid Grid.Row="4" ColumnDefinitions="Auto,*,Auto" Margin="0 8 0 0">
+            <Button Grid.Column="1" Command="{Binding OpenGithubPageDonateSectionCommand}" Width="110"
+                    HorizontalContentAlignment="Center" Margin="0,0,6,0">
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                    <TextBlock Foreground="Crimson">
+                        <PathIcon Data="{StaticResource heart}" Width="16" Height="16" />
+                    </TextBlock>
+                    <TextBlock Text="Donate" Foreground="White" />
+                </StackPanel>
+            </Button>
+            <Button Grid.Column="2" Content="OK" Command="{Binding $parent[Window].Close}" Width="80"
+                    HorizontalContentAlignment="Center" />
+        </Grid>
+    </Grid>
+</Window>

@@ -1,0 +1,7 @@
+﻿<linker>
+    <!-- Can be removed if CompiledBinding and no reflection are used -->
+    <assembly fullname="YoutubeApp" preserve="All"/>
+    <assembly fullname="System.Text.Json" preserve="All"/>
+    <assembly fullname="Serilog.Expressions" preserve="All"/>
+    <assembly fullname="MessageBox.Avalonia" preserve="All"/>
+</linker>

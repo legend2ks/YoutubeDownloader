@@ -1,0 +1,143 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:YoutubeApp"
+             xmlns:vm="using:YoutubeApp.ViewModels"
+             xmlns:views="using:YoutubeApp.Views"
+             mc:Ignorable="d" d:DesignWidth="680" d:DesignHeight="420"
+             x:Class="YoutubeApp.Views.ChannelsView"
+             x:DataType="vm:ChannelsViewModel"
+             d:DataContext="{x:Static local:DesignViewModels.ChannelsView}"
+             Background="#18191d">
+    <Panel>
+        <!-- Channels -->
+        <Grid RowDefinitions="Auto,*" IsVisible="{Binding !CurrentPage}">
+            <!--Toolbar-->
+            <Grid Grid.Row="0" Height="38" Background="#1976d2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <Grid.Styles>
+                    <Styles>
+                        <Style Selector="Button">
+                            <Setter Property="Background" Value="Transparent" />
+                            <Setter Property="FontSize" Value="20" />
+                        </Style>
+                        <Style Selector="Button:disabled /template/ ContentPresenter">
+                            <Setter Property="Background" Value="Transparent" />
+                        </Style>
+                    </Styles>
+                </Grid.Styles>
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                    <Button ToolTip.Tip="Add Channel" Margin="5,0,0,0"
+                            Command="{Binding AddChannelPressedCommand}">
+                        <PathIcon Data="{StaticResource add}" Width="24" Height="24" />
+                    </Button>
+                </StackPanel>
+            </Grid>
+
+            <!-- Channel Categories -->
+            <ScrollViewer Grid.Row="1">
+                <ItemsControl ItemsSource="{Binding ChannelCategories}" Padding="10 0">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <Label Content="{Binding Title}" HorizontalAlignment="Left" FontSize="20"
+                                       FontWeight="SemiBold"
+                                       Padding="10 0" Margin="0 10 0 0" Foreground="#cfff" />
+                                <!-- Channels -->
+                                <ItemsControl ItemsSource="{Binding Channels}" Margin="0 8">
+                                    <ItemsControl.Styles>
+                                        <Styles>
+                                            <Style Selector="Button.ActionBtn:disabled /template/ ContentPresenter">
+                                                <Setter Property="Background" Value="Transparent" />
+                                            </Style>
+                                            <Style Selector="TextBlock.secondary:not(:disabled)">
+                                                <Setter Property="Foreground" Value="#cfff" />
+                                            </Style>
+                                        </Styles>
+                                    </ItemsControl.Styles>
+
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Margin="8">
+                                                <Button IsEnabled="{Binding !Updating}"
+                                                        Command="{Binding $parent[UserControl].((vm:ChannelsViewModel)DataContext).ChannelPressedCommand}"
+                                                        CommandParameter="{Binding}" Width="300" Padding="10"
+                                                        Background="#282e33" CornerRadius="0">
+                                                    <StackPanel>
+                                                        <TextBlock Text="{Binding Title}" FontSize="16" />
+                                                        <Grid ColumnDefinitions="*,10,Auto" Margin="0 6 0 4">
+                                                            <TextBlock Grid.Column="0" Classes="secondary"
+                                                                       Text="{Binding VideoCount, StringFormat={}{0} Video(s)}" />
+                                                        </Grid>
+                                                        <TextBlock Text="{Binding LastUpdate}" Classes="secondary" />
+                                                    </StackPanel>
+                                                </Button>
+                                                <Border Background="#99282e33" Padding="2">
+                                                    <Grid ColumnDefinitions="*,Auto,Auto">
+                                                        <TextBlock Grid.Column="0" Text="{Binding StatusText}"
+                                                                   Margin="8 0" VerticalAlignment="Center" />
+                                                        <Button Grid.Column="1" IsVisible="{Binding !Updating}"
+                                                                ToolTip.Tip="Update" Classes="ActionBtn"
+                                                                Background="Transparent"
+                                                                Command="{Binding $parent[UserControl].((vm:ChannelsViewModel)DataContext).UpdateChannelPressedCommand}"
+                                                                CommandParameter="{Binding}">
+                                                            <PathIcon Data="{StaticResource rotate}" Width="18"
+                                                                      Height="18" />
+                                                        </Button>
+                                                        <Button Grid.Column="1"
+                                                                Classes="ActionBtn"
+                                                                IsVisible="{Binding Updating}" ToolTip.Tip="Stop"
+                                                                Command="{Binding $parent[UserControl].((vm:ChannelsViewModel)DataContext).UpdateChannelPressedCommand}"
+                                                                CommandParameter="{Binding}" Background="Transparent">
+                                                            <PathIcon Data="{StaticResource hand}" Width="18" Height="18"/>
+                                                        </Button>
+                                                        <Button Grid.Column="2"
+                                                                ToolTip.Tip="Menu" Background="Transparent"
+                                                                IsEnabled="{Binding !Updating}" Classes="ActionBtn">
+                                                            <PathIcon Data="{StaticResource ellipsis_vertical}" Width="18" Height="18"/>
+                                                            <Button.Flyout>
+                                                                <MenuFlyout Placement="Bottom">
+                                                                    <MenuItem Header="Edit..." />
+                                                                    <MenuItem Header="Change category..."
+                                                                              Command="{Binding $parent[UserControl].((vm:ChannelsViewModel)DataContext).ChangeCategoryCommand}"
+                                                                              CommandParameter="{Binding}" />
+                                                                    <MenuItem Header="Full update"
+                                                                              Command="{Binding $parent[UserControl].((vm:ChannelsViewModel)DataContext).FullChannelUpdatePressedCommand}"
+                                                                              CommandParameter="{Binding}" />
+                                                                    <Separator/>
+                                                                    <MenuItem Header="Delete"
+                                                                              Command="{Binding $parent[UserControl].((vm:ChannelsViewModel)DataContext).RemoveChannelPressedCommand}"
+                                                                              CommandParameter="{Binding}" />
+                                                                </MenuFlyout>
+                                                            </Button.Flyout>
+                                                        </Button>
+                                                    </Grid>
+                                                </Border>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Grid>
+
+        <!--Videos-->
+        <views:VideosView IsVisible="{Binding CurrentPage}" />
+    </Panel>
+</UserControl>

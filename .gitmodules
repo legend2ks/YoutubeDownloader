@@ -1,0 +1,3 @@
+[submodule "MessageBox.Avalonia"]
+	path = MessageBox.Avalonia
+	url = https://github.com/legend2ks/MessageBox.Avalonia
