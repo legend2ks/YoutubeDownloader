@@ -90,6 +90,7 @@ public partial class DownloadsViewModel : ViewModelBase
     private int _removeBlockerCount;
     private int _refreshBlockerCount;
     private int _chooseFormatBlockerCount;
+    private bool _movingItems;
     private bool _isShuttingDown;
 
     public bool RemoveButtonEnabled => Selection.Count > 0 && _removeBlockerCount == 0;
@@ -248,6 +249,7 @@ public partial class DownloadsViewModel : ViewModelBase
         Download? temp = null;
         var tempIndex = 0;
 
+        _movingItems = true;
         using (Downloads.SuspendNotifications())
         {
             for (var i = 0; i < selectedDownloadsIndexes.Count; i++)
@@ -277,6 +279,7 @@ public partial class DownloadsViewModel : ViewModelBase
             Selection.Select(i - 1);
         }
 
+        _movingItems = false;
         _downloadData.UpdateDownloadPriorities(changes);
     }
 
@@ -292,6 +295,7 @@ public partial class DownloadsViewModel : ViewModelBase
         Download? temp = null;
         var tempIndex = 0;
 
+        _movingItems = true;
         using (Downloads.SuspendNotifications())
         {
             for (var i = selectedDownloadsIndexes.Count - 1; i >= 0; i--)
@@ -321,6 +325,7 @@ public partial class DownloadsViewModel : ViewModelBase
             Selection.Select(i + 1);
         }
 
+        _movingItems = false;
         _downloadData.UpdateDownloadPriorities(changes);
     }
 
@@ -372,6 +377,8 @@ public partial class DownloadsViewModel : ViewModelBase
 
     private void SelectionChanged(object? sender, SelectionModelSelectionChangedEventArgs<Download> e)
     {
+        if (_movingItems) return;
+
         // Selected
         foreach (var item in e.SelectedItems)
         {
