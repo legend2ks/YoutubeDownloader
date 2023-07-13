@@ -62,6 +62,7 @@ public class SqliteDbAccessProvider
     private const string CreateChannelsTableSql = @"
         CREATE TABLE IF NOT EXISTS Channels (
             Id INTEGER NOT NULL,
+            UniqueId TEXT NOT NULL,
             ListId TEXT NOT NULL,
             Title TEXT NOT NULL,
             Path TEXT NOT NULL,

@@ -185,6 +185,7 @@ public partial class AddChannelWindowViewModel : ObservableObject
             var channel
                 = new Channel
                 {
+                    UniqueId = _playlistInfo.channel_id,
                     ListId = _playlistInfo.id,
                     Title = _playlistInfo.channel,
                     Path = SaveTo,

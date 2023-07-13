@@ -44,11 +44,12 @@ public class ChannelData
         using var transaction = _dbConn.BeginTransaction();
 
         // Insert channel
-        const string stmt = @"INSERT INTO Channels (ListId, Title, Path, LastUpdate, VideoCount)
-            VALUES (@ListId, @Title, @Path, @LastUpdate, @VideoCount)
+        const string stmt = @"INSERT INTO Channels (UniqueId, ListId, Title, Path, LastUpdate, VideoCount)
+            VALUES (@UniqueId, @ListId, @Title, @Path, @LastUpdate, @VideoCount)
             RETURNING Id";
         var parameters = new
         {
+            channel.UniqueId,
             channel.ListId,
             channel.Title,
             channel.Path,
@@ -131,12 +132,12 @@ public class ChannelData
 
         // Update channel
         const string stmt =
-            @"UPDATE Channels SET Title = @Title, LastUpdate = @LastUpdate, VideoCount = @VideoCount WHERE Id = @Id";
+            @"UPDATE Channels SET UniqueId = @UniqueId, Title = @Title, LastUpdate = @LastUpdate, VideoCount = @VideoCount WHERE Id = @Id";
         var parameters = new
         {
             Id = channel.Id,
+            UniqueId = playlistInfo.channel_id,
             Title = playlistInfo.channel,
-            Channel = playlistInfo.channel,
             VideoCount = totalVideoCount,
             LastUpdate = updateDateTime,
         };

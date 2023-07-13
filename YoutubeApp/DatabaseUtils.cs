@@ -38,6 +38,7 @@ internal static class DatabaseUtils
         return new Channel
         {
             Id = dto.Id,
+            UniqueId = dto.UniqueId,
             ListId = dto.ListId,
             Title = dto.Title,
             Path = dto.Path,

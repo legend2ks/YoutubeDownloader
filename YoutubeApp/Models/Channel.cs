@@ -6,6 +6,7 @@ namespace YoutubeApp.Models;
 public partial class Channel : ObservableObject
 {
     public int Id { get; set; }
+    public string UniqueId { get; set; }
     public string ListId { get; set; }
 
     public string Path { get; set; }
