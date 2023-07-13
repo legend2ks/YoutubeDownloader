@@ -220,7 +220,7 @@ public partial class ChannelsViewModel : ViewModelBase
         {
             var lastUpdate = DateTime.Parse(channel.LastUpdate);
             var daysSinceLastUpdate = (DateTime.Now - lastUpdate).Days;
-            var count = Math.Max((int)(daysSinceLastUpdate * .9), 10);
+            var count = Math.Max((int)(daysSinceLastUpdate * 1.5), 10);
 
             while (true)
             {
