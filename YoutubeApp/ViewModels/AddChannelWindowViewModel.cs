@@ -87,61 +87,51 @@ public partial class AddChannelWindowViewModel : ObservableObject
             var trimmedLink = Link.Trim();
             if (trimmedLink.Length == 0) return;
 
-            var playlistPattern = @"^(?:https?:\/\/)?(?:www\.|m\.)?youtube.com\/\S*(?:\?|&)list=([-a-zA-Z0-9_]{24,})";
             var handlePattern = @"^(?:https?:\/\/)?(?:www\.|m\.)?youtube\.com\/(@[-a-zA-Z0-9_\.]{3,})\/?";
 
-            var playlistMatch = Regex.Match(trimmedLink, playlistPattern);
-
-            if (!playlistMatch.Success)
+            var handleMatch = Regex.Match(trimmedLink, handlePattern);
+            if (!handleMatch.Success)
             {
-                var handleMatch = Regex.Match(trimmedLink, handlePattern);
-                if (!handleMatch.Success)
-                {
-                    await MessageBoxManager.GetMessageBoxStandardWindow("Error", $"Invalid link.")
-                        .ShowDialog(window);
-                    return;
-                }
-
-                var handle = handleMatch.Groups[1].Value;
-
-                // Get Playlist ID
-                Loading = true;
-                _cancellationTokenSource = new();
-                ChannelInfo channelInfo;
-                try
-                {
-                    channelInfo =
-                        await _youtubeCommunicator.GetChannelInfoAsync(handle, _cancellationTokenSource.Token);
-                }
-                catch (OperationCanceledException)
-                {
-                    return;
-                }
-                catch (Exception)
-                {
-                    Error = true;
-                    Loading = false;
-                    return;
-                }
-                finally
-                {
-                    _cancellationTokenSource.Dispose();
-                }
-
-                var channelId = channelInfo.channel_id;
-                if (!channelId.StartsWith("UC", StringComparison.OrdinalIgnoreCase))
-                {
-                    Error = true;
-                    Loading = false;
-                    return;
-                }
-
-                ListId = $"UU{channelId[2..]}";
+                await MessageBoxManager.GetMessageBoxStandardWindow("Error", $"Invalid link.")
+                    .ShowDialog(window);
+                return;
             }
-            else
+
+            var handle = handleMatch.Groups[1].Value;
+
+            // Get Playlist ID
+            Loading = true;
+            _cancellationTokenSource = new();
+            ChannelInfo channelInfo;
+            try
             {
-                ListId = playlistMatch.Groups[1].Value;
+                channelInfo =
+                    await _youtubeCommunicator.GetChannelInfoAsync(handle, _cancellationTokenSource.Token);
             }
+            catch (OperationCanceledException)
+            {
+                return;
+            }
+            catch (Exception)
+            {
+                Error = true;
+                Loading = false;
+                return;
+            }
+            finally
+            {
+                _cancellationTokenSource.Dispose();
+            }
+
+            var channelId = channelInfo.channel_id;
+            if (!channelId.StartsWith("UC", StringComparison.OrdinalIgnoreCase))
+            {
+                Error = true;
+                Loading = false;
+                return;
+            }
+
+            ListId = $"UU{channelId[2..]}";
 
             var channels = ChannelCategories.SelectMany(x => x.Channels);
             var ch = channels.FirstOrDefault(x => x.ListId == ListId);
