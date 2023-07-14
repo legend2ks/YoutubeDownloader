@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
@@ -104,16 +105,24 @@ public partial class ChannelsViewModel : ViewModelBase
         // Check available files
         if (Directory.Exists(channel.Path))
         {
+            var fileNames = new Dictionary<string, string>();
             var dirFiles = Directory.GetFiles(channel.Path).Select(Path.GetFileName).ToArray();
+
+            const string videoIdPattern = @"^\[.*]\[.*]\[(.*)]";
+
+            foreach (var filename in dirFiles)
+            {
+                var videoIdMatch = Regex.Match(filename, videoIdPattern);
+                if (!videoIdMatch.Success) continue;
+                var videoId = videoIdMatch.Groups[1].Value;
+                fileNames.Add(videoId, filename);
+            }
+
             foreach (var video in _allVideos)
             {
                 video.Channel = channel;
-                foreach (var file in dirFiles)
-                {
-                    if (!file.Contains($"[{video.VideoId}]")) continue;
-                    video.FileName = file;
-                    break;
-                }
+                fileNames.TryGetValue(video.VideoId, out var filename);
+                video.FileName = filename;
             }
         }
 
