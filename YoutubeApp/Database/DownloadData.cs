@@ -245,6 +245,7 @@ public class DownloadData
     public void UpdateSaveTo(int downloadId, string saveToPath)
     {
         const string stmt = "UPDATE Downloads SET SaveTo = @SaveTo WHERE Id = @Id";
-        _dbConn.Execute(stmt, new { Id = downloadId, SaveTo = saveToPath });
+        var rowsAffected = _dbConn.Execute(stmt, new { Id = downloadId, SaveTo = saveToPath });
+        if (rowsAffected != 1) throw new Exception("Unexpected affected rows number.");
     }
 }
