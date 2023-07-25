@@ -12,6 +12,7 @@ public partial class Video : ObservableObject
     public string VideoId { get; set; }
     public string Title { get; set; }
     public string Duration { get; set; }
+    public int Timestamp { get; set; }
     public string PublishedAt { get; set; }
 
     private string? _fileName;
