@@ -112,7 +112,7 @@ public partial class FormatWindowViewModel : ViewModelBase
                            variant.Fps + "+" + variant.Abr;
                 if (commonVariants.TryGetValue(sign, out var value))
                 {
-                    value.Downloads.Add(dl.Id, dl);
+                    value.Downloads.TryAdd(dl.Id, dl);
                 }
                 else
                 {
