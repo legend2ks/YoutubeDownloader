@@ -1,9 +1,9 @@
 <div align="center">
 <img src="https://user-images.githubusercontent.com/16824470/226195878-47e26931-87a4-4145-b208-6f336eca55f2.png"/>
 
-[![Discord](https://img.shields.io/discord/1084939796792754206?color=blue&labelColor=555555&label=&logo=discord&logoColor=lightblue&style=for-the-badge)](https://discord.gg/RrVaGUTuYA)
-[![GitHub release (release name instead of tag name)](https://img.shields.io/github/v/release/legend2ks/YoutubeDownloader?&style=for-the-badge)](https://github.com/legend2ks/YoutubeDownloader/releases)
-[![Donate](https://img.shields.io/badge/_-Donate-red.svg?logo=githubsponsors&labelColor=555555&style=for-the-badge)](https://github.com/legend2ks/YoutubeDownloader/#-support)
+[![Chat](https://img.shields.io/badge/Chat-on%20Telegram-blue)](https://t.me/+5Kma9lxB0z40Y2M0)
+[![Release](https://img.shields.io/github/v/release/legend2ks/YoutubeDownloader?label=Release&color=2ea043)](https://github.com/legend2ks/YoutubeDownloader/releases)
+[![Donate](https://img.shields.io/badge/_-Donate-red.svg?logo=githubsponsors&labelColor=555555)](https://github.com/legend2ks/YoutubeDownloader/#-support)
 </div>
 
 An open-source YouTube video downloader that allows you to easily download videos from YouTube in all available original qualities. It uses yt-dlp, ffmpeg and aria2 under the hood.
