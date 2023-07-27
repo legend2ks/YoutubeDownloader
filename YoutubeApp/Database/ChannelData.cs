@@ -12,16 +12,20 @@ namespace YoutubeApp.Database;
 public class ChannelData
 {
     private readonly SQLiteConnection _dbConn;
+    private List<Channel>? _channels;
 
     public ChannelData(SqliteDbAccessProvider sqliteDbAccessProvider)
     {
         _dbConn = sqliteDbAccessProvider.Connection;
     }
 
-    public IEnumerable<Channel> GetChannels()
+    public List<Channel> GetChannels(bool useCache = true)
     {
+        if (useCache && _channels is not null) return _channels;
+
         var result = _dbConn.Query<ChannelDTO>("SELECT * FROM Channels");
-        var channels = result.Select(DatabaseUtils.ToChannel);
+        var channels = result.Select(DatabaseUtils.ToChannel).ToList();
+        _channels = channels;
         return channels;
     }
 
@@ -79,6 +83,8 @@ public class ChannelData
         }
 
         transaction.Commit();
+
+        _channels!.Add(channel);
     }
 
     public int UpdateChannel(Channel channel, PlaylistInfo playlistInfo,
@@ -153,6 +159,7 @@ public class ChannelData
     public void RemoveChannel(int id)
     {
         const string stmt = "DELETE FROM Channels WHERE Id = @Id";
+        _channels!.Remove(_channels.First(x => x.Id == id));
         var rowsAffected = _dbConn.Execute(stmt, new { Id = id });
         if (rowsAffected != 1) throw new Exception("Unexpected affected rows number.");
     }
