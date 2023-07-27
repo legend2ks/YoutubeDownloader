@@ -194,6 +194,9 @@ public partial class ChannelsViewModel : ViewModelBase
                 result.Channel.CancellationTokenSource.Dispose();
             }
 
+            _channelData.SetIncompleteCount(result.Channel.Id, 0);
+            result.Channel.IncompleteCount = 0;
+
             result.Channel.StatusText = string.Empty;
         }, cts.Token);
     }
@@ -229,7 +232,7 @@ public partial class ChannelsViewModel : ViewModelBase
         {
             var lastUpdate = DateTime.Parse(channel.LastUpdate);
             var daysSinceLastUpdate = (DateTime.Now - lastUpdate).Days;
-            var count = Math.Max((int)(daysSinceLastUpdate * 1.5), 10);
+            var count = Math.Max((int)(daysSinceLastUpdate * 1.5), 10) + channel.IncompleteCount;
 
             while (true)
             {
@@ -255,7 +258,7 @@ public partial class ChannelsViewModel : ViewModelBase
                 var prevVideos = _channelData.GetVideos(channel.Id).ToArray();
                 var prevVideoIds = prevVideos.ToDictionary(x => x.VideoId, x => x.Id);
 
-                var prevLastVideo = prevVideos[^1];
+                var prevLastVideo = prevVideos[^(channel.IncompleteCount > 0 ? channel.IncompleteCount : 1)];
                 if (!fullUpdate && playlistInfo.entries.All(x => x.id != prevLastVideo.VideoId))
                 {
                     _logger.LogDebug("Previous last video ID not found. Switching to full update. Channel: {Channel}",
@@ -266,10 +269,10 @@ public partial class ChannelsViewModel : ViewModelBase
 
                 var updateDateTime = DateTime.UtcNow.ToString();
 
-                int totalVideoCount;
+                int addedVideoCount;
                 try
                 {
-                    totalVideoCount = _channelData.UpdateChannel(channel, playlistInfo, prevVideoIds, updateDateTime);
+                    addedVideoCount = _channelData.UpdateChannel(channel, playlistInfo, prevVideoIds, updateDateTime);
                 }
                 catch (Exception)
                 {
@@ -279,10 +282,9 @@ public partial class ChannelsViewModel : ViewModelBase
                     return;
                 }
 
-                var addedCount = totalVideoCount - channel.VideoCount;
-
                 channel.Title = playlistInfo.channel;
-                channel.VideoCount = totalVideoCount;
+                channel.VideoCount = prevVideoIds.Count + addedVideoCount;
+                channel.IncompleteCount += addedVideoCount;
                 channel.LastUpdate = DateTime.Parse(updateDateTime).ToLocalTime().ToString();
 
                 try
@@ -296,6 +298,9 @@ public partial class ChannelsViewModel : ViewModelBase
                     channel.CancellationTokenSource.Dispose();
                     return;
                 }
+
+                _channelData.SetIncompleteCount(channel.Id, 0);
+                channel.IncompleteCount = 0;
 
                 channel.Updating = false;
                 channel.StatusText = $"Updated successfully (+{(addedCount < 0 ? 0 : addedCount)})";
