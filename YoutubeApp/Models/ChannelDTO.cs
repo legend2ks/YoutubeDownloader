@@ -2,12 +2,14 @@
 
 public class ChannelDTO
 {
-    public int Id { get; set; }
-    public string UniqueId { get; set; }
-    public string ListId { get; set; }
-    public string Title { get; set; }
-    public string Path { get; set; }
-    public int CategoryId { get; set; }
-    public string LastUpdate { get; set; }
-    public int VideoCount { get; set; }
+    public required int Id { get; set; }
+    public required string UniqueId { get; set; }
+    public required string ListId { get; set; }
+    public required string Title { get; set; }
+    public required string Path { get; set; }
+    public required int CategoryId { get; set; }
+    public required string LastUpdate { get; set; }
+    public required int VideoCount { get; set; }
+    public required int IncompleteCount { get; set; }
+    public required int AddedVideoCount { get; set; }
 }

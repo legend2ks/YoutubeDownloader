@@ -190,6 +190,7 @@ public partial class AddChannelWindowViewModel : ObservableObject
                     Title = _playlistInfo.channel,
                     Path = SaveTo,
                     VideoCount = VideoCount,
+                    IncompleteCount = VideoCount,
                     LastUpdate = DateTime.UtcNow.ToString(),
                 };
 

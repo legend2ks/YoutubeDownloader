@@ -11,6 +11,9 @@ public partial class Channel : ObservableObject
 
     public string Path { get; set; }
     public int CategoryId { get; set; }
+    public int IncompleteCount { get; set; }
+
+    [ObservableProperty] private int _addedVideoCount;
 
     [ObservableProperty] private string _lastUpdate;
 

@@ -45,6 +45,8 @@ internal static class DatabaseUtils
             Path = dto.Path,
             CategoryId = dto.CategoryId,
             VideoCount = dto.VideoCount,
+            IncompleteCount = dto.IncompleteCount,
+            AddedVideoCount = dto.AddedVideoCount,
             LastUpdate = DateTime.Parse(dto.LastUpdate).ToLocalTime().ToString(),
         };
     }

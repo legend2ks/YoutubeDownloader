@@ -48,8 +48,9 @@ public class ChannelData
         using var transaction = _dbConn.BeginTransaction();
 
         // Insert channel
-        const string stmt = @"INSERT INTO Channels (UniqueId, ListId, Title, Path, LastUpdate, VideoCount)
-            VALUES (@UniqueId, @ListId, @Title, @Path, @LastUpdate, @VideoCount)
+        const string stmt =
+            @"INSERT INTO Channels (UniqueId, ListId, Title, Path, LastUpdate, VideoCount, IncompleteCount)
+            VALUES (@UniqueId, @ListId, @Title, @Path, @LastUpdate, @VideoCount, @IncompleteCount)
             RETURNING Id";
         var parameters = new
         {
@@ -58,6 +59,7 @@ public class ChannelData
             channel.Title,
             channel.Path,
             channel.VideoCount,
+            channel.IncompleteCount,
             channel.LastUpdate,
         };
 
@@ -92,8 +94,7 @@ public class ChannelData
     {
         using var transaction = _dbConn.BeginTransaction();
 
-        var totalVideoCount = prevVideoIds.Count;
-
+        var addedVideoCount = 0;
 
         // Update Videos
         const string insertVideoStmt = @"INSERT INTO Videos (VideoId, ChannelId, Title, Duration, Timestamp)
@@ -120,7 +121,7 @@ public class ChannelData
             else
             {
                 // Insert new video
-                totalVideoCount++;
+                addedVideoCount++;
 
                 var insertVideoParams = new
                 {
@@ -138,13 +139,22 @@ public class ChannelData
 
         // Update channel
         const string stmt =
-            @"UPDATE Channels SET UniqueId = @UniqueId, Title = @Title, LastUpdate = @LastUpdate, VideoCount = @VideoCount WHERE Id = @Id";
+            @"UPDATE Channels SET 
+                UniqueId = @UniqueId,
+                Title = @Title,
+                LastUpdate = @LastUpdate,
+                VideoCount = @VideoCount,
+                IncompleteCount = @IncompleteCount,
+                AddedVideoCount = @AddedVideoCount
+                WHERE Id = @Id";
         var parameters = new
         {
-            Id = channel.Id,
+            channel.Id,
             UniqueId = playlistInfo.channel_id,
             Title = playlistInfo.channel,
-            VideoCount = totalVideoCount,
+            VideoCount = prevVideoIds.Count + addedVideoCount,
+            IncompleteCount = channel.IncompleteCount + addedVideoCount,
+            AddedVideoCount = channel.AddedVideoCount + addedVideoCount,
             LastUpdate = updateDateTime,
         };
 
@@ -153,7 +163,7 @@ public class ChannelData
 
         transaction.Commit();
 
-        return totalVideoCount;
+        return addedVideoCount;
     }
 
     public void RemoveChannel(int id)
@@ -219,6 +229,20 @@ public class ChannelData
             : "UPDATE Channels SET CategoryId = @CategoryId WHERE Id = @Id";
         var rowsAffected = _dbConn.Execute(sql,
             new { CategoryId = categoryId, channel.Id });
+        if (rowsAffected != 1) throw new Exception("Unexpected affected rows number.");
+    }
+
+    public void SetIncompleteCount(int channelId, int count)
+    {
+        var rowsAffected = _dbConn.Execute("UPDATE Channels SET IncompleteCount = @IncompleteCount WHERE Id = @Id",
+            new { Id = channelId, IncompleteCount = count });
+        if (rowsAffected != 1) throw new Exception("Unexpected affected rows number.");
+    }
+
+    public void SetAddedVideoCount(int channelId, int count)
+    {
+        var rowsAffected = _dbConn.Execute("UPDATE Channels SET AddedVideoCount = @AddedVideoCount WHERE Id = @Id",
+            new { Id = channelId, AddedVideoCount = count });
         if (rowsAffected != 1) throw new Exception("Unexpected affected rows number.");
     }
 }

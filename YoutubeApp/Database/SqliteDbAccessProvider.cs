@@ -1,5 +1,7 @@
-﻿using System.Data.SQLite;
+﻿using System;
+using System.Data.SQLite;
 using Dapper;
+using YoutubeApp.Database.Migrations;
 
 namespace YoutubeApp.Database;
 
@@ -10,20 +12,48 @@ public class SqliteDbAccessProvider
         const string connStr = "Data Source=./data.dat;Version=3;foreign keys=True;";
         Connection = new SQLiteConnection(connStr);
         Connection.Open();
-        Initialize();
+
+        var userVersion = Connection.QueryFirst<int>("PRAGMA user_version");
+        if (userVersion > LatestDbVersion)
+            throw new Exception("The database version is not supported.");
+
+        var tableCount = Connection.QueryFirst<int>("SELECT COUNT(*) FROM sqlite_master WHERE type = 'table'");
+        if (tableCount == 0)
+        {
+            Initialize();
+        }
+        else
+        {
+            ApplyMigrations(userVersion);
+        }
     }
 
     private void Initialize()
     {
-        Connection.Execute(CreateDownloadsTableSql);
-        Connection.Execute(CreateDownloadFilesTableSql);
-        Connection.Execute(CreateChannelsTableSql);
-        Connection.Execute(CreateVideosTableSql);
-        Connection.Execute(CreateChannelCategoriesTableSql);
-        Connection.Execute(CreateConfigsTableSql);
+        using var transaction = Connection.BeginTransaction();
+        Connection.Execute(CreateDownloadsTableSql, null, transaction);
+        Connection.Execute(CreateDownloadFilesTableSql, null, transaction);
+        Connection.Execute(CreateChannelsTableSql, null, transaction);
+        Connection.Execute(CreateVideosTableSql, null, transaction);
+        Connection.Execute(CreateChannelCategoriesTableSql, null, transaction);
+        Connection.Execute(CreateConfigsTableSql, null, transaction);
+        Connection.Execute("PRAGMA user_version = 1", null, transaction);
+        transaction.Commit();
+    }
+
+    private void ApplyMigrations(int userVersion)
+    {
+        switch (userVersion)
+        {
+            case 0:
+                Migration1.Apply(Connection);
+                break;
+        }
     }
 
     public SQLiteConnection Connection { get; }
+
+    private const int LatestDbVersion = 1;
 
     private const string CreateDownloadsTableSql = @"
         CREATE TABLE IF NOT EXISTS Downloads (
@@ -67,6 +97,8 @@ public class SqliteDbAccessProvider
             Title TEXT NOT NULL,
             Path TEXT NOT NULL,
             VideoCount INTEGER,
+            IncompleteCount INTEGER NOT NULL,
+            AddedVideoCount INTEGER NOT NULL DEFAULT 0,
             CategoryId INTEGER,
             LastUpdate TEXT,
             PRIMARY KEY (Id),
