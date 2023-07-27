@@ -18,6 +18,7 @@ public partial class GrabberJob : ObservableObject
     [ObservableProperty] private Dictionary<string, GrabberJobPlaylist>? _playlists;
 
     public string Title { get; private set; }
+    public Channel? Channel { get; }
     public string SavePath { get; private set; }
     public string DateAdded { get; private set; }
 
@@ -91,7 +92,7 @@ public partial class GrabberJob : ObservableObject
 
 
     public GrabberJob(int id, List<string> videoIds, List<string> playlistIds, string savePath, string title,
-        Youtube youtube)
+        Channel? channel, Youtube youtube)
     {
         _youtube = youtube;
         Id = id;
@@ -99,6 +100,7 @@ public partial class GrabberJob : ObservableObject
         PlaylistIds = playlistIds;
         SavePath = savePath;
         Title = title;
+        Channel = channel;
         DateAdded = DateTime.Now.ToString("HH:mm");
         CancellationToken = _cancellationTokenSource.Token;
     }

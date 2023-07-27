@@ -20,16 +20,17 @@ public class Youtube
     private readonly ILogger<Youtube> _logger;
     private readonly IYoutubeCommunicator _youtubeCommunicator;
     private readonly DownloadData _downloadData;
+    private readonly ChannelData _channelData;
     private readonly DownloaderUtils _downloaderUtils;
     private readonly Settings _settings;
 
     public Youtube(ILogger<Youtube> logger, IYoutubeCommunicator youtubeCommunicator, DownloadData downloadData,
-        DownloaderUtils downloaderUtils,
-        Settings settings)
+        ChannelData channelData, DownloaderUtils downloaderUtils, Settings settings)
     {
         _logger = logger;
         _youtubeCommunicator = youtubeCommunicator;
         _downloadData = downloadData;
+        _channelData = channelData;
         _downloaderUtils = downloaderUtils;
         _settings = settings;
     }
@@ -100,13 +101,26 @@ public class Youtube
                         Description = Utils.GenerateVariantDescription(bestVariant, vformat.Protocol, aformat.Protocol,
                             vformat.Throttled, aformat.Throttled),
                         IsApproxFilesize = bestVariant.IsApproxFilesize,
+                        VCodec = bestVariant.VCodec,
+                        ACodec = bestVariant.ACodec,
+                        Width = bestVariant.Width,
+                        Height = bestVariant.Height,
+                        Fps = bestVariant.Fps,
+                        Abr = bestVariant.Abr,
                     };
 
                     var container = GetContainerOptions(bestVariant.VCodec, bestVariant.ACodec)[0];
 
                     var uploadDate = videoInfo.upload_date.Insert(4, "-").Insert(7, "-");
 
-                    var filename = GenerateFilename(_settings.FilenameTemplate, video.VideoId, videoInfo.title,
+                    var channel = job.Channel ?? _channelData.GetChannels()
+                        .FirstOrDefault(x => x.UniqueId == videoInfo.channel_id);
+
+                    var isChannelVideo = string.Compare(channel?.Path, job.SavePath,
+                        StringComparison.InvariantCultureIgnoreCase) == 0;
+                    var filenameTemplate =
+                        isChannelVideo ? Settings.DefaultFilenameTemplate : _settings.FilenameTemplate;
+                    var filename = GenerateFilename(filenameTemplate, video.VideoId, videoInfo.title,
                         container,
                         bestVariant.Fps, videoInfo.channel, uploadDate, bestVariant.Width, bestVariant.Height,
                         bestVariant.VCodec, bestVariant.ACodec, bestVariant.Abr);
@@ -119,6 +133,7 @@ public class Youtube
                         VideoId = video.VideoId,
                         Uuid = uuid,
                         ChannelId = videoInfo.channel_id,
+                        Channel = channel,
                         Title = videoInfo.title,
                         SelectedVariant = selectedVariant,
                         Container = container,
@@ -363,6 +378,12 @@ public class Youtube
                     Description = Utils.GenerateVariantDescription(variant, vformat.Protocol, aformat.Protocol,
                         vformat.Throttled, aformat.Throttled),
                     IsApproxFilesize = variant.IsApproxFilesize,
+                    VCodec = variant.VCodec,
+                    ACodec = variant.ACodec,
+                    Width = variant.Width,
+                    Height = variant.Height,
+                    Fps = variant.Fps,
+                    Abr = variant.Abr,
                 };
                 break;
             }

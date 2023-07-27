@@ -15,4 +15,10 @@ public class SelectedVariant
     public required string AudioLmt { get; set; }
     public required string Description { get; set; }
     public required bool IsApproxFilesize { get; set; }
+    public required string VCodec { get; set; }
+    public required string ACodec { get; set; }
+    public required int Width { get; set; }
+    public required int Height { get; set; }
+    public required float Fps { get; set; }
+    public required float Abr { get; set; }
 }

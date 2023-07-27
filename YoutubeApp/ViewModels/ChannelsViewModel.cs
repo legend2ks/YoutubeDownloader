@@ -342,6 +342,8 @@ public partial class ChannelsViewModel : ViewModelBase
         _channelData.RemoveChannel(channel.Id);
         ChannelCategories.First(x => x.Id == channel.CategoryId).Channels.Remove(channel);
 
+        _messenger.Send(new ChannelDeletedMessage { Channel = channel });
+
         try
         {
             Directory.Delete(Path.Combine(channel.Path, ".thumbs"), true);

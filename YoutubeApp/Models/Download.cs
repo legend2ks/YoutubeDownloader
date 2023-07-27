@@ -126,6 +126,7 @@ public partial class Download : ObservableObject
 
     public int Priority { get; set; }
     public string ChannelId { get; set; }
+    public Channel? Channel { get; set; }
 
     public static event EventHandler<EnableStateChangedEventArgs>? EnableStateChanged;
 

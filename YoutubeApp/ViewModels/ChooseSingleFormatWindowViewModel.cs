@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Controls.Selection;
@@ -137,6 +138,12 @@ public partial class ChooseSingleFormatWindowViewModel : ViewModelBase
                 Description = Utils.GenerateVariantDescription(chosenVariant, vformat.Protocol, aformat.Protocol,
                     vformat.Throttled, aformat.Throttled),
                 IsApproxFilesize = chosenVariant.IsApproxFilesize,
+                VCodec = chosenVariant.VCodec,
+                ACodec = chosenVariant.ACodec,
+                Width = chosenVariant.Width,
+                Height = chosenVariant.Height,
+                Fps = chosenVariant.Fps,
+                Abr = chosenVariant.Abr,
             };
 
             bytesLoaded = 0;
@@ -144,7 +151,10 @@ public partial class ChooseSingleFormatWindowViewModel : ViewModelBase
 
         var container = Containers.First(x => x.Value.IsChecked).Key;
 
-        var filename = Youtube.GenerateFilename(_settings.FilenameTemplate, DownloadItem.VideoId, DownloadItem.Title,
+        var isChannelVideo = string.Compare(DownloadItem.Channel?.Path, DownloadItem.SaveTo,
+            StringComparison.InvariantCultureIgnoreCase) == 0;
+        var filenameTemplate = isChannelVideo ? Settings.DefaultFilenameTemplate : _settings.FilenameTemplate;
+        var filename = Youtube.GenerateFilename(filenameTemplate, DownloadItem.VideoId, DownloadItem.Title,
             container, chosenVariant.Fps, DownloadItem.ChannelTitle, DownloadItem.UploadDate, chosenVariant.Width,
             chosenVariant.Height, chosenVariant.VCodec, chosenVariant.ACodec, chosenVariant.Abr);
 

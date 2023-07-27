@@ -11,19 +11,6 @@ namespace YoutubeApp;
 
 public partial class Grabber : ObservableObject
 {
-    private readonly Youtube _youtube;
-    private readonly IMessenger _messenger;
-    private static int _nextJobId = 1;
-
-    [ObservableProperty] private int _activeJobCount;
-
-    public ObservableCollection<GrabberJob> GrabberJobs { get; } = new();
-
-    [ObservableProperty] private bool _grabberHasError;
-
-    public int? GrabberJobWindowId { get; set; }
-
-
     public Grabber(Youtube youtube, IMessenger messenger)
     {
         _youtube = youtube;
@@ -35,13 +22,24 @@ public partial class Grabber : ObservableObject
         GrabberJob.Retry += GrabberJob_Retry;
     }
 
-    public void AddJob(List<string> videos, List<string> playlists, string savePath, Channel? owner = null)
+    private readonly Youtube _youtube;
+    private readonly IMessenger _messenger;
+    private static int _nextJobId = 1;
+
+    [ObservableProperty] private int _activeJobCount;
+    [ObservableProperty] private bool _grabberHasError;
+
+    public ObservableCollection<GrabberJob> GrabberJobs { get; } = new();
+
+    public int? GrabberJobWindowId { get; set; }
+
+    public void AddJob(List<string> videos, List<string> playlists, string savePath, Channel? channel = null)
     {
         var id = _nextJobId++;
         var title = $"#{id}";
-        if (owner is not null)
-            title += $" | {owner.Title}";
-        var job = new GrabberJob(id, videos, playlists, savePath, title, _youtube);
+        if (channel is not null)
+            title += $" | {channel.Title}";
+        var job = new GrabberJob(id, videos, playlists, savePath, title, channel, _youtube);
         GrabberJobs.Insert(0, job);
         ActiveJobCount++;
         _ = _youtube.GetVideosAsync(job);

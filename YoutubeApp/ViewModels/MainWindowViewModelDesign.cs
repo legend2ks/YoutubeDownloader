@@ -22,6 +22,7 @@ internal class MainWindowViewModelDesign : MainWindowViewModel
                     new List<string>(),
                     @"C:\Videos",
                     "#1",
+                    null,
                     null!
                 )
                 {
@@ -33,6 +34,7 @@ internal class MainWindowViewModelDesign : MainWindowViewModel
                     new List<string>(),
                     @"D:\Videos",
                     "#2 | Uploads from dotnet",
+                    null,
                     null!
                 )
                 {
@@ -46,6 +48,7 @@ internal class MainWindowViewModelDesign : MainWindowViewModel
                     new List<string>(),
                     @"E:\Videos",
                     "#3 | Uploads from Avalonia UI",
+                    null,
                     null!
                 )
                 {

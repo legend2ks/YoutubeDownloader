@@ -14,6 +14,7 @@ public class DownloadDTO
     public string Filename { get; set; }
     public string SaveTo { get; set; }
     public string ChannelTitle { get; set; }
+    public string ChannelId { get; set; }
     public string UploadDate { get; set; }
     public long Filesize { get; set; }
     public long BytesLoaded { get; set; }

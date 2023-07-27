@@ -248,12 +248,21 @@ public partial class FormatWindowViewModel : ViewModelBase
                         Description = Utils.GenerateVariantDescription(chosenVariant, vformat.Protocol,
                             aformat.Protocol, vformat.Throttled, aformat.Throttled),
                         IsApproxFilesize = chosenVariant.IsApproxFilesize,
+                        VCodec = chosenVariant.VCodec,
+                        ACodec = chosenVariant.ACodec,
+                        Width = chosenVariant.Width,
+                        Height = chosenVariant.Height,
+                        Fps = chosenVariant.Fps,
+                        Abr = chosenVariant.Abr,
                     };
 
                     bytesLoaded = 0;
                 }
 
-                var filename = Youtube.GenerateFilename(_settings.FilenameTemplate, dl.VideoId, dl.Title, container,
+                var isChannelVideo =
+                    string.Compare(dl.Channel?.Path, dl.SaveTo, StringComparison.InvariantCultureIgnoreCase) == 0;
+                var filenameTemplate = isChannelVideo ? Settings.DefaultFilenameTemplate : _settings.FilenameTemplate;
+                var filename = Youtube.GenerateFilename(filenameTemplate, dl.VideoId, dl.Title, container,
                     chosenVariant.Fps, dl.ChannelTitle, dl.UploadDate, chosenVariant.Width, chosenVariant.Height,
                     chosenVariant.VCodec, chosenVariant.ACodec, chosenVariant.Abr);
 

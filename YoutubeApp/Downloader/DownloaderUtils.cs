@@ -293,6 +293,17 @@ public class DownloaderUtils
             }
 
             // Update Database
+            var isChannelVideo =
+                string.Compare(dl.Channel?.Path, destPath, StringComparison.InvariantCultureIgnoreCase) == 0;
+            if (isChannelVideo)
+            {
+                dl.Filename = Youtube.GenerateFilename(Settings.DefaultFilenameTemplate, dl.VideoId, dl.Title,
+                    dl.Container, dl.SelectedVariant.Fps, dl.ChannelTitle, dl.UploadDate, dl.SelectedVariant.Width,
+                    dl.SelectedVariant.Height, dl.SelectedVariant.VCodec, dl.SelectedVariant.ACodec,
+                    dl.SelectedVariant.Abr);
+                _downloadData.UpdateFilename(dl.Id, dl.Filename);
+            }
+
             _downloadData.UpdateSaveTo(dl.Id, destPath);
 
             dl.SaveTo = destPath;

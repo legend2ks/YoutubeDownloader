@@ -195,6 +195,7 @@ public partial class AddChannelWindowViewModel : ObservableObject
 
             _channelData.AddChannel(channel, _playlistInfo.entries);
             ChannelCategories[0].Channels.Add(channel);
+            _messenger.Send(new ChannelAddedMessage { Channel = channel });
 
             window.Close(new AddChannelWindowResult { Channel = channel, PlaylistInfo = _playlistInfo });
         }

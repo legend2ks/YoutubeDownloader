@@ -15,6 +15,7 @@ internal static class DatabaseUtils
             Id = dto.Id,
             BytesLoaded = dto.BytesLoaded,
             ChannelTitle = dto.ChannelTitle,
+            ChannelId = dto.ChannelId,
             Container = dto.Container,
             Duration = dto.Duration,
             Enabled = dto.Enabled,

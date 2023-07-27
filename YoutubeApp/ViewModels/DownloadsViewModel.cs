@@ -23,10 +23,12 @@ using YoutubeApp.Models;
 
 namespace YoutubeApp.ViewModels;
 
-public partial class DownloadsViewModel : ViewModelBase
+public partial class DownloadsViewModel : ViewModelBase, IRecipient<ChannelDeletedMessage>,
+    IRecipient<ChannelAddedMessage>
 {
-    public DownloadsViewModel(ILogger<DownloadsViewModel> logger, DownloadData downloadData, Settings settings,
-        DownloadManager downloadManager, Youtube youtube, DownloaderUtils downloaderUtils, IMessenger messenger)
+    public DownloadsViewModel(ILogger<DownloadsViewModel> logger, DownloadData downloadData, ChannelData channelData,
+        Settings settings, DownloadManager downloadManager, Youtube youtube, DownloaderUtils downloaderUtils,
+        IMessenger messenger)
     {
         _logger = logger;
         _downloadData = downloadData;
@@ -45,8 +47,10 @@ public partial class DownloadsViewModel : ViewModelBase
         Selection.SelectionChanged += SelectionChanged;
 
         var downloads = _downloadData.GetDownloadList();
+        var channels = channelData.GetChannels();
         foreach (var download in downloads)
         {
+            download.Channel = channels.FirstOrDefault(x => x.UniqueId == download.ChannelId);
             Downloads.Add(download);
         }
 
@@ -63,6 +67,8 @@ public partial class DownloadsViewModel : ViewModelBase
         Youtube.VideoFound += Youtube_VideoFound;
         Youtube.RefreshFinished += Youtube_RefreshFinished;
         Download.EnableStateChanged += Download_EnableStateChanged;
+
+        _messenger.RegisterAll(this);
     }
 
     protected DownloadsViewModel()
@@ -567,10 +573,13 @@ public partial class DownloadsViewModel : ViewModelBase
         var errors = new List<string>();
         foreach (var dl in downloadItems)
         {
-            var variant = dl!.Variants[dl.SelectedVariant.Id];
-            var newFilename = Youtube.GenerateFilename(_settings.FilenameTemplate, dl.VideoId, dl.Title, dl.Container,
-                variant.Fps, dl.ChannelTitle, dl.UploadDate, variant.Width, variant.Height, variant.VCodec,
-                variant.ACodec, variant.Abr);
+            var isChannelVideo =
+                string.Compare(dl.Channel?.Path, dl.SaveTo, StringComparison.InvariantCultureIgnoreCase) == 0;
+            var filenameTemplate = isChannelVideo ? Settings.DefaultFilenameTemplate : _settings.FilenameTemplate;
+            var newFilename = Youtube.GenerateFilename(filenameTemplate, dl.VideoId, dl.Title, dl.Container,
+                dl.SelectedVariant.Fps, dl.ChannelTitle, dl.UploadDate, dl.SelectedVariant.Width,
+                dl.SelectedVariant.Height, dl.SelectedVariant.VCodec, dl.SelectedVariant.ACodec,
+                dl.SelectedVariant.Abr);
             if (dl.Filename == newFilename) continue;
 
             var srcPath = Path.Combine(dl.SaveTo, dl.Filename);
@@ -653,6 +662,22 @@ public partial class DownloadsViewModel : ViewModelBase
                 Title = "Move File Error(s)",
                 Items = errors.ToArray(),
             });
+        }
+    }
+
+    public void Receive(ChannelDeletedMessage message)
+    {
+        foreach (var dl in Downloads)
+        {
+            if (dl.Channel == message.Channel) dl.Channel = null;
+        }
+    }
+
+    public void Receive(ChannelAddedMessage message)
+    {
+        foreach (var dl in Downloads)
+        {
+            if (dl.ChannelId == message.Channel.UniqueId) dl.Channel = message.Channel;
         }
     }
 }
