@@ -71,8 +71,8 @@
 
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
-                                            <StackPanel Margin="8">
-                                                <Button IsEnabled="{Binding !Updating}"
+                                            <Grid RowDefinitions="Auto, Auto" Margin="8">
+                                                <Button Grid.Row="0" IsEnabled="{Binding !Updating}"
                                                         Command="{Binding $parent[UserControl].((vm:ChannelsViewModel)DataContext).ChannelPressedCommand}"
                                                         CommandParameter="{Binding}" Width="300" Padding="10"
                                                         Background="#282e33" CornerRadius="0">
@@ -85,7 +85,7 @@
                                                         <TextBlock Text="{Binding LastUpdate}" Classes="secondary" />
                                                     </StackPanel>
                                                 </Button>
-                                                <Border Background="#99282e33" Padding="2">
+                                                <Border Grid.Row="1" Background="#99282e33" Padding="2">
                                                     <Grid ColumnDefinitions="*,Auto,Auto">
                                                         <TextBlock Grid.Column="0" Text="{Binding StatusText}"
                                                                    Margin="8 0" VerticalAlignment="Center" />
@@ -102,12 +102,14 @@
                                                                 IsVisible="{Binding Updating}" ToolTip.Tip="Stop"
                                                                 Command="{Binding $parent[UserControl].((vm:ChannelsViewModel)DataContext).UpdateChannelPressedCommand}"
                                                                 CommandParameter="{Binding}" Background="Transparent">
-                                                            <PathIcon Data="{StaticResource hand}" Width="18" Height="18"/>
+                                                            <PathIcon Data="{StaticResource hand}" Width="18"
+                                                                      Height="18" />
                                                         </Button>
                                                         <Button Grid.Column="2"
                                                                 ToolTip.Tip="Menu" Background="Transparent"
                                                                 IsEnabled="{Binding !Updating}" Classes="ActionBtn">
-                                                            <PathIcon Data="{StaticResource ellipsis_vertical}" Width="18" Height="18"/>
+                                                            <PathIcon Data="{StaticResource ellipsis_vertical}"
+                                                                      Width="18" Height="18" />
                                                             <Button.Flyout>
                                                                 <MenuFlyout Placement="Bottom">
                                                                     <MenuItem Header="Edit..." />
@@ -117,7 +119,7 @@
                                                                     <MenuItem Header="Full update"
                                                                               Command="{Binding $parent[UserControl].((vm:ChannelsViewModel)DataContext).FullChannelUpdatePressedCommand}"
                                                                               CommandParameter="{Binding}" />
-                                                                    <Separator/>
+                                                                    <Separator />
                                                                     <MenuItem Header="Delete"
                                                                               Command="{Binding $parent[UserControl].((vm:ChannelsViewModel)DataContext).RemoveChannelPressedCommand}"
                                                                               CommandParameter="{Binding}" />
@@ -126,7 +128,14 @@
                                                         </Button>
                                                     </Grid>
                                                 </Border>
-                                            </StackPanel>
+                                                <Border Grid.Row="0" IsVisible="{Binding AddedVideoCount}"
+                                                        Background="#7744ee" BorderBrush="#885dee" BorderThickness="2"
+                                                        CornerRadius="8" Padding="4 0 6 0" HorizontalAlignment="Right"
+                                                        VerticalAlignment="Top" Margin="0 -5 -4 0">
+                                                    <TextBlock Text="{Binding AddedVideoCount, StringFormat=+{0}}"
+                                                               FontSize="15" />
+                                                </Border>
+                                            </Grid>
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
                                 </ItemsControl>

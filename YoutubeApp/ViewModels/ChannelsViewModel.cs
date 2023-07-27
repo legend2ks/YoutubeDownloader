@@ -98,6 +98,9 @@ public partial class ChannelsViewModel : ViewModelBase
             VideosScrollOffset = new Vector();
         }
 
+        _channelData.SetAddedVideoCount(channel.Id, 0);
+        channel.AddedVideoCount = 0;
+
         SelectedChannel = channel;
         var videos = _channelData.GetVideos(channel.Id);
         _allVideos = videos.Reverse().ToList();
@@ -285,6 +288,7 @@ public partial class ChannelsViewModel : ViewModelBase
                 channel.Title = playlistInfo.channel;
                 channel.VideoCount = prevVideoIds.Count + addedVideoCount;
                 channel.IncompleteCount += addedVideoCount;
+                channel.AddedVideoCount += addedVideoCount;
                 channel.LastUpdate = DateTime.Parse(updateDateTime).ToLocalTime().ToString();
 
                 try
@@ -303,7 +307,7 @@ public partial class ChannelsViewModel : ViewModelBase
                 channel.IncompleteCount = 0;
 
                 channel.Updating = false;
-                channel.StatusText = $"Updated successfully (+{(addedCount < 0 ? 0 : addedCount)})";
+                channel.StatusText = "✔ Updated successfully";
                 channel.CancellationTokenSource.Dispose();
                 break;
             }

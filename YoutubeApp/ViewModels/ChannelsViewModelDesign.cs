@@ -23,7 +23,8 @@ public class ChannelsViewModelDesign : ChannelsViewModel
                     Title = $"Channel Test Derived {x}",
                     Path = @$"C:\Test{x}",
                     LastUpdate = "1/5/2023",
-                    CategoryId = (x % 5) + 1,
+                    CategoryId = x % 5 + 1,
+                    AddedVideoCount = x % 3 * (x + 1) * 7,
                 }))
             },
             new()
