@@ -9,9 +9,13 @@
 An open-source YouTube video downloader that allows you to easily download videos from YouTube in all available original qualities. It uses yt-dlp, ffmpeg and aria2 under the hood.
 
 ### Features
+
 * Easy selection of video/audio/container formats
 * Download videos from playlists
+* Listing and downloading channel videos
 * Fast, multi-threaded downloading
+
+> Note: The **Channels** section will be available soon (Work-in-Progress 🚧)
 
 ### Screenshots
 
@@ -23,13 +27,16 @@ An open-source YouTube video downloader that allows you to easily download video
 </div>
 
 ## Installing
+
 #### Requirements:
+
 - Microsoft Windows 7+ (x64)
 - [.NET 7.0 Desktop Runtime](https://aka.ms/dotnet-core-applaunch?arch=x64&rid=win-x64&apphost_version=7.0.8&gui=true)
 
 [Releases](https://github.com/legend2ks/YoutubeDownloader/releases)
 
 ## Roadmap
+
 * [ ] Channels section [WIP]
 * [ ] Audio-only formats
 * [ ] Scheduler
@@ -38,6 +45,7 @@ An open-source YouTube video downloader that allows you to easily download video
 * [ ] Browser Integration
 
 ## ❤ Support
+
 This project is free and open source, if you like my work, please consider:
 * Star this project on GitHub
 * Donate
@@ -47,6 +55,7 @@ BCH: qrgc9audu8quq2qyh35dxuaf0eupvlr23qs4alprws</h6>
 Your support helps keep the project going.
 
 ## Tech Stack
+
 <table>
   <tr>
     <td>
