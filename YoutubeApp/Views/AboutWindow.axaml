@@ -33,7 +33,7 @@
         <StackPanel Grid.Row="0">
             <TextBlock Text="Youtube Downloader" FontSize="22" Foreground="LightSteelBlue" FontWeight="Medium" />
 
-            <TextBlock Text="Version 0.0.1" FontSize="16" />
+            <TextBlock Text="{Binding Version, StringFormat=Version {0}}" FontSize="16" />
 
             <TextBlock Text="Free and open source YouTube video downloader." FontSize="16" Margin="0 8 0 0" />
 

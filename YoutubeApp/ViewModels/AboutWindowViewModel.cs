@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Reflection;
 using CommunityToolkit.Mvvm.Input;
 
 namespace YoutubeApp.ViewModels;
@@ -18,4 +19,6 @@ public partial class AboutWindowViewModel
         Process.Start(new ProcessStartInfo("https://github.com/legend2ks/YoutubeDownloader/#-support")
             { UseShellExecute = true });
     }
+
+    public string Version { get; } = Assembly.GetExecutingAssembly().GetName().Version!.ToString(3);
 }
