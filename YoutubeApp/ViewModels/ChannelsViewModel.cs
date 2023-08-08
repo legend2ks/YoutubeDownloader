@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Reactive;
 using System.Reactive.Linq;
@@ -332,8 +333,16 @@ public partial class ChannelsViewModel : ViewModelBase
             Debug.WriteLine($"DL Thumb -> {i}: {video.id}");
             channel.StatusText = $"Getting Thumbnails... {i}/{playlistInfo.entries.Length}";
             var thumbUrl = video.thumbnails[0].url;
-            var imageBytes = await httpClient.GetByteArrayAsync(thumbUrl, token);
-            await File.WriteAllBytesAsync(filePath, imageBytes, token);
+            try
+            {
+                var imageBytes = await httpClient.GetByteArrayAsync(thumbUrl, token);
+                await File.WriteAllBytesAsync(filePath, imageBytes, token);
+            }
+            catch (HttpRequestException e)
+            {
+                if (e.StatusCode != HttpStatusCode.NotFound)
+                    throw;
+            }
         }
     }
 
