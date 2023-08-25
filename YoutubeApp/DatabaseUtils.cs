@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text.Json;
 using YoutubeApp.Media;
 using YoutubeApp.Models;
@@ -27,7 +28,7 @@ internal static class DatabaseUtils
             Title = dto.Title,
             Uuid = dto.Uuid,
             VideoId = dto.VideoId,
-            UploadDate = DateTime.Parse(dto.UploadDate).ToString("yyyy-MM-dd"),
+            UploadDate = DateTime.Parse(dto.UploadDate, CultureInfo.InvariantCulture).ToString("yyyy-MM-dd"),
             Variants = JsonSerializer.Deserialize<List<Variant>>(dto.Variants),
             Formats = JsonSerializer.Deserialize<Dictionary<string, Format>>(dto.Formats),
             SelectedVariant = JsonSerializer.Deserialize<SelectedVariant>(dto.SelectedVariant),
@@ -47,7 +48,7 @@ internal static class DatabaseUtils
             VideoCount = dto.VideoCount,
             IncompleteCount = dto.IncompleteCount,
             AddedVideoCount = dto.AddedVideoCount,
-            LastUpdate = DateTime.Parse(dto.LastUpdate).ToLocalTime().ToString(),
+            LastUpdate = DateTime.Parse(dto.LastUpdate, CultureInfo.InvariantCulture).ToLocalTime().ToString(),
         };
     }
 
