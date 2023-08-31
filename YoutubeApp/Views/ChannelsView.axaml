@@ -119,7 +119,10 @@
                                                                       Width="18" Height="18" />
                                                             <Button.Flyout>
                                                                 <MenuFlyout Placement="Bottom">
-                                                                    <MenuItem Header="Edit..." />
+                                                                    <MenuItem Header="Open channel folder"
+                                                                              Command="{Binding $parent[UserControl].((vm:ChannelsViewModel)DataContext).OpenChannelFolderCommand}"
+                                                                              CommandParameter="{Binding}" />
+                                                                    <Separator/>
                                                                     <MenuItem Header="Change category..."
                                                                               Command="{Binding $parent[UserControl].((vm:ChannelsViewModel)DataContext).ChangeCategoryCommand}"
                                                                               CommandParameter="{Binding}" />
