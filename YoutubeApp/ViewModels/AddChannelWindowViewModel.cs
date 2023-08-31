@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -196,7 +197,7 @@ public partial class AddChannelWindowViewModel : ObservableObject
                     Path = SaveTo,
                     VideoCount = VideoCount,
                     IncompleteCount = VideoCount,
-                    LastUpdate = DateTime.UtcNow.ToString(),
+                    LastUpdate = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture),
                 };
 
             _channelData.AddChannel(channel, _playlistInfo.entries);
