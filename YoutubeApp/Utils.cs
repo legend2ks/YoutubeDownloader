@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Web;
 using DynamicData;
@@ -167,5 +168,13 @@ public static class Utils
         if (durationString.Length < 3)
             durationString += "s";
         return durationString;
+    }
+
+    public static bool IsSamePath(string? path1, string? path2)
+    {
+        if (path1 is null || path2 is null)
+            return false;
+        return string.Equals(Path.TrimEndingDirectorySeparator(path1), Path.TrimEndingDirectorySeparator(path2),
+            StringComparison.OrdinalIgnoreCase);
     }
 }
