@@ -116,8 +116,7 @@ public class Youtube
                     var channel = job.Channel ?? _channelData.GetChannels()
                         .FirstOrDefault(x => x.UniqueId == videoInfo.channel_id);
 
-                    var isChannelVideo = string.Compare(channel?.Path, job.SavePath,
-                        StringComparison.InvariantCultureIgnoreCase) == 0;
+                    var isChannelVideo = Utils.IsSamePath(channel?.Path, job.SavePath);
                     var filenameTemplate =
                         isChannelVideo ? Settings.DefaultFilenameTemplate : _settings.FilenameTemplate;
                     var filename = GenerateFilename(filenameTemplate, video.VideoId, videoInfo.title,

@@ -17,6 +17,7 @@ using MessageBox.Avalonia.Enums;
 using Microsoft.Extensions.Logging;
 using YoutubeApp.Database;
 using YoutubeApp.Downloader;
+using YoutubeApp.Extensions;
 using YoutubeApp.Media;
 using YoutubeApp.Messages;
 using YoutubeApp.Models;
@@ -573,8 +574,7 @@ public partial class DownloadsViewModel : ViewModelBase, IRecipient<ChannelDelet
         var errors = new List<string>();
         foreach (var dl in downloadItems)
         {
-            var isChannelVideo =
-                string.Compare(dl.Channel?.Path, dl.SaveTo, StringComparison.InvariantCultureIgnoreCase) == 0;
+            var isChannelVideo = Utils.IsSamePath(dl.Channel?.Path, dl.SaveTo);
             var filenameTemplate = isChannelVideo ? Settings.DefaultFilenameTemplate : _settings.FilenameTemplate;
             var newFilename = Youtube.GenerateFilename(filenameTemplate, dl.VideoId, dl.Title, dl.Container,
                 dl.SelectedVariant.Fps, dl.ChannelTitle, dl.UploadDate, dl.SelectedVariant.Width,
@@ -632,11 +632,9 @@ public partial class DownloadsViewModel : ViewModelBase, IRecipient<ChannelDelet
             Title = "Move To...",
             SuggestedStartLocation = suggestedStartLocation
         });
-        if (selectedFolders.Count == 0) return;
+        if (selectedFolders.Count != 1) return;
 
-        var selectedDestPath = selectedFolders[0]!.Path.LocalPath;
-        var selectedDestDirInfo = new DirectoryInfo(selectedDestPath);
-        var destPath = selectedDestDirInfo.LinkTarget ?? selectedDestDirInfo.FullName;
+        var destPath = new DirectoryInfo(selectedFolders[0]!.Path.LocalPath).GetActualPath();
 
         List<string> errors;
         try

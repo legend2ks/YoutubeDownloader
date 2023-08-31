@@ -4,11 +4,13 @@ using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.Messaging;
 using YoutubeApp.Enums;
 using YoutubeApp.Messages;
+using YoutubeApp.ViewModels;
 using YoutubeApp.ViewUtils;
 
 namespace YoutubeApp.Views;
 
-public partial class AddLinkWindow : Window, IRecipient<OpenFolderPickerMessage>
+public partial class AddLinkWindow : Window, IRecipient<OpenFolderPickerMessage>,
+    IRecipient<CloseWindowMessage<AddLinkWindowResult>>
 {
     public AddLinkWindow()
     {
@@ -17,6 +19,12 @@ public partial class AddLinkWindow : Window, IRecipient<OpenFolderPickerMessage>
             Win32.UseImmersiveDarkMode(TryGetPlatformHandle()!.Handle, true);
 
         WeakReferenceMessenger.Default.RegisterAll(this, (int)MessengerChannel.AddLinkWindow);
+    }
+
+    protected override void OnLoaded(RoutedEventArgs e)
+    {
+        base.OnLoaded(e);
+        Links.Focus();
     }
 
     public async void Receive(OpenFolderPickerMessage message)
@@ -37,5 +45,10 @@ public partial class AddLinkWindow : Window, IRecipient<OpenFolderPickerMessage>
     {
         WeakReferenceMessenger.Default.UnregisterAll(this);
         base.OnUnloaded(e);
+    }
+
+    public void Receive(CloseWindowMessage<AddLinkWindowResult> message)
+    {
+        Close(message.Value);
     }
 }

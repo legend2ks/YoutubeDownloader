@@ -78,7 +78,7 @@
             </Button>
             <Border Margin="10 0 5 0" CornerRadius="30" Padding="4 0" Background="#28000000">
                 <StackPanel Orientation="Horizontal" Spacing="6">
-                    <Button Classes="TopbarButton" ToolTip.Tip="Add Link"
+                    <Button Classes="TopbarButton" ToolTip.Tip="Add Link(s)"
                             Command="{Binding AddLinkButtonPressedCommand}">
                         <PathIcon Data="{StaticResource add}" Width="24" Height="24" />
                     </Button>

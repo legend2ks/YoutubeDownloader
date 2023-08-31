@@ -5,11 +5,10 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using MessageBox.Avalonia;
+using MessageBox.Avalonia.Enums;
 using YoutubeApp.Database;
 using YoutubeApp.Enums;
 using YoutubeApp.Media;
@@ -57,27 +56,18 @@ public partial class AddChannelWindowViewModel : ObservableObject
     [NotifyPropertyChangedFor(nameof(DetailsIsVisible))]
     private bool _success;
 
-    public string PrimaryButtonText
-    {
-        get => Success ? "Add" : "Continue";
-    }
+    public string PrimaryButtonText => Success ? "Add" : "Continue";
 
-    public bool LinkBoxIsEnabled
-    {
-        get => !Loading && !Success;
-    }
+    public bool LinkBoxIsEnabled => !Loading && !Success;
 
-    public bool DetailsIsVisible
-    {
-        get => Success || Exists;
-    }
+    public bool DetailsIsVisible => Success || Exists;
 
     private PlaylistInfo _playlistInfo;
 
     private CancellationTokenSource _cancellationTokenSource;
 
     [RelayCommand]
-    private async Task AddButtonPressedAsync(Window window)
+    private async Task AddButtonPressedAsync()
     {
         if (!Success)
         {
@@ -92,8 +82,11 @@ public partial class AddChannelWindowViewModel : ObservableObject
             var handleMatch = Regex.Match(trimmedLink, handlePattern);
             if (!handleMatch.Success)
             {
-                await MessageBoxManager.GetMessageBoxStandardWindow("Error", $"Invalid link.")
-                    .ShowDialog(window);
+                await _messenger.Send(new ShowMessageBoxMessage
+                {
+                    Title = "Error", Message = "Invalid channel link.", Icon = Icon.Error,
+                    ButtonDefinitions = ButtonEnum.Ok
+                }, (int)MessengerChannel.AddChannelWindow);
                 return;
             }
 
@@ -101,7 +94,7 @@ public partial class AddChannelWindowViewModel : ObservableObject
 
             // Get Playlist ID
             Loading = true;
-            _cancellationTokenSource = new();
+            _cancellationTokenSource = new CancellationTokenSource();
             ChannelInfo channelInfo;
             try
             {
@@ -173,6 +166,18 @@ public partial class AddChannelWindowViewModel : ObservableObject
         }
         else
         {
+            var channels = ChannelCategories.SelectMany(cat => cat.Channels);
+            foreach (var ch in channels)
+            {
+                if (!Utils.IsSamePath(SaveTo, ch.Path)) continue;
+                await _messenger.Send(new ShowMessageBoxMessage
+                {
+                    Title = "Move", Message = $"The selected save path belongs to another channel:\n\"{ch.Title}\"",
+                    Icon = Icon.Error, ButtonDefinitions = ButtonEnum.Ok
+                }, (int)MessengerChannel.AddChannelWindow);
+                return;
+            }
+
             try
             {
                 Directory.CreateDirectory(SaveTo);
@@ -196,9 +201,10 @@ public partial class AddChannelWindowViewModel : ObservableObject
 
             _channelData.AddChannel(channel, _playlistInfo.entries);
             ChannelCategories[0].Channels.Add(channel);
-            _messenger.Send(new ChannelAddedMessage { Channel = channel });
 
-            window.Close(new AddChannelWindowResult { Channel = channel, PlaylistInfo = _playlistInfo });
+            _messenger.Send(new ChannelAddedMessage { Channel = channel });
+            _messenger.Send(new CloseWindowMessage<AddChannelWindowResult>(new AddChannelWindowResult
+                { Channel = channel, PlaylistInfo = _playlistInfo }), (int)MessengerChannel.AddChannelWindow);
         }
     }
 

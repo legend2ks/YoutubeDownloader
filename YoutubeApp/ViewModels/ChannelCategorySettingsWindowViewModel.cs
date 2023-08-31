@@ -135,7 +135,7 @@ public partial class ChannelCategorySettingsWindowViewModel : ViewModelBase
 
         if (_channel.CategoryId != Selection.SelectedItem.ChannelCategory.Id)
         {
-            _channelData.UpdateChannel(_channel, Selection.SelectedItem.ChannelCategory.Id);
+            _channelData.SetChannelCategory(_channel, Selection.SelectedItem.ChannelCategory.Id);
             _currentCategory.Channels.Remove(_channel);
             Selection.SelectedItem.ChannelCategory.Channels.Add(_channel);
             _channel.CategoryId = Selection.SelectedItem.ChannelCategory.Id;

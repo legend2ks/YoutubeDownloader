@@ -72,10 +72,10 @@
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
                                             <Grid RowDefinitions="Auto, Auto" Margin="8">
-                                                <Button Grid.Row="0" IsEnabled="{Binding !Updating}"
+                                                <Button Grid.Row="0" IsEnabled="{Binding !Updating}" BorderThickness="0"
                                                         Command="{Binding $parent[UserControl].((vm:ChannelsViewModel)DataContext).ChannelPressedCommand}"
                                                         CommandParameter="{Binding}" Width="300" Padding="10"
-                                                        Background="#282e33" CornerRadius="0">
+                                                        Background="#282e33" CornerRadius="10 10 0 0">
                                                     <StackPanel>
                                                         <TextBlock Text="{Binding Title}" FontSize="16" />
                                                         <Grid ColumnDefinitions="*,10,Auto" Margin="0 6 0 4">
@@ -85,8 +85,15 @@
                                                         <TextBlock Text="{Binding LastUpdate}" Classes="secondary" />
                                                     </StackPanel>
                                                 </Button>
-                                                <Border Grid.Row="1" Background="#99282e33" Padding="2">
+                                                <Border Grid.Row="1" Background="#282e33" Padding="2" CornerRadius="0 0 10 10">
                                                     <Grid ColumnDefinitions="*,Auto,Auto">
+                                                        <Grid.Styles>
+                                                            <Styles>
+                                                                <Style Selector="Button">
+                                                                    <Setter Property="CornerRadius" Value="10"/>
+                                                                </Style>
+                                                            </Styles>
+                                                        </Grid.Styles>
                                                         <TextBlock Grid.Column="0" Text="{Binding StatusText}"
                                                                    Margin="8 0" VerticalAlignment="Center" />
                                                         <Button Grid.Column="1" IsVisible="{Binding !Updating}"
@@ -129,9 +136,9 @@
                                                     </Grid>
                                                 </Border>
                                                 <Border Grid.Row="0" IsVisible="{Binding AddedVideoCount}"
-                                                        Background="#7744ee" BorderBrush="#885dee" BorderThickness="2"
-                                                        CornerRadius="8" Padding="4 0 6 0" HorizontalAlignment="Right"
-                                                        VerticalAlignment="Top" Margin="0 -5 -4 0">
+                                                        Background="#0277BD" IsHitTestVisible="False"
+                                                        CornerRadius="10" Padding="4 0 6 0" HorizontalAlignment="Right"
+                                                        VerticalAlignment="Top" Margin="0 5 5 0">
                                                     <TextBlock Text="{Binding AddedVideoCount, StringFormat=+{0}}"
                                                                FontSize="15" />
                                                 </Border>

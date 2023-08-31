@@ -259,9 +259,9 @@ public class DownloadManager
             }
         }
 
-        var isEnoughSpace =
+        var hasEnoughSpace =
             _downloaderUtils.CheckAvailableFreeSpace(pkg.DownloadInfo.SaveTo, requiredSpace + 1024 * 1024);
-        if (!isEnoughSpace)
+        if (!hasEnoughSpace)
         {
             _logger.LogError("Merge: Not enough space {RequiredSpace}", Utils.FormatBytes(requiredSpace + 1024 * 1024));
             return false;
@@ -327,8 +327,8 @@ public class DownloadManager
         var outputFilepath = Path.Combine(downloadInfo.SaveTo, downloadInfo.Filename);
 
         var streamsFilesize = new FileInfo(videoFilepath).Length + new FileInfo(audioFilepath).Length;
-        var isEnoughSpace = _downloaderUtils.CheckAvailableFreeSpace(outputFilepath, (long)(streamsFilesize * 1.05));
-        if (!isEnoughSpace)
+        var hasEnoughSpace = _downloaderUtils.CheckAvailableFreeSpace(outputFilepath, (long)(streamsFilesize * 1.05));
+        if (!hasEnoughSpace)
             throw new MuxFailedException("No Space");
         await _ffmpeg.MuxAsync(videoFilepath, audioFilepath, outputFilepath, cancellationToken);
 

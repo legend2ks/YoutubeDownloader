@@ -222,13 +222,12 @@ public class ChannelData
         transaction.Commit();
     }
 
-    public void UpdateChannel(Channel channel, int categoryId)
+    public void SetChannelCategory(Channel channel, int categoryId)
     {
         var sql = categoryId == 0
             ? "UPDATE Channels SET CategoryId = NULL WHERE Id = @Id"
             : "UPDATE Channels SET CategoryId = @CategoryId WHERE Id = @Id";
-        var rowsAffected = _dbConn.Execute(sql,
-            new { CategoryId = categoryId, channel.Id });
+        var rowsAffected = _dbConn.Execute(sql, new { CategoryId = categoryId, channel.Id });
         if (rowsAffected != 1) throw new Exception("Unexpected affected rows number.");
     }
 

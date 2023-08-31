@@ -259,8 +259,7 @@ public partial class FormatWindowViewModel : ViewModelBase
                     bytesLoaded = 0;
                 }
 
-                var isChannelVideo =
-                    string.Compare(dl.Channel?.Path, dl.SaveTo, StringComparison.InvariantCultureIgnoreCase) == 0;
+                var isChannelVideo = Utils.IsSamePath(dl.Channel?.Path, dl.SaveTo);
                 var filenameTemplate = isChannelVideo ? Settings.DefaultFilenameTemplate : _settings.FilenameTemplate;
                 var filename = Youtube.GenerateFilename(filenameTemplate, dl.VideoId, dl.Title, container,
                     chosenVariant.Fps, dl.ChannelTitle, dl.UploadDate, chosenVariant.Width, chosenVariant.Height,

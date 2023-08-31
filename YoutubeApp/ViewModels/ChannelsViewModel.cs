@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -20,6 +21,8 @@ using CommunityToolkit.Mvvm.Messaging;
 using MessageBox.Avalonia.Enums;
 using Microsoft.Extensions.Logging;
 using YoutubeApp.Database;
+using YoutubeApp.Downloader;
+using YoutubeApp.Extensions;
 using YoutubeApp.Media;
 using YoutubeApp.Messages;
 using YoutubeApp.Models;
@@ -29,14 +32,35 @@ namespace YoutubeApp.ViewModels;
 
 public partial class ChannelsViewModel : ViewModelBase
 {
+    private const string VideoIdPattern = @"^\[.*]\[.*]\[(.*)]";
+    private readonly ChannelData _channelData;
+    private readonly Grabber _grabber;
+
+    private readonly ILogger<ChannelsViewModel> _logger;
+    private readonly IMessenger _messenger;
+    private readonly IYoutubeCommunicator _youtubeCommunicator;
+    private readonly DownloadManager _downloadManager;
+
+    private List<Video> _allVideos;
+    [ObservableProperty] private int _currentPage;
+
+    private IDisposable _searchObservable;
+    [ObservableProperty] private string _searchText = string.Empty;
+
+    [ObservableProperty] private Channel? _selectedChannel;
+    [ObservableProperty] private List<Video> _videos;
+
+    [ObservableProperty] private Vector _videosScrollOffset;
+
     public ChannelsViewModel(ILogger<ChannelsViewModel> logger, Grabber grabber, ChannelData channelData,
-        IYoutubeCommunicator youtubeCommunicator,
+        IYoutubeCommunicator youtubeCommunicator, DownloadManager downloadManager,
         IMessenger messenger)
     {
         _logger = logger;
         _grabber = grabber;
         _channelData = channelData;
         _youtubeCommunicator = youtubeCommunicator;
+        _downloadManager = downloadManager;
         _messenger = messenger;
 
         var channels = _channelData.GetChannels();
@@ -55,24 +79,7 @@ public partial class ChannelsViewModel : ViewModelBase
     {
     }
 
-    private readonly ILogger<ChannelsViewModel> _logger;
-    private readonly Grabber _grabber;
-    private readonly ChannelData _channelData;
-    private readonly IYoutubeCommunicator _youtubeCommunicator;
-    private readonly IMessenger _messenger;
-    [ObservableProperty] private int _currentPage;
-
     public ObservableCollection<ChannelCategory> ChannelCategories { get; set; }
-
-    [ObservableProperty] private Channel? _selectedChannel;
-
-    private List<Video> _allVideos;
-    [ObservableProperty] private List<Video> _videos;
-    [ObservableProperty] private string _searchText = string.Empty;
-
-    [ObservableProperty] private Vector _videosScrollOffset;
-
-    private IDisposable _searchObservable;
 
     public ObservableCollection<Video> SelectedVideos { get; } = new();
 
@@ -110,16 +117,13 @@ public partial class ChannelsViewModel : ViewModelBase
         if (Directory.Exists(channel.Path))
         {
             var fileNames = new Dictionary<string, string>();
-            var dirFiles = Directory.GetFiles(channel.Path).Select(Path.GetFileName).ToArray();
-
-            const string videoIdPattern = @"^\[.*]\[.*]\[(.*)]";
-
+            var dirFiles = Directory.GetFiles(channel.Path).Select(Path.GetFileName);
             foreach (var filename in dirFiles)
             {
-                var videoIdMatch = Regex.Match(filename, videoIdPattern);
+                var videoIdMatch = Regex.Match(filename, VideoIdPattern);
                 if (!videoIdMatch.Success) continue;
                 var videoId = videoIdMatch.Groups[1].Value;
-                fileNames.Add(videoId, filename);
+                fileNames.TryAdd(videoId, filename);
             }
 
             foreach (var video in _allVideos)
@@ -160,7 +164,7 @@ public partial class ChannelsViewModel : ViewModelBase
     [RelayCommand]
     private void PlayPressed(Video video)
     {
-        var filepath = Path.Combine(SelectedChannel!.Path, video.FileName);
+        var filepath = Path.Combine(SelectedChannel!.Path, video.FileName!);
         if (!File.Exists(filepath))
         {
             video.FileName = null;
@@ -234,7 +238,7 @@ public partial class ChannelsViewModel : ViewModelBase
 
         _ = Task.Run(async () =>
         {
-            var lastUpdate = DateTime.Parse(channel.LastUpdate);
+            var lastUpdate = DateTime.Parse(channel.LastUpdate, CultureInfo.InvariantCulture);
             var daysSinceLastUpdate = (DateTime.Now - lastUpdate).Days;
             var count = Math.Max((int)(daysSinceLastUpdate * 1.5), 10) + channel.IncompleteCount;
 
@@ -271,7 +275,7 @@ public partial class ChannelsViewModel : ViewModelBase
                     continue;
                 }
 
-                var updateDateTime = DateTime.UtcNow.ToString();
+                var updateDateTime = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture);
 
                 int addedVideoCount;
                 try
@@ -290,7 +294,8 @@ public partial class ChannelsViewModel : ViewModelBase
                 channel.VideoCount = prevVideoIds.Count + addedVideoCount;
                 channel.IncompleteCount += addedVideoCount;
                 channel.AddedVideoCount += addedVideoCount;
-                channel.LastUpdate = DateTime.Parse(updateDateTime).ToLocalTime().ToString();
+                channel.LastUpdate =
+                    DateTime.Parse(updateDateTime).ToLocalTime().ToString(CultureInfo.InvariantCulture);
 
                 try
                 {
@@ -371,6 +376,7 @@ public partial class ChannelsViewModel : ViewModelBase
             // ignored
         }
 
+        // Delete the channel folder if it is empty
         try
         {
             Directory.Delete(channel.Path);
@@ -379,6 +385,47 @@ public partial class ChannelsViewModel : ViewModelBase
         {
             // ignored
         }
+    }
+
+    [RelayCommand]
+    private async Task MoveChannelFolderAsync(Channel channel)
+    {
+        string? suggestedStartLocation = null;
+        if (Directory.Exists(channel.Path))
+            suggestedStartLocation = channel.Path;
+
+        var selectedFolders = await _messenger.Send(new OpenFolderPickerMessage
+        {
+            Title = "Move channel folder to...",
+            SuggestedStartLocation = suggestedStartLocation
+        });
+        if (selectedFolders.Count != 1) return;
+        var destPath = new DirectoryInfo(selectedFolders[0]!.Path.LocalPath).GetActualPath();
+
+        var isSamePath = Utils.IsSamePath(channel.Path, destPath);
+        if (isSamePath)
+        {
+            return;
+        }
+
+        // Check for path duplication
+        var channels = ChannelCategories.SelectMany(cat => cat.Channels);
+        foreach (var ch in channels)
+        {
+            if (!Utils.IsSamePath(destPath, ch.Path)) continue;
+            await _messenger.Send(new ShowMessageBoxMessage
+            {
+                Title = "Move", Message = $"The selected destination path belongs to another channel:\n\"{ch.Title}\"",
+                Icon = Icon.Error, ButtonDefinitions = ButtonEnum.Ok
+            });
+            return;
+        }
+
+        // todo Check for related download items
+
+        // todo Check dest. available free space
+
+        await _messenger.Send(new ShowMoveChannelWindowMessage { Channel = channel, DestPath = destPath });
     }
 
     [RelayCommand]
@@ -440,5 +487,15 @@ public partial class ChannelsViewModel : ViewModelBase
 
         ChannelCategories = new ObservableCollection<ChannelCategory>(result);
         OnPropertyChanged(nameof(ChannelCategories));
+    }
+
+    [RelayCommand]
+    private static void OpenChannelFolder(Channel channel)
+    {
+        var folderPath = channel.Path;
+        if (!Directory.Exists(folderPath)) return;
+
+        using var fileopener = new Process();
+        Process.Start("explorer", $"\"{folderPath}\"");
     }
 }

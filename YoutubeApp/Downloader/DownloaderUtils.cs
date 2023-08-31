@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
 using YoutubeApp.Database;
+using YoutubeApp.Extensions;
 using YoutubeApp.Media;
 using YoutubeApp.Models;
 
@@ -315,8 +316,7 @@ public class DownloaderUtils
     public bool CheckAvailableFreeSpace(string path, long requiredSpace)
     {
         // Get the target path
-        var dirInfo = new DirectoryInfo(path);
-        path = dirInfo.LinkTarget ?? dirInfo.FullName;
+        path = new DirectoryInfo(path).GetActualPath();
 
         // Get drive's free space
         DriveInfo driveInfo;

@@ -5,11 +5,9 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using MessageBox.Avalonia;
 using MessageBox.Avalonia.Enums;
 using YoutubeApp.Enums;
 using YoutubeApp.Messages;
@@ -71,7 +69,7 @@ public partial class AddLinkWindowViewModel : ViewModelBase
         $"{_videos.Count + _addedVideoCount} Video(s) + {_playlists.Count + _addedPlaylistCount} Playlist(s)";
 
     [RelayCommand]
-    private async Task ContinueButtonClickedAsync(Window window)
+    private async Task ContinueButtonClickedAsync()
     {
         if (CurrentPage == 0)
         {
@@ -162,9 +160,11 @@ public partial class AddLinkWindowViewModel : ViewModelBase
 
             if (error is not null)
             {
-                await MessageBoxManager.GetMessageBoxStandardWindow("Error",
-                        $"Invalid link at line {error.LineNumber}:\n{error.Text}", ButtonEnum.Ok, Icon.Error)
-                    .ShowDialog(window);
+                await _messenger.Send(new ShowMessageBoxMessage
+                {
+                    Title = "Error", Message = $"Invalid link at line {error.LineNumber}:\n{error.Text}",
+                    Icon = Icon.Error, ButtonDefinitions = ButtonEnum.Ok
+                }, (int)MessengerChannel.AddLinkWindow);
                 Reset();
                 return;
             }
@@ -198,9 +198,11 @@ public partial class AddLinkWindowViewModel : ViewModelBase
             if (savePath != SaveTo) SaveTo = savePath;
             if (!Directory.Exists(savePath))
             {
-                await MessageBoxManager.GetMessageBoxStandardWindow("Error", $"Path \"{SaveTo}\" is not accessible.",
-                        ButtonEnum.Ok, Icon.Error)
-                    .ShowDialog(window);
+                await _messenger.Send(new ShowMessageBoxMessage
+                {
+                    Title = "Error", Message = $"Path \"{SaveTo}\" is not accessible.", Icon = Icon.Error,
+                    ButtonDefinitions = ButtonEnum.Ok
+                }, (int)MessengerChannel.AddLinkWindow);
                 Reset();
                 return;
             }
@@ -213,7 +215,7 @@ public partial class AddLinkWindowViewModel : ViewModelBase
             }
             else
             {
-                StartJob(window);
+                StartJob();
                 return;
             }
 
@@ -221,7 +223,7 @@ public partial class AddLinkWindowViewModel : ViewModelBase
         }
         else if (CurrentPage == 1) // ✔ Confirm
         {
-            StartJob(window);
+            StartJob();
         }
     }
 
@@ -274,7 +276,7 @@ public partial class AddLinkWindowViewModel : ViewModelBase
         SaveTo = selectedFolders[0]!.Path.LocalPath;
     }
 
-    private void StartJob(Window window)
+    private void StartJob()
     {
         foreach (var vp in VideosWithPlaylist)
         {
@@ -290,7 +292,8 @@ public partial class AddLinkWindowViewModel : ViewModelBase
 
         _settings.SaveLastSavePath(SaveTo);
 
-        window.Close(new AddLinkWindowResult { Videos = _videos, Playlists = _playlists, SavePath = SaveTo });
+        _messenger.Send(new CloseWindowMessage<AddLinkWindowResult>(new AddLinkWindowResult
+            { Videos = _videos, Playlists = _playlists, SavePath = SaveTo }), (int)MessengerChannel.AddLinkWindow);
     }
 
     private void Reset()
