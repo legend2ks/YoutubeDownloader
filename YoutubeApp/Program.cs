@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using System.Threading;
 using Avalonia;
 using Microsoft.Extensions.Configuration;
@@ -22,7 +23,8 @@ internal class Program
 
         try
         {
-            Log.Information("Application starting up");
+            Log.Information("Application starting up, v{Version}",
+                Assembly.GetExecutingAssembly().GetName().Version!.ToString(3));
             BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
         }
         catch (Exception e)
