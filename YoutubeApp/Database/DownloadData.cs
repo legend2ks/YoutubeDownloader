@@ -14,6 +14,7 @@ namespace YoutubeApp.Database;
 public class DownloadData
 {
     private readonly SQLiteConnection _dbConn;
+    public IReadOnlyList<Download> Downloads;
 
     public DownloadData(SqliteDbAccessProvider sqliteDbAccessProvider)
     {

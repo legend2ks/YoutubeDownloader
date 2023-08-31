@@ -231,6 +231,13 @@ public class ChannelData
         if (rowsAffected != 1) throw new Exception("Unexpected affected rows number.");
     }
 
+    public void SetChannelPath(Channel channel, string path)
+    {
+        const string sql = "UPDATE Channels SET Path = @Path WHERE Id = @Id";
+        var rowsAffected = _dbConn.Execute(sql, new { Path = path, channel.Id });
+        if (rowsAffected != 1) throw new Exception("Unexpected affected rows number.");
+    }
+
     public void SetIncompleteCount(int channelId, int count)
     {
         var rowsAffected = _dbConn.Execute("UPDATE Channels SET IncompleteCount = @IncompleteCount WHERE Id = @Id",

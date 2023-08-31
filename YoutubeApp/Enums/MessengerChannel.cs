@@ -3,5 +3,6 @@
 public enum MessengerChannel
 {
     AddLinkWindow,
-    AddChannelWindow
+    AddChannelWindow,
+    MoveChannelWindow
 }

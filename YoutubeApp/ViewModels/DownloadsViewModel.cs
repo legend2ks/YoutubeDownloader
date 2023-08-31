@@ -55,6 +55,8 @@ public partial class DownloadsViewModel : ViewModelBase, IRecipient<ChannelDelet
             Downloads.Add(download);
         }
 
+        downloadData.Downloads = Downloads;
+
         GridConfig = Settings.ColumnsConfig;
         var columnsSorted = GridConfig.OrderBy(x => x.Value.Order).Select(x => x.Value);
         ColumnOrdered = new ObservableCollection<ColumnConfig>(columnsSorted);

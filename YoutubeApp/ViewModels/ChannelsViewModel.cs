@@ -421,10 +421,6 @@ public partial class ChannelsViewModel : ViewModelBase
             return;
         }
 
-        // todo Check for related download items
-
-        // todo Check dest. available free space
-
         await _messenger.Send(new ShowMoveChannelWindowMessage { Channel = channel, DestPath = destPath });
     }
 

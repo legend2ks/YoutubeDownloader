@@ -22,7 +22,8 @@ public partial class MainWindow : Window, IRecipient<GrabberListCloseMessage>, I
     IRecipient<ShowSettingsWindowMessage>, IRecipient<ShowAboutWindowMessage>,
     IRecipient<ShowChooseFormatWindowMessage>, IRecipient<ShowColumnsWindowMessage>,
     IRecipient<ShowMessageBoxCheckboxMessage>, IRecipient<ShowLogWindowMessage>, IRecipient<OpenFolderPickerMessage>,
-    IRecipient<SetClipboardTextMessage>, IRecipient<ShowAddChannelWindowMessage>
+    IRecipient<SetClipboardTextMessage>, IRecipient<ShowAddChannelWindowMessage>,
+    IRecipient<ShowMoveChannelWindowMessage>
 {
     public MainWindow()
     {
@@ -200,6 +201,20 @@ public partial class MainWindow : Window, IRecipient<GrabberListCloseMessage>, I
                 { ChannelCategories = message.ChannelCategories }
         };
         var result = addPlaylistWindow.ShowDialog<AddChannelWindowResult?>(this);
+        message.Reply(result);
+    }
+
+    public void Receive(ShowMoveChannelWindowMessage message)
+    {
+        var moveChannelWindow = new MoveChannelWindow
+        {
+            DataContext = new MoveChannelWindowViewModel(App.Host.Services.GetRequiredService<IMessenger>(),
+                App.Host.Services.GetRequiredService<ChannelData>(),
+                App.Host.Services.GetRequiredService<DownloadData>(),
+                App.Host.Services.GetRequiredService<DownloaderUtils>(),
+                message.Channel, message.DestPath)
+        };
+        var result = moveChannelWindow.ShowDialog<bool>(this);
         message.Reply(result);
     }
 }

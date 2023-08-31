@@ -126,6 +126,9 @@
                                                                     <MenuItem Header="Change category..."
                                                                               Command="{Binding $parent[UserControl].((vm:ChannelsViewModel)DataContext).ChangeCategoryCommand}"
                                                                               CommandParameter="{Binding}" />
+                                                                    <MenuItem Header="Move channel folder..."
+                                                                              Command="{Binding $parent[UserControl].((vm:ChannelsViewModel)DataContext).MoveChannelFolderCommand}"
+                                                                              CommandParameter="{Binding}" />
                                                                     <MenuItem Header="Full update"
                                                                               Command="{Binding $parent[UserControl].((vm:ChannelsViewModel)DataContext).FullChannelUpdatePressedCommand}"
                                                                               CommandParameter="{Binding}" />

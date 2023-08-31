@@ -18,4 +18,6 @@ public static class DesignViewModels
 
     public static ChannelCategorySettingsWindowViewModel ChannelCategorySettingsWindow =>
         new ChannelCategorySettingsWindowViewModelDesign();
+
+    public static MoveChannelWindowViewModelDesign MoveChannelWindow => new MoveChannelWindowViewModelDesign();
 }
