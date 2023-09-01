@@ -15,13 +15,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using MessageBox.Avalonia.Enums;
 using Microsoft.Extensions.Logging;
 using YoutubeApp.Database;
-using YoutubeApp.Downloader;
 using YoutubeApp.Extensions;
 using YoutubeApp.Media;
 using YoutubeApp.Messages;
@@ -39,7 +39,6 @@ public partial class ChannelsViewModel : ViewModelBase
     private readonly ILogger<ChannelsViewModel> _logger;
     private readonly IMessenger _messenger;
     private readonly IYoutubeCommunicator _youtubeCommunicator;
-    private readonly DownloadManager _downloadManager;
 
     private List<Video> _allVideos;
     [ObservableProperty] private int _currentPage;
@@ -53,14 +52,12 @@ public partial class ChannelsViewModel : ViewModelBase
     [ObservableProperty] private Vector _videosScrollOffset;
 
     public ChannelsViewModel(ILogger<ChannelsViewModel> logger, Grabber grabber, ChannelData channelData,
-        IYoutubeCommunicator youtubeCommunicator, DownloadManager downloadManager,
-        IMessenger messenger)
+        IYoutubeCommunicator youtubeCommunicator, IMessenger messenger)
     {
         _logger = logger;
         _grabber = grabber;
         _channelData = channelData;
         _youtubeCommunicator = youtubeCommunicator;
-        _downloadManager = downloadManager;
         _messenger = messenger;
 
         var channels = _channelData.GetChannels();
@@ -83,6 +80,9 @@ public partial class ChannelsViewModel : ViewModelBase
 
     public ObservableCollection<Video> SelectedVideos { get; } = new();
 
+    private readonly List<UpdateChannelJob> _updateQueue = new();
+    private int _activeUpdateJobCount;
+    [ObservableProperty] private int _totalUpdateJobCount;
 
     private void SearchVideos(EventPattern<PropertyChangedEventArgs> e)
     {
@@ -181,58 +181,116 @@ public partial class ChannelsViewModel : ViewModelBase
             { ChannelCategories = ChannelCategories });
         if (result is null) return;
 
-        result.Channel.Updating = true;
-        var cts = new CancellationTokenSource();
-        result.Channel.CancellationTokenSource = cts;
+        AddChannelToUpdateQueue(result.Channel, false, result.PlaylistInfo);
+    }
 
-        _ = Task.Run(async () =>
+    [RelayCommand]
+    private void UpdateAll()
+    {
+        var channels = ChannelCategories.SelectMany(x => x.Channels);
+
+        foreach (var channel in channels)
         {
-            try
+            if (channel.Updating) continue;
+
+            channel.Updating = true;
+            channel.StatusText = "Updating...";
+            TotalUpdateJobCount++;
+            _updateQueue.Add(new UpdateChannelJob { Channel = channel });
+        }
+
+        ProcessUpdateQueue();
+    }
+
+    [RelayCommand]
+    private void StopUpdateAll()
+    {
+        var channels = ChannelCategories.SelectMany(x => x.Channels);
+        foreach (var channel in channels)
+        {
+            if (!channel.Updating) continue;
+
+            if (channel.CancellationTokenSource is not null)
             {
-                await DownloadThumbnailsAsync(result.Channel, result.PlaylistInfo, cts.Token);
+                channel.CancellationTokenSource.Cancel();
+                channel.CancellationTokenSource.Dispose();
+                channel.CancellationTokenSource = null;
             }
-            catch (Exception)
+            else
             {
-                result.Channel.StatusText = "Getting thumbnails failed.";
-                return;
-            }
-            finally
-            {
-                result.Channel.Updating = false;
-                result.Channel.CancellationTokenSource.Dispose();
+                var jobIdx = _updateQueue.FindIndex(x => x.Channel == channel);
+                _updateQueue.RemoveAt(jobIdx);
             }
 
-            _channelData.SetIncompleteCount(result.Channel.Id, 0);
-            result.Channel.IncompleteCount = 0;
+            channel.Updating = false;
+            channel.StatusText = string.Empty;
+        }
 
-            result.Channel.StatusText = string.Empty;
-        }, cts.Token);
+        _activeUpdateJobCount = 0;
+        TotalUpdateJobCount = 0;
     }
 
     [RelayCommand]
     private void UpdateChannelPressed(Channel channel)
     {
-        UpdateChannel(channel);
-    }
-
-    [RelayCommand]
-    private void FullChannelUpdatePressed(Channel channel)
-    {
-        UpdateChannel(channel, true);
-    }
-
-    private void UpdateChannel(Channel channel, bool fullUpdate = false)
-    {
         if (channel.Updating)
         {
-            channel.CancellationTokenSource!.Cancel();
+            if (channel.CancellationTokenSource is not null)
+            {
+                channel.CancellationTokenSource.Cancel();
+                channel.CancellationTokenSource.Dispose();
+                channel.CancellationTokenSource = null;
+                _activeUpdateJobCount--;
+                ProcessUpdateQueue();
+            }
+            else
+            {
+                var jobIdx = _updateQueue.FindIndex(x => x.Channel == channel);
+                _updateQueue.RemoveAt(jobIdx);
+            }
+
+            TotalUpdateJobCount--;
             channel.Updating = false;
             channel.StatusText = string.Empty;
             return;
         }
 
+        AddChannelToUpdateQueue(channel);
+    }
+
+    [RelayCommand]
+    private void FullChannelUpdatePressed(Channel channel)
+    {
+        AddChannelToUpdateQueue(channel, true);
+    }
+
+    private void AddChannelToUpdateQueue(Channel channel, bool fullUpdate = false,
+        PlaylistInfo? resultPlaylistInfo = null)
+    {
         channel.Updating = true;
         channel.StatusText = "Updating...";
+        TotalUpdateJobCount++;
+        _updateQueue.Add(new UpdateChannelJob
+            { Channel = channel, FullUpdate = fullUpdate, PlaylistInfo = resultPlaylistInfo });
+        ProcessUpdateQueue();
+    }
+
+    private void ProcessUpdateQueue()
+    {
+        while (_activeUpdateJobCount < Settings.MaxConcurrentChannelUpdates && _updateQueue.Count > 0)
+        {
+            var updateJob = _updateQueue[0];
+            _updateQueue.RemoveAt(0);
+            _activeUpdateJobCount++;
+            UpdateChannel(updateJob);
+        }
+    }
+
+    private void UpdateChannel(UpdateChannelJob updateJob)
+    {
+        var channel = updateJob.Channel;
+        var fullUpdate = updateJob.FullUpdate;
+
         var cts = new CancellationTokenSource();
         channel.CancellationTokenSource = cts;
 
@@ -244,12 +302,63 @@ public partial class ChannelsViewModel : ViewModelBase
 
             while (true)
             {
-                PlaylistInfo playlistInfo;
+                var playlistInfo = updateJob.PlaylistInfo;
+                if (playlistInfo is null)
+                {
+                    try
+                    {
+                        playlistInfo =
+                            await _youtubeCommunicator.GetPlaylistInfoAsync(channel.ListId, cts.Token,
+                                fullUpdate ? null : count);
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        return;
+                    }
+                    catch (Exception)
+                    {
+                        SetUpdateDone(channel, "Update failed.");
+                        return;
+                    }
+
+                    var prevVideos = _channelData.GetVideos(channel.Id).ToArray();
+                    var prevVideoIds = prevVideos.ToDictionary(x => x.VideoId, x => x.Id);
+
+                    var prevLastVideo = prevVideos[^(channel.IncompleteCount > 0 ? channel.IncompleteCount : 1)];
+                    if (!fullUpdate && playlistInfo.entries.All(x => x.id != prevLastVideo.VideoId))
+                    {
+                        _logger.LogDebug(
+                            "Previous last video ID not found. Switching to full update. Channel: {Channel}",
+                            channel.Title);
+                        fullUpdate = true;
+                        continue;
+                    }
+
+                    var updateDateTime = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture);
+
+                    int addedVideoCount;
+                    try
+                    {
+                        addedVideoCount =
+                            _channelData.UpdateChannel(channel, playlistInfo, prevVideoIds, updateDateTime);
+                    }
+                    catch (Exception)
+                    {
+                        SetUpdateDone(channel, "Update failed.");
+                        return;
+                    }
+
+                    channel.Title = playlistInfo.channel;
+                    channel.VideoCount = prevVideoIds.Count + addedVideoCount;
+                    channel.IncompleteCount += addedVideoCount;
+                    channel.AddedVideoCount += addedVideoCount;
+                    channel.LastUpdate =
+                        DateTime.Parse(updateDateTime).ToLocalTime().ToString(CultureInfo.InvariantCulture);
+                }
+
                 try
                 {
-                    playlistInfo =
-                        await _youtubeCommunicator.GetPlaylistInfoAsync(channel.ListId, cts.Token,
-                            fullUpdate ? null : count);
+                    await DownloadThumbnailsAsync(channel, playlistInfo, cts.Token);
                 }
                 catch (OperationCanceledException)
                 {
@@ -257,67 +366,31 @@ public partial class ChannelsViewModel : ViewModelBase
                 }
                 catch (Exception)
                 {
-                    channel.Updating = false;
-                    channel.StatusText = "Update failed.";
-                    channel.CancellationTokenSource.Dispose();
-                    return;
-                }
-
-                var prevVideos = _channelData.GetVideos(channel.Id).ToArray();
-                var prevVideoIds = prevVideos.ToDictionary(x => x.VideoId, x => x.Id);
-
-                var prevLastVideo = prevVideos[^(channel.IncompleteCount > 0 ? channel.IncompleteCount : 1)];
-                if (!fullUpdate && playlistInfo.entries.All(x => x.id != prevLastVideo.VideoId))
-                {
-                    _logger.LogDebug("Previous last video ID not found. Switching to full update. Channel: {Channel}",
-                        channel.Title);
-                    fullUpdate = true;
-                    continue;
-                }
-
-                var updateDateTime = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture);
-
-                int addedVideoCount;
-                try
-                {
-                    addedVideoCount = _channelData.UpdateChannel(channel, playlistInfo, prevVideoIds, updateDateTime);
-                }
-                catch (Exception)
-                {
-                    channel.Updating = false;
-                    channel.StatusText = "Update failed.";
-                    channel.CancellationTokenSource.Dispose();
-                    return;
-                }
-
-                channel.Title = playlistInfo.channel;
-                channel.VideoCount = prevVideoIds.Count + addedVideoCount;
-                channel.IncompleteCount += addedVideoCount;
-                channel.AddedVideoCount += addedVideoCount;
-                channel.LastUpdate =
-                    DateTime.Parse(updateDateTime).ToLocalTime().ToString(CultureInfo.InvariantCulture);
-
-                try
-                {
-                    await DownloadThumbnailsAsync(channel, playlistInfo, cts.Token);
-                }
-                catch (Exception)
-                {
-                    channel.Updating = false;
-                    channel.StatusText = "Getting thumbnails failed.";
-                    channel.CancellationTokenSource.Dispose();
+                    SetUpdateDone(channel, "Getting thumbnails failed.");
                     return;
                 }
 
                 _channelData.SetIncompleteCount(channel.Id, 0);
                 channel.IncompleteCount = 0;
 
-                channel.Updating = false;
-                channel.StatusText = "✔ Updated successfully";
-                channel.CancellationTokenSource.Dispose();
+                SetUpdateDone(channel, "✔ Updated successfully");
                 break;
             }
         }, cts.Token);
+    }
+
+    private void SetUpdateDone(Channel channel, string statusText)
+    {
+        Dispatcher.UIThread.Post(() =>
+        {
+            channel.Updating = false;
+            channel.StatusText = statusText;
+            channel.CancellationTokenSource!.Dispose();
+            channel.CancellationTokenSource = null;
+            _activeUpdateJobCount--;
+            TotalUpdateJobCount--;
+            ProcessUpdateQueue();
+        });
     }
 
     private static async Task DownloadThumbnailsAsync(Channel channel, PlaylistInfo playlistInfo,
@@ -493,5 +566,12 @@ public partial class ChannelsViewModel : ViewModelBase
 
         using var fileopener = new Process();
         Process.Start("explorer", $"\"{folderPath}\"");
+    }
+
+    public class UpdateChannelJob
+    {
+        public required Channel Channel { get; set; }
+        public bool FullUpdate { get; set; }
+        public PlaylistInfo? PlaylistInfo { get; set; }
     }
 }

@@ -16,6 +16,7 @@ public partial class SettingsWindowViewModel : ViewModelBase
 
         FilenameTemplate = _settings.FilenameTemplate;
         MaxConnections.Find(x => x.MaxCount == Settings.MaxConnections)!.Checked = true;
+        MaxConcurrentChannelUpdates.Find(x => x.MaxCount == Settings.MaxConcurrentChannelUpdates)!.Checked = true;
     }
 
     private readonly ILogger<SettingsWindowViewModel> _logger;
@@ -23,7 +24,7 @@ public partial class SettingsWindowViewModel : ViewModelBase
 
     [ObservableProperty] private bool _applyButtonEnabled = true;
 
-    public class MaxConnectionsItem
+    public class NumberOption
     {
         public int MaxCount { get; set; }
         public bool Checked { get; set; }
@@ -41,13 +42,20 @@ public partial class SettingsWindowViewModel : ViewModelBase
         }
     }
 
-    public List<MaxConnectionsItem> MaxConnections { get; set; } = new()
+    public List<NumberOption> MaxConnections { get; set; } = new()
     {
-        new MaxConnectionsItem { MaxCount = 1, Checked = false },
-        new MaxConnectionsItem { MaxCount = 2, Checked = false },
-        new MaxConnectionsItem { MaxCount = 4, Checked = false },
-        new MaxConnectionsItem { MaxCount = 8, Checked = false },
-        new MaxConnectionsItem { MaxCount = 16, Checked = false },
+        new NumberOption { MaxCount = 1, Checked = false },
+        new NumberOption { MaxCount = 2, Checked = false },
+        new NumberOption { MaxCount = 4, Checked = false },
+        new NumberOption { MaxCount = 8, Checked = false },
+        new NumberOption { MaxCount = 16, Checked = false },
+    };
+
+    public List<NumberOption> MaxConcurrentChannelUpdates { get; set; } = new()
+    {
+        new NumberOption { MaxCount = 1, Checked = false },
+        new NumberOption { MaxCount = 2, Checked = false },
+        new NumberOption { MaxCount = 4, Checked = false },
     };
 
 
@@ -58,6 +66,9 @@ public partial class SettingsWindowViewModel : ViewModelBase
 
         var selectedMaxConnections = MaxConnections.First(x => x.Checked).MaxCount;
         _settings.SaveMaxConnections(selectedMaxConnections);
+
+        var selectedMaxConcurrentChannelUpdates = MaxConcurrentChannelUpdates.First(x => x.Checked).MaxCount;
+        _settings.SaveMaxConcurrentChannelUpdates(selectedMaxConcurrentChannelUpdates);
 
         window.Close();
     }

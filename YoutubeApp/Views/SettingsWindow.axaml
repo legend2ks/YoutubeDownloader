@@ -3,9 +3,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="using:YoutubeApp.ViewModels"
-        mc:Ignorable="d" d:DesignWidth="680" d:DesignHeight="480"
-        MinWidth="580" MinHeight="480"
-        Width="680" Height="480"
+        mc:Ignorable="d" d:DesignWidth="680" d:DesignHeight="510"
+        MinWidth="580" MinHeight="510"
+        Width="680" Height="510"
         x:Class="YoutubeApp.Views.SettingsWindow"
         x:DataType="vm:SettingsWindowViewModel"
         x:CompileBindings="True"
@@ -15,6 +15,7 @@
 
     <Grid Margin="10">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
@@ -143,9 +144,28 @@
                 </ItemsControl>
             </Grid>
         </HeaderedContentControl>
+        
+        <!-- Concurrent Channel Updates -->
+        <HeaderedContentControl Grid.Row="2" Header="Channels" Background="#5fff">
+            <Grid ColumnDefinitions="Auto,Auto">
+                <TextBlock Grid.Column="0" Text="Max. concurrent updates:" Margin="0 0 10 0" VerticalAlignment="Center" />
+                <ItemsControl Grid.Column="1" ItemsSource="{Binding MaxConcurrentChannelUpdates}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" Spacing="16" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <RadioButton Content="{Binding MaxCount}" GroupName="maxChannelUpdates" IsChecked="{Binding Checked}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Grid>
+        </HeaderedContentControl>
 
         <!--Action Buttons-->
-        <Grid Grid.Row="2" ColumnDefinitions="*,Auto,Auto">
+        <Grid Grid.Row="3" ColumnDefinitions="*,Auto,Auto" Margin="0 10 0 0">
             <Button Grid.Column="1" Content="Apply" Command="{Binding ApplyButtonClickedCommand}"
                     CommandParameter="{Binding $parent[Window]}" IsEnabled="{Binding ApplyButtonEnabled}" Width="80"
                     HorizontalContentAlignment="Center" Margin="0,0,6,0" Classes="Primary" />

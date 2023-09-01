@@ -75,6 +75,18 @@ public class Settings
             }
         }
 
+        // Max Concurrent channel updates
+        var maxConcurrentChannelUpdatesString =
+            settings.FirstOrDefault(x => x.Key == "MaxConcurrentChannelUpdates")?.Value;
+        if (maxConcurrentChannelUpdatesString is not null)
+        {
+            var maxConcurrentChannelUpdates = int.Parse(maxConcurrentChannelUpdatesString);
+            if (new[] { 1, 2, 4 }.Contains(maxConcurrentChannelUpdates))
+            {
+                MaxConcurrentChannelUpdates = maxConcurrentChannelUpdates;
+            }
+        }
+
         // Window State
         var windowWidthString = settings.FirstOrDefault(x => x.Key == "WindowWidth")?.Value;
         var windowHeightString = settings.FirstOrDefault(x => x.Key == "WindowHeight")?.Value;
@@ -105,6 +117,7 @@ public class Settings
     public string FilenameTemplate { get; private set; }
     public static string LastSavePath { get; set; }
     public static int MaxConnections { get; private set; } = 4;
+    public static int MaxConcurrentChannelUpdates { get; set; } = 2;
     public static int WindowWidth { get; private set; } = 900;
     public static int WindowHeight { get; private set; } = 640;
     public static WindowState WindowState { get; private set; } = WindowState.Normal;
@@ -149,6 +162,12 @@ public class Settings
     {
         MaxConnections = maxConnections;
         _settingsData.SaveSetting("MaxConnections", maxConnections.ToString());
+    }
+
+    public void SaveMaxConcurrentChannelUpdates(int maxConcurrentChannelUpdates)
+    {
+        MaxConcurrentChannelUpdates = maxConcurrentChannelUpdates;
+        _settingsData.SaveSetting("MaxConcurrentChannelUpdates", maxConcurrentChannelUpdates.ToString());
     }
 
     public void SaveWindowState(int windowWidth, int windowHeight)
