@@ -142,11 +142,7 @@ public class DownloaderUtils
 
         foreach (var dl in downloadItems)
         {
-            if (string.Equals(
-                    Path.TrimEndingDirectorySeparator(dl.SaveTo),
-                    Path.TrimEndingDirectorySeparator(destPath),
-                    StringComparison.OrdinalIgnoreCase
-                ))
+            if (Utils.IsSamePath(dl.SaveTo, destPath))
             {
                 continue;
             }
@@ -155,13 +151,20 @@ public class DownloaderUtils
 
             var srcDriveInfo = new DriveInfo(dl.SaveTo);
             var sameDrive = srcDriveInfo.Name == destDriveInfo.Name;
+            var isChannelVideo = Utils.IsSamePath(dl.Channel?.Path, destPath);
+            var fileName = isChannelVideo
+                ? Youtube.GenerateFilename(Settings.DefaultFilenameTemplate, dl.VideoId, dl.Title,
+                    dl.Container, dl.SelectedVariant.Fps, dl.ChannelTitle, dl.UploadDate, dl.SelectedVariant.Width,
+                    dl.SelectedVariant.Height, dl.SelectedVariant.VCodec, dl.SelectedVariant.ACodec,
+                    dl.SelectedVariant.Abr)
+                : dl.Filename;
 
             if (dl.Completed)
             {
                 var downloadedFilepath = Path.Combine(dl.SaveTo, dl.Filename);
                 if (File.Exists(downloadedFilepath))
                 {
-                    var destFilepath = Path.Combine(destPath, dl.Filename);
+                    var destFilepath = Path.Combine(destPath, fileName);
                     var filesize = new FileInfo(downloadedFilepath).Length;
 
                     if (!sameDrive && filesize > destFreeSpace)
@@ -183,7 +186,7 @@ public class DownloaderUtils
                     }
                     catch (Exception e)
                     {
-                        _logger.LogError(e, "Move Files:Unable to move file {Filename}", dl.Filename);
+                        _logger.LogError(e, "Move Files: Unable to move file {Filename}", dl.Filename);
                         errors.Add($"{e.Message}: {dl.Title}");
                         continue;
                     }
@@ -294,19 +297,13 @@ public class DownloaderUtils
             }
 
             // Update Database
-            var isChannelVideo =
-                string.Compare(dl.Channel?.Path, destPath, StringComparison.InvariantCultureIgnoreCase) == 0;
             if (isChannelVideo)
             {
-                dl.Filename = Youtube.GenerateFilename(Settings.DefaultFilenameTemplate, dl.VideoId, dl.Title,
-                    dl.Container, dl.SelectedVariant.Fps, dl.ChannelTitle, dl.UploadDate, dl.SelectedVariant.Width,
-                    dl.SelectedVariant.Height, dl.SelectedVariant.VCodec, dl.SelectedVariant.ACodec,
-                    dl.SelectedVariant.Abr);
+                dl.Filename = fileName;
                 _downloadData.UpdateFilename(dl.Id, dl.Filename);
             }
 
             _downloadData.UpdateSaveTo(dl.Id, destPath);
-
             dl.SaveTo = destPath;
         }
 
