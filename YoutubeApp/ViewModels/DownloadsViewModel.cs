@@ -451,7 +451,7 @@ public partial class DownloadsViewModel : ViewModelBase, IRecipient<ChannelDelet
 
         DownloadManager.ActiveDownloads.Remove(dl);
 
-        _messenger.Send(new VideoDownloadCompletedMessage { DownloadItem = dl });
+        _messenger.Send(new VideoDownloadCompletedMessage(dl));
 
         StartButtonClicked();
     }

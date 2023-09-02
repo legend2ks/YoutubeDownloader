@@ -30,7 +30,7 @@ using YoutubeApp.Views;
 
 namespace YoutubeApp.ViewModels;
 
-public partial class ChannelsViewModel : ViewModelBase
+public partial class ChannelsViewModel : ViewModelBase, IRecipient<VideoDownloadCompletedMessage>
 {
     private const string VideoIdPattern = @"^\[.*]\[.*]\[(.*)]";
     private readonly ChannelData _channelData;
@@ -59,6 +59,8 @@ public partial class ChannelsViewModel : ViewModelBase
         _channelData = channelData;
         _youtubeCommunicator = youtubeCommunicator;
         _messenger = messenger;
+
+        messenger.RegisterAll(this);
 
         var channels = _channelData.GetChannels();
         var categories = _channelData.GetChannelCategories().ToList();
@@ -573,5 +575,15 @@ public partial class ChannelsViewModel : ViewModelBase
         public required Channel Channel { get; set; }
         public bool FullUpdate { get; set; }
         public PlaylistInfo? PlaylistInfo { get; set; }
+    }
+
+    public void Receive(VideoDownloadCompletedMessage message)
+    {
+        if (CurrentPage != 1) return;
+        var dl = message.Value;
+        if (!Utils.IsSamePath(dl.SaveTo, SelectedChannel?.Path)) return;
+        var video = _allVideos.FirstOrDefault(x => x.VideoId == dl.VideoId);
+        if (video is null) return;
+        video.FileName = dl.Filename;
     }
 }

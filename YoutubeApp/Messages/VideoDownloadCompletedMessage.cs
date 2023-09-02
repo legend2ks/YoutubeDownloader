@@ -1,8 +1,11 @@
-﻿using YoutubeApp.Models;
+﻿using CommunityToolkit.Mvvm.Messaging.Messages;
+using YoutubeApp.Models;
 
 namespace YoutubeApp.Messages;
 
-public class VideoDownloadCompletedMessage
+public class VideoDownloadCompletedMessage : ValueChangedMessage<Download>
 {
-    public required Download DownloadItem { get; init; }
+    public VideoDownloadCompletedMessage(Download value) : base(value)
+    {
+    }
 }
