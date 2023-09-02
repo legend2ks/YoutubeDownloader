@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using DynamicData;
 using MessageBox.Avalonia.Enums;
 using YoutubeApp.Database;
 using YoutubeApp.Enums;
@@ -203,8 +204,11 @@ public partial class AddChannelWindowViewModel : ObservableObject
                         .ToString(CultureInfo.CurrentCulture),
                 };
 
+            var idx = ChannelCategories[0].Channels
+                .BinarySearch(channel.Title, (s, ch) => string.CompareOrdinal(s, ch.Title));
+            if (idx < 0) idx = ~idx;
             _channelData.AddChannel(channel, _playlistInfo.entries, updateDateTime);
-            ChannelCategories[0].Channels.Add(channel);
+            ChannelCategories[0].Channels.Insert(idx, channel);
 
             _messenger.Send(new ChannelAddedMessage { Channel = channel });
             _messenger.Send(new CloseWindowMessage<AddChannelWindowResult>(new AddChannelWindowResult

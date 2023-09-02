@@ -24,7 +24,7 @@ public class ChannelData
         if (useCache && _channels is not null) return _channels;
 
         var result = _dbConn.Query<ChannelDTO>("SELECT * FROM Channels");
-        var channels = result.Select(DatabaseUtils.ToChannel).ToList();
+        var channels = result.Select(DatabaseUtils.ToChannel).OrderBy(x => x.Title).ToList();
         _channels = channels;
         return channels;
     }
