@@ -215,7 +215,6 @@ public partial class ChannelsViewModel : ViewModelBase, IRecipient<VideoDownload
             if (channel.CancellationTokenSource is not null)
             {
                 channel.CancellationTokenSource.Cancel();
-                channel.CancellationTokenSource.Dispose();
                 channel.CancellationTokenSource = null;
             }
             else
@@ -240,7 +239,6 @@ public partial class ChannelsViewModel : ViewModelBase, IRecipient<VideoDownload
             if (channel.CancellationTokenSource is not null)
             {
                 channel.CancellationTokenSource.Cancel();
-                channel.CancellationTokenSource.Dispose();
                 channel.CancellationTokenSource = null;
                 _activeUpdateJobCount--;
                 ProcessUpdateQueue();
@@ -298,7 +296,7 @@ public partial class ChannelsViewModel : ViewModelBase, IRecipient<VideoDownload
 
         _ = Task.Run(async () =>
         {
-            var lastUpdate = DateTime.Parse(channel.LastUpdate, CultureInfo.InvariantCulture);
+            var lastUpdate = DateTime.Parse(channel.LastUpdate);
             var daysSinceLastUpdate = (DateTime.Now - lastUpdate).Days;
             var count = Math.Max((int)(daysSinceLastUpdate * 1.5), 10) + channel.IncompleteCount;
 
@@ -355,7 +353,8 @@ public partial class ChannelsViewModel : ViewModelBase, IRecipient<VideoDownload
                     channel.IncompleteCount += addedVideoCount;
                     channel.AddedVideoCount += addedVideoCount;
                     channel.LastUpdate =
-                        DateTime.Parse(updateDateTime).ToLocalTime().ToString(CultureInfo.InvariantCulture);
+                        DateTime.Parse(updateDateTime, CultureInfo.InvariantCulture).ToLocalTime()
+                            .ToString(CultureInfo.CurrentCulture);
                 }
 
                 try

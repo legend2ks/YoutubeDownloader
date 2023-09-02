@@ -188,6 +188,8 @@ public partial class AddChannelWindowViewModel : ObservableObject
                 return;
             }
 
+            var updateDateTime = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture);
+
             var channel
                 = new Channel
                 {
@@ -197,10 +199,11 @@ public partial class AddChannelWindowViewModel : ObservableObject
                     Path = SaveTo,
                     VideoCount = VideoCount,
                     IncompleteCount = VideoCount,
-                    LastUpdate = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture),
+                    LastUpdate = DateTime.Parse(updateDateTime, CultureInfo.InvariantCulture).ToLocalTime()
+                        .ToString(CultureInfo.CurrentCulture),
                 };
 
-            _channelData.AddChannel(channel, _playlistInfo.entries);
+            _channelData.AddChannel(channel, _playlistInfo.entries, updateDateTime);
             ChannelCategories[0].Channels.Add(channel);
 
             _messenger.Send(new ChannelAddedMessage { Channel = channel });

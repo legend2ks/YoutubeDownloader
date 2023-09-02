@@ -48,7 +48,8 @@ internal static class DatabaseUtils
             VideoCount = dto.VideoCount,
             IncompleteCount = dto.IncompleteCount,
             AddedVideoCount = dto.AddedVideoCount,
-            LastUpdate = DateTime.Parse(dto.LastUpdate, CultureInfo.InvariantCulture).ToLocalTime().ToString(),
+            LastUpdate = DateTime.Parse(dto.LastUpdate, CultureInfo.InvariantCulture).ToLocalTime()
+                .ToString(CultureInfo.CurrentCulture),
         };
     }
 

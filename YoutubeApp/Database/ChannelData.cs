@@ -43,7 +43,7 @@ public class ChannelData
         return videos;
     }
 
-    public void AddChannel(Channel channel, PlaylistInfoEntry[] videos)
+    public void AddChannel(Channel channel, PlaylistInfoEntry[] videos, string updateDateTime)
     {
         using var transaction = _dbConn.BeginTransaction();
 
@@ -60,7 +60,7 @@ public class ChannelData
             channel.Path,
             channel.VideoCount,
             channel.IncompleteCount,
-            channel.LastUpdate,
+            LastUpdate = updateDateTime,
         };
 
         var channelId = _dbConn.QuerySingle<int>(stmt, parameters, transaction);
