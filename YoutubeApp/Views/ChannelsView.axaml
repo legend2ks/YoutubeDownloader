@@ -38,11 +38,12 @@
                             Command="{Binding AddChannelPressedCommand}">
                         <PathIcon Data="{StaticResource add}" />
                     </Button>
-                    <Button ToolTip.Tip="Update All" Margin="5,0,0,0"
+                    <Rectangle Fill="#5fff" Width="1" Height="30" Margin="4 0" />
+                    <Button ToolTip.Tip="Update All"
                             Command="{Binding UpdateAllCommand}">
                         <PathIcon Data="{StaticResource rotate}" />
                     </Button>
-                    <Button ToolTip.Tip="Stop All" Margin="5,0,0,0"
+                    <Button ToolTip.Tip="Stop All" Margin="2,0,0,0"
                             Command="{Binding StopUpdateAllCommand}" IsVisible="{Binding TotalUpdateJobCount}">
                         <PathIcon Data="{StaticResource hand}" />
                     </Button>
