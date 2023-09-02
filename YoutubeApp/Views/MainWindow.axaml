@@ -40,7 +40,7 @@
                 <views:DownloadsView />
             </TabItem>
 
-            <TabItem Header="Channels" IsVisible="{Binding ChannelsTabEnabled}">
+            <TabItem Header="Channels">
                 <views:ChannelsView />
             </TabItem>
         </TabControl>
@@ -57,7 +57,8 @@
                 </Styles>
             </StackPanel.Styles>
 
-            <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding DownloadManager.ActiveDownloads.Count}">
+            <StackPanel Orientation="Horizontal" Spacing="8"
+                        IsVisible="{Binding DownloadManager.ActiveDownloads.Count}">
                 <PathIcon Data="{StaticResource speedometer}" Width="18" Height="18" />
                 <TextBlock
                     Text="{Binding DownloadSpeed, Converter={StaticResource IntFilesizeConverter}, StringFormat={}{0}/s}"

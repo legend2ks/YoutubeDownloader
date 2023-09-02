@@ -8,7 +8,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using MessageBox.Avalonia.Enums;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using YoutubeApp.Downloader;
 using YoutubeApp.Messages;
@@ -22,8 +21,6 @@ public partial class MainWindowViewModel : ViewModelBase
     public DownloadManager DownloadManager { get; }
     private readonly Settings _settings;
     private readonly IMessenger _messenger;
-
-    public bool ChannelsTabEnabled { get; init; }
 
     public Grabber Grabber { get; protected init; }
     [ObservableProperty] private int _downloadSpeed;
@@ -52,17 +49,13 @@ public partial class MainWindowViewModel : ViewModelBase
     private bool _isShuttingDown;
 
     public MainWindowViewModel(ILogger<MainWindowViewModel> logger, Grabber grabber, DownloadManager downloadManager,
-        Settings settings, IMessenger messenger, IConfiguration configuration)
+        Settings settings, IMessenger messenger)
     {
         _logger = logger;
         _settings = settings;
         _messenger = messenger;
         DownloadManager = downloadManager;
         Grabber = grabber;
-
-        var channelsTabEnabled = configuration["ChannelsTabEnabled"];
-        if (channelsTabEnabled is not null)
-            ChannelsTabEnabled = bool.Parse(channelsTabEnabled);
 
         _ = Task.Run(async () =>
         {
