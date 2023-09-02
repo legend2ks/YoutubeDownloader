@@ -518,10 +518,23 @@ public partial class ChannelsViewModel : ViewModelBase, IRecipient<VideoDownload
     }
 
     [RelayCommand]
-    private void CopyLink()
+    private void OpenVideoInYoutube(Video video)
+    {
+        var link = $"https://youtube.com/watch?v={video.VideoId}";
+        Process.Start(new ProcessStartInfo(link) { UseShellExecute = true });
+    }
+
+    [RelayCommand]
+    private void CopyLinks()
     {
         var links = string.Join("\n", SelectedVideos.Select(x => $"https://youtube.com/watch?v={x.VideoId}"));
         _messenger.Send(new SetClipboardTextMessage { Text = links });
+    }
+
+    [RelayCommand]
+    private void CopyLink(Video video)
+    {
+        _messenger.Send(new SetClipboardTextMessage { Text = $"https://youtube.com/watch?v={video.VideoId}" });
     }
 
     [RelayCommand]

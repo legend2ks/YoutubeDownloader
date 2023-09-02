@@ -48,7 +48,7 @@
                 <Rectangle Fill="#5fff" Width="1" Height="30" Margin="4 0" />
                 <Button ToolTip.Tip="Copy Link(s)"
                         Margin="0 0 2 0"
-                        Command="{Binding CopyLinkCommand}">
+                        Command="{Binding CopyLinksCommand}">
                     <PathIcon Data="{StaticResource copy}" />
                 </Button>
                 <Button ToolTip.Tip="Download"
@@ -200,6 +200,20 @@
                                                     </Panel>
                                                 </ControlTemplate>
                                             </Button.Template>
+                                        </Button>
+                                        <Button HorizontalAlignment="Right" Background="Transparent" CornerRadius="20"
+                                                Padding="6" Margin="0 2 2 0">
+                                            <PathIcon Data="{StaticResource ellipsis_vertical}" Width="18" Height="18" />
+                                            <Button.Flyout>
+                                                <MenuFlyout Placement="Bottom">
+                                                    <MenuItem Header="Open in YouTube"
+                                                              Command="{Binding $parent[UserControl].((vm:ChannelsViewModel)DataContext).OpenVideoInYoutubeCommand}"
+                                                              CommandParameter="{Binding}" />
+                                                    <MenuItem Header="Copy link"
+                                                              Command="{Binding $parent[UserControl].((vm:ChannelsViewModel)DataContext).CopyLinkCommand}"
+                                                              CommandParameter="{Binding}" />
+                                                </MenuFlyout>
+                                            </Button.Flyout>
                                         </Button>
                                     </Panel>
                                     <TextBlock Text="{Binding Title}" TextWrapping="Wrap" Height="57"
