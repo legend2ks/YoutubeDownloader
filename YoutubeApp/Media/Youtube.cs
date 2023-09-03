@@ -498,6 +498,12 @@ public class Youtube
                 continue;
             }
 
+            if ((format.filesize ?? format.filesize_approx) is null)
+            {
+                _logger.LogWarning("Filesize is not available! FormatId: {FormatId}", format.format_id);
+                continue;
+            }
+
             var hasVideo = format.vcodec is not null && format.vcodec != "none";
             var hasAudio = format.acodec is not null && format.acodec != "none";
 
@@ -527,9 +533,10 @@ public class Youtube
                     videoFormat.vcodec == "avc1" && audioFormat.acodec is "opus" or "mp4a" ||
                     videoFormat.vcodec == "av01" && audioFormat.acodec is "opus" or "mp4a")
                 {
-                    var filesize = (videoFormat.filesize ?? videoFormat.filesize_approx) +
-                                   (audioFormat.filesize ?? audioFormat.filesize_approx);
-                    if (filesize is null) throw new Exception("Filesize is not available!");
+                    var videoFileSize = videoFormat.filesize ?? videoFormat.filesize_approx;
+                    var audioFileSize = audioFormat.filesize ?? audioFormat.filesize_approx;
+                    var filesize = videoFileSize + audioFileSize;
+
                     variants.Add(new Variant
                     {
                         VFormatId = videoFormat.format_id,
