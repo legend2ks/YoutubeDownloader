@@ -221,7 +221,8 @@ public partial class AddChannelWindowViewModel : ObservableObject
                 };
 
             var idx = ChannelCategories[0].Channels
-                .BinarySearch(channel.Title, (s, ch) => string.CompareOrdinal(s, ch.Title));
+                .BinarySearch(channel.Title,
+                    (s, ch) => string.Compare(s, ch.Title, StringComparison.OrdinalIgnoreCase));
             if (idx < 0) idx = ~idx;
             _channelData.AddChannel(channel, _playlistInfo.entries, updateDateTime);
             ChannelCategories[0].Channels.Insert(idx, channel);

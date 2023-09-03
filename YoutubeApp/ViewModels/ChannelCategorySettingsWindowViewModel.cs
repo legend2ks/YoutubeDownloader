@@ -139,7 +139,8 @@ public partial class ChannelCategorySettingsWindowViewModel : ViewModelBase
             _currentCategory.Channels.Remove(_channel);
 
             var idx = Selection.SelectedItem.ChannelCategory.Channels
-                .BinarySearch(_channel.Title, (s, ch) => string.CompareOrdinal(s, ch.Title));
+                .BinarySearch(_channel.Title,
+                    (s, ch) => string.Compare(s, ch.Title, StringComparison.OrdinalIgnoreCase));
             if (idx < 0) idx = ~idx;
             Selection.SelectedItem.ChannelCategory.Channels.Insert(idx, _channel);
             _channel.CategoryId = Selection.SelectedItem.ChannelCategory.Id;
