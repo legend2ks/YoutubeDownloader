@@ -3,7 +3,7 @@
 
 [![Chat](https://img.shields.io/badge/Chat-on%20Telegram-blue)](https://t.me/+5Kma9lxB0z40Y2M0)
 [![Release](https://img.shields.io/github/v/release/legend2ks/YoutubeDownloader?label=Release&color=2ea043)](https://github.com/legend2ks/YoutubeDownloader/releases)
-[![Donate](https://img.shields.io/badge/_-Donate-red.svg?logo=githubsponsors&labelColor=555555)](https://github.com/legend2ks/YoutubeDownloader/#-support)
+[![Donate](https://img.shields.io/badge/_-Donate-red.svg?logo=undertale&logoColor=ff3333&labelColor=ffcccc&color=ff3333)](https://github.com/legend2ks/YoutubeDownloader/#-support)
 </div>
 
 An open-source YouTube video downloader that allows you to easily download videos from YouTube in all available original qualities. It uses yt-dlp, ffmpeg and aria2 under the hood.
@@ -15,29 +15,29 @@ An open-source YouTube video downloader that allows you to easily download video
 * Listing and downloading channel videos
 * Fast, multi-threaded downloading
 
-> Note: The **Channels** section will be available soon (Work-in-Progress 🚧)
-
 ### Screenshots
 
-<img src="https://github.com/legend2ks/YoutubeDownloader/assets/16824470/9ef686d5-954f-4110-8b19-3f4777fb2a0f" />
+<img src="https://github.com/legend2ks/YoutubeDownloader/assets/16824470/2e600160-88d4-49f1-af54-f2c47000f87d" />
 <div align="center">
   <img src="https://github.com/legend2ks/YoutubeDownloader/assets/16824470/a464935d-3b5e-47cc-bf83-37195f2c8e9c" height="170" />
   <img src="https://github.com/legend2ks/YoutubeDownloader/assets/16824470/52958fb7-09ce-4921-a571-4291aee4aa47" height="170" />
-  <img src="https://github.com/legend2ks/YoutubeDownloader/assets/16824470/2cf3d6db-991c-4317-959e-ed16f1974acc" height="170" />
+  <img src="https://github.com/legend2ks/YoutubeDownloader/assets/16824470/b4c253f9-f2d8-41c6-a995-245dff6ebed2" height="170" />
 </div>
+
+
 
 ## Installing
 
 #### Requirements:
 
 - Microsoft Windows 7+ (x64)
-- [.NET 7.0 Desktop Runtime](https://aka.ms/dotnet-core-applaunch?arch=x64&rid=win-x64&apphost_version=7.0.8&gui=true)
+- [.NET 7.0 Desktop Runtime](https://aka.ms/dotnet-core-applaunch?arch=x64&rid=win-x64&apphost_version=7.0.10&gui=true)
 
 [Releases](https://github.com/legend2ks/YoutubeDownloader/releases)
 
 ## Roadmap
 
-* [ ] Channels section [WIP]
+* [x] Channels section
 * [ ] Audio-only formats
 * [ ] Scheduler
 * [ ] Subtitle support
