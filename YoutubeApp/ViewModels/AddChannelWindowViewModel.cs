@@ -80,9 +80,11 @@ public partial class AddChannelWindowViewModel : ObservableObject
             if (trimmedLink.Length == 0) return;
 
             var handlePattern = @"^(?:https?:\/\/)?(?:www\.|m\.)?youtube\.com\/(@[-a-zA-Z0-9_\.]{3,})\/?";
+            var idPattern = @"^(?:https?:\/\/)?(?:www\.|m\.)?youtube\.com\/channel\/(UC[-a-zA-Z0-9_\.]+)\/?";
 
             var handleMatch = Regex.Match(trimmedLink, handlePattern);
-            if (!handleMatch.Success)
+            var idMatch = Regex.Match(trimmedLink, idPattern);
+            if (!handleMatch.Success && !idMatch.Success)
             {
                 await _messenger.Send(new ShowMessageBoxMessage
                 {
@@ -92,33 +94,42 @@ public partial class AddChannelWindowViewModel : ObservableObject
                 return;
             }
 
-            var handle = handleMatch.Groups[1].Value;
+            string channelId;
 
-            // Get Playlist ID
-            Loading = true;
-            _cancellationTokenSource = new CancellationTokenSource();
-            ChannelInfo channelInfo;
-            try
+            if (idMatch.Success)
             {
-                channelInfo =
-                    await _youtubeCommunicator.GetChannelInfoAsync(handle, _cancellationTokenSource.Token);
+                channelId = idMatch.Groups[1].Value;
             }
-            catch (OperationCanceledException)
+            else
             {
-                return;
-            }
-            catch (Exception)
-            {
-                Error = true;
-                Loading = false;
-                return;
-            }
-            finally
-            {
-                _cancellationTokenSource.Dispose();
+                // Get Channel ID
+                var handle = handleMatch.Groups[1].Value;
+                Loading = true;
+                _cancellationTokenSource = new CancellationTokenSource();
+                ChannelInfo channelInfo;
+                try
+                {
+                    channelInfo =
+                        await _youtubeCommunicator.GetChannelInfoAsync(handle, _cancellationTokenSource.Token);
+                }
+                catch (OperationCanceledException)
+                {
+                    return;
+                }
+                catch (Exception)
+                {
+                    Error = true;
+                    Loading = false;
+                    return;
+                }
+                finally
+                {
+                    _cancellationTokenSource.Dispose();
+                }
+
+                channelId = channelInfo.channel_id;
             }
 
-            var channelId = channelInfo.channel_id;
             if (!channelId.StartsWith("UC", StringComparison.OrdinalIgnoreCase))
             {
                 Error = true;
