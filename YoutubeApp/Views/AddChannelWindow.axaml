@@ -19,11 +19,15 @@
             <TextBlock Text="Channel Link:" Margin="0 0 0 4" />
             <TextBox Name="Link" Text="{Binding Link}" Margin="0 0 0 8" IsEnabled="{Binding LinkBoxIsEnabled}" />
             <TextBlock Text="Save To:" Margin="0 0 0 4" />
-            <Grid ColumnDefinitions="*,Auto" Margin="0 0 0 8" IsEnabled="{Binding Success}">
-                <TextBox Grid.Column="0" Text="{Binding SaveTo}" IsReadOnly="True" Margin="0 0 6 0" />
-                <Button Grid.Column="1" Command="{Binding BrowseButtonPressedCommand}"
-                        CommandParameter="{Binding $parent[Window]}">
+            <Grid ColumnDefinitions="*,Auto,Auto" Margin="0 0 0 8" IsEnabled="{Binding Success}">
+                <TextBox Grid.Column="0" Text="{Binding SaveTo}" />
+                <Button Grid.Column="1" Command="{Binding BrowseButtonPressedCommand}" ToolTip.Tip="Browse..."
+                        Margin="6 0 0 0">
                     <PathIcon Data="{StaticResource folder}" />
+                </Button>
+                <Button Grid.Column="2" Command="{Binding AddChannelTitleCommand}" ToolTip.Tip="Add channel title"
+                        Margin="6 0 0 0">
+                    <PathIcon Data="{StaticResource title}" />
                 </Button>
             </Grid>
         </StackPanel>

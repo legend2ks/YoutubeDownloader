@@ -179,6 +179,20 @@ public partial class AddChannelWindowViewModel : ObservableObject
         }
         else
         {
+            try
+            {
+                var dirInfo = Directory.CreateDirectory(SaveTo);
+                SaveTo = Path.TrimEndingDirectorySeparator(dirInfo.FullName);
+            }
+            catch (Exception e)
+            {
+                await _messenger.Send(new ShowMessageBoxMessage
+                {
+                    Title = "Error", Message = e.Message, Icon = Icon.Error, ButtonDefinitions = ButtonEnum.Ok
+                }, (int)MessengerChannel.AddChannelWindow);
+                return;
+            }
+
             var channels = ChannelCategories.SelectMany(cat => cat.Channels);
             foreach (var ch in channels)
             {
@@ -188,15 +202,6 @@ public partial class AddChannelWindowViewModel : ObservableObject
                     Title = "Move", Message = $"The selected save path belongs to another channel:\n\"{ch.Title}\"",
                     Icon = Icon.Error, ButtonDefinitions = ButtonEnum.Ok
                 }, (int)MessengerChannel.AddChannelWindow);
-                return;
-            }
-
-            try
-            {
-                Directory.CreateDirectory(SaveTo);
-            }
-            catch (Exception)
-            {
                 return;
             }
 
@@ -238,6 +243,15 @@ public partial class AddChannelWindowViewModel : ObservableObject
         if (selectedFolders.Count == 0) return;
 
         SaveTo = selectedFolders[0]!.Path.LocalPath;
+    }
+
+    [RelayCommand]
+    private void AddChannelTitle()
+    {
+        var savePath = Path.GetFullPath(SaveTo);
+        savePath = Path.TrimEndingDirectorySeparator(savePath);
+        var channelName = Youtube.SanitizeFilename(_playlistInfo.channel);
+        SaveTo = !savePath.EndsWith(channelName) ? Path.Combine(savePath, channelName) : savePath;
     }
 }
 

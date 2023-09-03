@@ -194,14 +194,16 @@ public partial class AddLinkWindowViewModel : ViewModelBase
             }
 
             // Check save path
-            var savePath = Path.GetFullPath(SaveTo);
-            if (savePath != SaveTo) SaveTo = savePath;
-            if (!Directory.Exists(savePath))
+            try
+            {
+                var dirInfo = Directory.CreateDirectory(SaveTo);
+                SaveTo = Path.TrimEndingDirectorySeparator(dirInfo.FullName);
+            }
+            catch (Exception e)
             {
                 await _messenger.Send(new ShowMessageBoxMessage
                 {
-                    Title = "Error", Message = $"Path \"{SaveTo}\" is not accessible.", Icon = Icon.Error,
-                    ButtonDefinitions = ButtonEnum.Ok
+                    Title = "Error", Message = e.Message, Icon = Icon.Error, ButtonDefinitions = ButtonEnum.Ok
                 }, (int)MessengerChannel.AddLinkWindow);
                 Reset();
                 return;
