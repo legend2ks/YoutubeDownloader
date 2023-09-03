@@ -3,6 +3,7 @@
 
 [![Chat](https://img.shields.io/badge/Chat-on%20Telegram-blue)](https://t.me/+5Kma9lxB0z40Y2M0)
 [![Release](https://img.shields.io/github/v/release/legend2ks/YoutubeDownloader?label=Release&color=2ea043)](https://github.com/legend2ks/YoutubeDownloader/releases)
+[![Downloads](https://img.shields.io/github/downloads/legend2ks/YoutubeDownloader/total?label=Downloads&color=2ea043)](https://github.com/legend2ks/YoutubeDownloader/releases)
 [![Donate](https://img.shields.io/badge/_-Donate-red.svg?logo=undertale&logoColor=ff3333&labelColor=ffcccc&color=ff3333)](https://github.com/legend2ks/YoutubeDownloader/#-support)
 </div>
 
