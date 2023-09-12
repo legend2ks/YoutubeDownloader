@@ -79,7 +79,7 @@ public class ChannelData
                 Duration = video.duration != null
                     ? Utils.DurationStringFromSeconds((int)video.duration)
                     : "Not Available",
-                Timestamp = video.timestamp,
+                Timestamp = video.timestamp ?? 0,
             }, transaction);
             if (rowsAffected != 1) throw new Exception("Unexpected affected rows number.");
         }
