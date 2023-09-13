@@ -8,6 +8,7 @@
         <ApplicationManifest>app.manifest</ApplicationManifest>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
         <ApplicationIcon>Assets/app-logo.ico</ApplicationIcon>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <PathMap Condition="'$(Configuration)' == 'Release'">$(MSBuildProjectDirectory)=/_</PathMap> <!-- PDB Path -->
     </PropertyGroup>
 

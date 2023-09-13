@@ -30,6 +30,7 @@ public partial class Video : ObservableObject
     public bool IsDownloaded => FileName is not null;
 
     [ObservableProperty] private bool _isChecked;
+    [ObservableProperty] private bool _isCursor;
 
     [ObservableProperty] private bool _watched;
 

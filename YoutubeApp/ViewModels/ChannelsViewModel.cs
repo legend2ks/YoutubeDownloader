@@ -51,6 +51,8 @@ public partial class ChannelsViewModel : ViewModelBase, IRecipient<VideoDownload
 
     [ObservableProperty] private Vector _videosScrollOffset;
 
+    private Video? _currentCursor;
+
     public ChannelsViewModel(ILogger<ChannelsViewModel> logger, Grabber grabber, ChannelData channelData,
         IYoutubeCommunicator youtubeCommunicator, IMessenger messenger)
     {
@@ -97,6 +99,14 @@ public partial class ChannelsViewModel : ViewModelBase, IRecipient<VideoDownload
         }
 
         Videos = _allVideos.FindAll(x => x.Title.Contains(SearchText, StringComparison.OrdinalIgnoreCase));
+
+        if (_currentCursor is not null && Videos.Count > 0 && !Videos.Contains(_currentCursor))
+        {
+            _currentCursor.IsCursor = false;
+            var firstVideo = Videos[0];
+            firstVideo.IsCursor = true;
+            _currentCursor = firstVideo;
+        }
     }
 
     [RelayCommand]
@@ -152,6 +162,7 @@ public partial class ChannelsViewModel : ViewModelBase, IRecipient<VideoDownload
     private void BackToChannelsPressed()
     {
         SelectedVideos.Clear();
+        _currentCursor = null;
         _searchObservable.Dispose();
         SearchText = "";
         CurrentPage = 0;
@@ -506,14 +517,36 @@ public partial class ChannelsViewModel : ViewModelBase, IRecipient<VideoDownload
     }
 
     [RelayCommand]
-    private void Deselect()
+    private void DeselectAll()
     {
-        foreach (var video in SelectedVideos)
+        if (Videos.Count == 0) return;
+
+        foreach (var video in Videos)
         {
+            if (!video.IsChecked) continue;
             video.IsChecked = false;
+            SelectedVideos.Remove(video);
+        }
+    }
+
+    [RelayCommand]
+    private void SelectAll()
+    {
+        if (Videos.Count == 0) return;
+
+        foreach (var video in Videos)
+        {
+            if (video.IsChecked) continue;
+            video.IsChecked = true;
+            SelectedVideos.Add(video);
         }
 
-        SelectedVideos.Clear();
+        if (_currentCursor is null)
+        {
+            var firstVideo = Videos[0];
+            firstVideo.IsCursor = true;
+            _currentCursor = firstVideo;
+        }
     }
 
     [RelayCommand]
@@ -539,13 +572,78 @@ public partial class ChannelsViewModel : ViewModelBase, IRecipient<VideoDownload
     [RelayCommand]
     private void SelectionToggle(Video video)
     {
-        if (video.IsChecked)
+        var isShiftDown = Keyboard.IsKeyDown(Keyboard.Key.SHIFT);
+        var isAltDown = Keyboard.IsKeyDown(Keyboard.Key.ALT);
+
+        if (isShiftDown && !isAltDown)
         {
-            SelectedVideos.Add(video);
+            SelectFromCursor(video);
+        }
+        else if (!isShiftDown && isAltDown)
+        {
+            DeselectFromCursor(video);
         }
         else
         {
-            SelectedVideos.Remove(video);
+            if (video.IsChecked)
+            {
+                SelectedVideos.Add(video);
+            }
+            else
+            {
+                SelectedVideos.Remove(video);
+            }
+        }
+
+        if (_currentCursor == video) return;
+        if (_currentCursor is not null) _currentCursor.IsCursor = false;
+        video.IsCursor = true;
+        _currentCursor = video;
+    }
+
+    private void SelectFromCursor(Video video)
+    {
+        if (_currentCursor is null)
+        {
+            SelectedVideos.Add(video);
+            return;
+        }
+
+        video.IsChecked = !video.IsChecked;
+
+        var prevCursorPos = Videos.IndexOf(_currentCursor);
+        var newCursorPos = Videos.IndexOf(video);
+        var fromInx = Math.Min(prevCursorPos, newCursorPos);
+        var toInx = Math.Max(prevCursorPos, newCursorPos);
+
+        for (var i = fromInx; i <= toInx; i++)
+        {
+            var v = Videos[i];
+            if (v.IsChecked) continue;
+            v.IsChecked = true;
+            SelectedVideos.Add(v);
+        }
+    }
+
+    private void DeselectFromCursor(Video video)
+    {
+        video.IsChecked = !video.IsChecked;
+        if (_currentCursor is null)
+        {
+            return;
+        }
+
+        var prevCursorPos = Videos.IndexOf(_currentCursor);
+        var newCursorPos = Videos.IndexOf(video);
+        var fromInx = Math.Min(prevCursorPos, newCursorPos);
+        var toInx = Math.Max(prevCursorPos, newCursorPos);
+
+        for (var i = fromInx; i <= toInx; i++)
+        {
+            var v = Videos[i];
+            if (!v.IsChecked) continue;
+            v.IsChecked = false;
+            SelectedVideos.Remove(v);
         }
     }
 
