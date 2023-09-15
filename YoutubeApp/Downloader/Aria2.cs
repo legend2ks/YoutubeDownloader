@@ -16,7 +16,7 @@ namespace YoutubeApp.Downloader;
 public class Aria2 : IAria2
 {
     private readonly ILogger<Aria2> _logger;
-    private const string Aria2BinaryPath = @"./utils/aria2c.exe";
+    private const string Aria2BinaryPath = "./utils/aria2c.exe";
     private const string Aria2RpcPort = "6888";
 
     private Process? _ariaProcess;
@@ -30,7 +30,7 @@ public class Aria2 : IAria2
     public bool Run()
     {
         _ariaProcess = new ProcessRunner().StartProcess(Aria2BinaryPath,
-            $"-k 2M -j 64 --allow-overwrite=true --disable-ipv6 --allow-piece-length-change=true --enable-rpc --rpc-listen-port={Aria2RpcPort}");
+            $"-k 1M -j 1 --allow-overwrite=true --disable-ipv6 --allow-piece-length-change=true --enable-rpc --rpc-listen-port={Aria2RpcPort}");
         return _ariaProcess is not null;
     }
 
@@ -104,7 +104,10 @@ public class Aria2 : IAria2
                 { "dir", saveTo },
                 { "out", filename },
                 { "file-allocation", "none" },
-                { "split", singleConnection ? "1" : Settings.MaxConnections.ToString() },
+                {
+                    "split",
+                    singleConnection || Settings.MaxConnections == 1 ? "1" : (Settings.MaxConnections * 2).ToString()
+                },
                 { "max-connection-per-server", singleConnection ? "1" : Settings.MaxConnections.ToString() }
             });
         return returnedGid;
