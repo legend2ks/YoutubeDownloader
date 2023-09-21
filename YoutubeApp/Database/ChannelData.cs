@@ -130,7 +130,7 @@ public class ChannelData
                     Title = video.title,
                     Duration =
                         video.duration != null ? Utils.DurationStringFromSeconds((int)video.duration) : "Not Available",
-                    Timestamp = video.timestamp,
+                    Timestamp = video.timestamp ?? 0,
                 };
                 rowsAffected = _dbConn.Execute(insertVideoStmt, insertVideoParams, transaction);
                 if (rowsAffected != 1) throw new Exception("Unexpected affected rows number.");
