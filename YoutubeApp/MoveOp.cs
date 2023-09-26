@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace YoutubeApp;
 
-public class MoveOp
+public partial class MoveOp
 {
     private enum CopyProgressCallbackReason : uint
     {
@@ -66,10 +66,10 @@ public class MoveOp
         return CopyProgressResult.PROGRESS_CONTINUE;
     }
 
-    [DllImport("kernel32.dll", EntryPoint = "MoveFileWithProgressW", SetLastError = true,
-        CharSet = CharSet.Unicode)]
+    [LibraryImport("kernel32.dll", EntryPoint = "MoveFileWithProgressW", SetLastError = true,
+        StringMarshalling = StringMarshalling.Utf16)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool MoveFileWithProgressW(
+    private static partial bool MoveFileWithProgressW(
         string lpExistingFileName,
         string lpNewFileName,
         CopyProgressRoutine lpProgressRoutine,

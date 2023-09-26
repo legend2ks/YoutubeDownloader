@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -167,21 +166,6 @@ public partial class AddLinkWindowViewModel : ViewModelBase
                 }, (int)MessengerChannel.AddLinkWindow);
                 Reset();
                 return;
-            }
-
-            foreach (var item in videos)
-            {
-                Debug.WriteLine(item);
-            }
-
-            foreach (var item in playlists)
-            {
-                Debug.WriteLine(item);
-            }
-
-            foreach (var (_, item) in videosWithPlaylist)
-            {
-                Debug.WriteLine($"{item.PlaylistId} + {string.Join(", ", item.VideoIds)}");
             }
 
             _videos = videos.Where(x => x.Value == true).Select(x => x.Key).ToList();

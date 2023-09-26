@@ -117,11 +117,11 @@
                 <TextBlock Grid.Row="1" Grid.Column="0" Text="Template:" Margin="0 0 10 0" VerticalAlignment="Center" />
                 <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding FilenameTemplate}" HorizontalAlignment="Stretch" />
                 <TextBlock Grid.Row="1" Grid.Column="2" Text=".*ext*" Margin="4 0 0 0" VerticalAlignment="Center" />
-                <Button Grid.Row="1" Grid.Column="3" Background="Transparent" Margin="8 0 0 0" Command="{Binding ResetFilenameTemplateButtonPressedCommand}"
-                        Padding="5" >
-                   <TextBlock Foreground="DarkKhaki">
-                       <PathIcon Data="{StaticResource undo}" />
-                   </TextBlock>
+                <Button Grid.Row="1" Grid.Column="3" Background="Transparent" Margin="8 0 0 0" Padding="5"
+                        Command="{Binding ResetFilenameTemplateButtonPressedCommand}">
+                    <TextBlock Foreground="DarkKhaki">
+                        <PathIcon Data="{StaticResource undo}" />
+                    </TextBlock>
                 </Button>
             </Grid>
         </HeaderedContentControl>
@@ -144,7 +144,7 @@
                 </ItemsControl>
             </Grid>
         </HeaderedContentControl>
-        
+
         <!-- Concurrent Channel Updates -->
         <HeaderedContentControl Grid.Row="2" Header="Channels" Background="#5fff">
             <Grid ColumnDefinitions="Auto,Auto">
@@ -157,7 +157,8 @@
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <RadioButton Content="{Binding MaxCount}" GroupName="maxChannelUpdates" IsChecked="{Binding Checked}" />
+                            <RadioButton Content="{Binding MaxCount}" GroupName="maxChannelUpdates"
+                                         IsChecked="{Binding Checked}" />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
@@ -168,9 +169,9 @@
         <Grid Grid.Row="3" ColumnDefinitions="*,Auto,Auto" Margin="0 10 0 0">
             <Button Grid.Column="1" Content="Apply" Command="{Binding ApplyButtonClickedCommand}"
                     CommandParameter="{Binding $parent[Window]}" IsEnabled="{Binding ApplyButtonEnabled}" Width="80"
-                    HorizontalContentAlignment="Center" Margin="0,0,6,0" Classes="Primary" />
-            <Button Grid.Column="2" Content="Cancel" Command="{Binding $parent[Window].Close}" Width="80"
-                    HorizontalContentAlignment="Center" />
+                    IsDefault="True" HorizontalContentAlignment="Center" Margin="0,0,6,0" Classes="Primary" />
+            <Button Grid.Column="2" Content="Cancel" Command="{Binding $parent[Window].Close}" IsCancel="True"
+                    Width="80" HorizontalContentAlignment="Center" />
         </Grid>
     </Grid>
 </Window>

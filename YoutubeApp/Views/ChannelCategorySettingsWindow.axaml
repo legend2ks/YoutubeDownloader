@@ -11,7 +11,7 @@
         x:DataType="vm:ChannelCategorySettingsWindowViewModel"
         x:CompileBindings="True"
         d:DataContext="{x:Static local:DesignViewModels.ChannelCategorySettingsWindow}"
-        Title="ChannelCategorySettingsWindow"
+        Title="Change Category"
         Icon="/Assets/app-logo.ico"
         WindowStartupLocation="CenterOwner">
 
@@ -45,9 +45,9 @@
         <Grid Grid.Row="1" Grid.Column="1" ColumnDefinitions="*,Auto,Auto" Margin="10">
             <Button Grid.Column="1" Content="Apply" Command="{Binding ApplyCommand}"
                     CommandParameter="{Binding $parent[Window]}" Width="80" HorizontalContentAlignment="Center"
-                    Margin="0,0,6,0" Classes="Primary" />
+                    IsDefault="True" Margin="0,0,6,0" Classes="Primary" />
             <Button Grid.Column="2" Content="Cancel" Command="{Binding $parent[Window].Close}" Width="80"
-                    HorizontalContentAlignment="Center" />
+                    IsCancel="True" HorizontalContentAlignment="Center" />
         </Grid>
     </Grid>
 </Window>
