@@ -90,7 +90,6 @@ public partial class ChannelsViewModel : ViewModelBase, IRecipient<VideoDownload
 
     private void SearchVideos(EventPattern<PropertyChangedEventArgs> e)
     {
-        Debug.WriteLine($"Search for -> {SearchText}");
         var query = SearchText.Trim();
         if (query == "")
         {
@@ -326,8 +325,9 @@ public partial class ChannelsViewModel : ViewModelBase, IRecipient<VideoDownload
                     {
                         return;
                     }
-                    catch (Exception)
+                    catch (Exception e)
                     {
+                        _logger.LogError(e, "Update failed.");
                         SetUpdateDone(channel, "Update failed.");
                         return;
                     }
@@ -353,8 +353,9 @@ public partial class ChannelsViewModel : ViewModelBase, IRecipient<VideoDownload
                         addedVideoCount =
                             _channelData.UpdateChannel(channel, playlistInfo, prevVideoIds, updateDateTime);
                     }
-                    catch (Exception)
+                    catch (Exception e)
                     {
+                        _logger.LogError(e, "Update failed.");
                         SetUpdateDone(channel, "Update failed.");
                         return;
                     }
@@ -376,8 +377,9 @@ public partial class ChannelsViewModel : ViewModelBase, IRecipient<VideoDownload
                 {
                     return;
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    _logger.LogError(e, "Getting thumbnails failed.");
                     SetUpdateDone(channel, "Getting thumbnails failed.");
                     return;
                 }
@@ -420,7 +422,6 @@ public partial class ChannelsViewModel : ViewModelBase, IRecipient<VideoDownload
             var filePath = Path.Combine(thumbsPath, $"{video.id}.jpg");
             if (File.Exists(filePath)) continue;
 
-            Debug.WriteLine($"DL Thumb -> {i}: {video.id}");
             channel.StatusText = $"Getting Thumbnails... {i}/{playlistInfo.entries.Length}";
             var thumbUrl = video.thumbnails[0].url;
             try
@@ -680,13 +681,6 @@ public partial class ChannelsViewModel : ViewModelBase, IRecipient<VideoDownload
         Process.Start("explorer", $"\"{folderPath}\"");
     }
 
-    public class UpdateChannelJob
-    {
-        public required Channel Channel { get; set; }
-        public bool FullUpdate { get; set; }
-        public PlaylistInfo? PlaylistInfo { get; set; }
-    }
-
     public void Receive(VideoDownloadCompletedMessage message)
     {
         if (CurrentPage != 1) return;
@@ -695,5 +689,12 @@ public partial class ChannelsViewModel : ViewModelBase, IRecipient<VideoDownload
         var video = _allVideos.FirstOrDefault(x => x.VideoId == dl.VideoId);
         if (video is null) return;
         video.FileName = dl.Filename;
+    }
+
+    public class UpdateChannelJob
+    {
+        public required Channel Channel { get; init; }
+        public bool FullUpdate { get; init; }
+        public PlaylistInfo? PlaylistInfo { get; init; }
     }
 }
