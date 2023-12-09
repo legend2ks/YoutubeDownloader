@@ -170,9 +170,7 @@
                                             Command="{Binding UndoButtonPressedCommand}" Padding="4"
                                             HorizontalAlignment="Center" VerticalAlignment="Bottom"
                                             Background="Transparent">
-                                        <TextBlock Foreground="DarkKhaki">
-                                            <PathIcon Data="{StaticResource undo}" />
-                                        </TextBlock>
+                                        <PathIcon Data="{StaticResource undo}" Foreground="DarkKhaki" />
                                     </Button>
                                 </Grid>
                             </Border>

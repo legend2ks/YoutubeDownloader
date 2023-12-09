@@ -10,7 +10,7 @@
              x:DataType="vm:ChannelsViewModel"
              d:DataContext="{x:Static local:DesignViewModels.ChannelsView}">
 
-    <Grid RowDefinitions="Auto,Auto,*">
+    <Grid RowDefinitions="Auto,*">
         <!-- Videos Toolbar -->
         <Grid Grid.Row="0" Height="38" Background="#1976d2" IsSharedSizeScope="True">
             <Grid.ColumnDefinitions>
@@ -68,16 +68,9 @@
                 </Button>
             </Panel>
         </Grid>
-        <Grid Grid.Row="1" ColumnDefinitions="Auto,*,Auto">
-            <TextBlock Grid.Column="0" Text="{Binding SelectedChannel.Title}" FontSize="16" VerticalAlignment="Center"
-                       Padding="16 10" Foreground="#afff" />
-            <TextBlock Grid.Column="2" Text="{Binding SelectedVideos.Count,StringFormat={}{0} Selected}"
-                       IsVisible="{Binding SelectedVideos.Count}" FontSize="15" VerticalAlignment="Center"
-                       Margin="0 0 8 0" />
-        </Grid>
 
-        <ScrollViewer Grid.Row="2" Offset="{Binding VideosScrollOffset, Mode=TwoWay}">
-            <ItemsRepeater ItemsSource="{Binding Videos}" Margin="0 0 0 8" HorizontalAlignment="Center">
+        <ScrollViewer Grid.Row="1" Offset="{Binding VideosScrollOffset, Mode=TwoWay}">
+            <ItemsRepeater ItemsSource="{Binding Videos}" Margin="0 8 0 8" HorizontalAlignment="Center">
                 <ItemsRepeater.Layout>
                     <UniformGridLayout />
                 </ItemsRepeater.Layout>
@@ -85,15 +78,14 @@
                 <ItemsRepeater.Styles>
                     <Styles>
                         <Style Selector="Button.watched  /template/ ContentPresenter">
-                            <Setter Property="Content" Value="WATCHED" />
-                            <Setter Property="Background" Value="DarkRed" />
-                            <Setter Property="BorderBrush" Value="#afff" />
+                            <Setter Property="Background" Value="#5E35B1" />
+                            <Setter Property="BorderBrush" Value="#7E57C2" />
                         </Style>
                         <Style Selector="Button.watched:pointerover /template/ ContentPresenter">
-                            <Setter Property="Background" Value="#780000" />
+                            <Setter Property="Background" Value="#512DA8" />
                         </Style>
                         <Style Selector="Button.watched:pressed /template/ ContentPresenter">
-                            <Setter Property="Background" Value="#9c0000" />
+                            <Setter Property="Background" Value="#673AB7" />
                         </Style>
                         <Style Selector="Button.playBtn" />
                         <Style Selector="Button.playBtn Path">
@@ -128,15 +120,13 @@
                                                 BorderThickness="{TemplateBinding BorderThickness}"
                                                 CornerRadius="{TemplateBinding CornerRadius}" />
 
-                                        <Grid VerticalAlignment="Top" Margin="4">
+                                        <Grid VerticalAlignment="Top" Margin="3">
                                             <Border x:Name="NormalRectangle"
                                                     BorderBrush="{DynamicResource CheckBoxCheckBackgroundStrokeUnchecked}"
                                                     Background="{DynamicResource CheckBoxCheckBackgroundFillUnchecked}"
                                                     BorderThickness="{DynamicResource CheckBoxBorderThemeThickness}"
                                                     CornerRadius="{TemplateBinding CornerRadius}"
-                                                    UseLayoutRounding="False"
-                                                    Height="34"
-                                                    Width="34" />
+                                                    UseLayoutRounding="False" Width="34" Height="34" />
 
                                             <Viewbox UseLayoutRounding="False">
                                                 <Panel>
@@ -162,37 +152,45 @@
 
                 <ItemsRepeater.ItemTemplate>
                     <DataTemplate DataType="models:Video">
-                        <Border Width="200" Margin="8" BorderThickness="2"
+                        <Border Width="200" Margin="8" BorderThickness="0" CornerRadius="10"
                                 Classes.Downloaded="{Binding IsDownloaded}"
                                 Classes.NotDownloaded="{Binding !IsDownloaded}">
                             <StackPanel>
-                                <Panel>
-                                    <Rectangle Fill="SlateGray" />
-                                    <PathIcon Data="{StaticResource no_image}" Width="50" Height="50"
-                                              Foreground="#4fff" />
-                                    <Image Height="109" Source="{Binding Thumbnail}" />
-                                    <Panel IsVisible="{Binding IsCursor}" HorizontalAlignment="Right"
-                                           VerticalAlignment="Top" Margin="1">
-                                        <Rectangle Stroke="White" Width="40" Height="40" StrokeThickness="3"
-                                                   StrokeDashArray="2" StrokeLineCap="Square" />
-                                        <Rectangle Stroke="Black" Width="40" Height="40" StrokeThickness="3"
-                                                   StrokeDashArray="2" StrokeDashOffset="2" />
+                                <Border CornerRadius="10 10 0 0" ClipToBounds="True">
+                                    <Panel>
+                                        <Rectangle Fill="SlateGray" />
+                                        <PathIcon Data="{StaticResource no_image}" Width="50" Height="50"
+                                                  Foreground="#4fff" />
+                                        <Image Height="111" Source="{Binding Thumbnail}" />
+                                        <Panel IsVisible="{Binding IsCursor}" HorizontalAlignment="Right"
+                                               VerticalAlignment="Top" Margin="0">
+                                            <Rectangle Stroke="White" Width="40" Height="40" StrokeThickness="3"
+                                                       StrokeDashArray="2" StrokeLineCap="Square" RadiusX="10"
+                                                       RadiusY="10" />
+                                            <Rectangle Stroke="Black" Width="40" Height="40" StrokeThickness="3"
+                                                       StrokeDashArray="2" StrokeDashOffset="2" RadiusX="10"
+                                                       RadiusY="10" />
+                                        </Panel>
+                                        <CheckBox IsChecked="{Binding IsChecked}" HorizontalAlignment="Right"
+                                                  CornerRadius="9"
+                                                  Command="{Binding $parent[UserControl].((vm:ChannelsViewModel)DataContext).SelectionToggleCommand}"
+                                                  CommandParameter="{Binding}" VerticalAlignment="Top" />
+                                        <Border VerticalAlignment="Bottom" HorizontalAlignment="Right"
+                                                CornerRadius="4 0 0 0" Background="#9000">
+                                            <TextBlock Text="{Binding Duration}" Padding="4 1" />
+                                        </Border>
+                                        <Button VerticalAlignment="Top" HorizontalAlignment="Left" Background="#2000"
+                                                Command="{Binding $parent[UserControl].((vm:ChannelsViewModel)DataContext).WatchButtonPressedCommand}"
+                                                CommandParameter="{Binding}" Padding="6 2" CornerRadius="10 0 10 0"
+                                                BorderThickness="1" Classes.watched="{Binding Watched}"
+                                                Classes.notwatched="{Binding !Watched}">
+                                            <StackPanel Orientation="Horizontal" Spacing="5">
+                                                <PathIcon Data="{StaticResource eye}" />
+                                                <TextBlock Text="WATCHED" IsVisible="{Binding Watched}" />
+                                            </StackPanel>
+                                        </Button>
                                     </Panel>
-                                    <CheckBox IsChecked="{Binding IsChecked}" HorizontalAlignment="Right"
-                                              Command="{Binding $parent[UserControl].((vm:ChannelsViewModel)DataContext).SelectionToggleCommand}"
-                                              CommandParameter="{Binding}" VerticalAlignment="Top"/>
-                                    <TextBlock Text="{Binding Duration}" Background="#9000" Padding="4 2"
-                                               VerticalAlignment="Bottom" HorizontalAlignment="Right" />
-                                    <Button
-                                        Command="{Binding $parent[UserControl].((vm:ChannelsViewModel)DataContext).WatchButtonPressedCommand}"
-                                        CommandParameter="{Binding}" Padding="4 2" CornerRadius="0"
-                                        VerticalAlignment="Top" HorizontalAlignment="Left" Background="#2000"
-                                        Classes.watched="{Binding Watched}" Classes.notwatched="{Binding !Watched}">
-                                        <StackPanel Orientation="Horizontal">
-                                            <PathIcon Data="{StaticResource eye}" />
-                                        </StackPanel>
-                                    </Button>
-                                </Panel>
+                                </Border>
                                 <StackPanel>
                                     <Panel>
                                         <Button HorizontalAlignment="Center" Classes="playBtn" VerticalAlignment="Top"
@@ -238,5 +236,16 @@
                 </ItemsRepeater.ItemTemplate>
             </ItemsRepeater>
         </ScrollViewer>
+
+        <Grid Grid.Row="1" ColumnDefinitions="Auto,*,Auto" VerticalAlignment="Top">
+            <Border Grid.Column="0" Background="#333" CornerRadius="0 0 8 0">
+                <TextBlock Text="{Binding SelectedChannel.Title}" FontSize="16"
+                           Padding="7 2" Foreground="#cfff" />
+            </Border>
+            <Border Grid.Column="2" Background="#333" CornerRadius="0 0 0 8">
+                <TextBlock Text="{Binding SelectedVideos.Count,StringFormat={}{0} Selected}" FontSize="15"
+                           Padding="7 2" Foreground="#cfff" IsVisible="{Binding SelectedVideos.Count}" />
+            </Border>
+        </Grid>
     </Grid>
 </UserControl>

@@ -70,4 +70,9 @@
             </LinearGradientBrush>
         </Setter>
     </Style>
+    
+    <!-- PathIcon:Disabled -->
+    <Style Selector="PathIcon:disabled">
+        <Setter Property="Foreground" Value="#6fff"/>
+    </Style>
 </Styles>

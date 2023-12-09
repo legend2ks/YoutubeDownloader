@@ -85,7 +85,7 @@
                                             <Grid RowDefinitions="Auto, Auto" Margin="8">
                                                 <Button Grid.Row="0" IsEnabled="{Binding !Updating}"
                                                         Command="{Binding $parent[UserControl].((vm:ChannelsViewModel)DataContext).ChannelPressedCommand}"
-                                                        CommandParameter="{Binding}" Width="300" Padding="10"
+                                                        CommandParameter="{Binding}" Width="300" Padding="10 7"
                                                         BorderThickness="0" Background="#282e33"
                                                         CornerRadius="10 10 0 0">
                                                     <StackPanel>
@@ -93,8 +93,9 @@
                                                         <Grid ColumnDefinitions="*,10,Auto" Margin="0 6 0 4">
                                                             <TextBlock Grid.Column="0" Classes="secondary"
                                                                        Text="{Binding VideoCount, StringFormat={}{0} Video(s)}" />
+                                                            <TextBlock Grid.Column="2" Classes="secondary"
+                                                                       Text="{Binding LastUpdate}" />
                                                         </Grid>
-                                                        <TextBlock Text="{Binding LastUpdate}" Classes="secondary" />
                                                     </StackPanel>
                                                 </Button>
                                                 <Border Grid.Row="1" Background="#282e33" Padding="2"

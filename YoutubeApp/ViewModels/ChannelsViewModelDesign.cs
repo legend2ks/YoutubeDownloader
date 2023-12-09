@@ -52,6 +52,7 @@ public class ChannelsViewModelDesign : ChannelsViewModel
                 Parent = 0,
             },
         };
+        SelectedChannel = new Channel { Title = "Channel Title" };
         Videos = Enumerable.Range(0, 30).Select(x => new Video
         {
             Id = x,
