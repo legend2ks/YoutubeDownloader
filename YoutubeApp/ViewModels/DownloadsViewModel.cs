@@ -12,7 +12,6 @@ using Avalonia.Controls.Selection;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using DynamicData.Binding;
 using MessageBox.Avalonia.Enums;
 using Microsoft.Extensions.Logging;
 using YoutubeApp.Database;
@@ -94,7 +93,7 @@ public partial class DownloadsViewModel : ViewModelBase, IRecipient<ChannelDelet
 
     public SelectionModel<Download> Selection { get; init; }
 
-    [ObservableProperty] private ObservableCollectionExtended<Download> _downloads = new();
+    [ObservableProperty] private ObservableCollection<Download> _downloads = new();
 
     private int _removeBlockerCount;
     private int _refreshBlockerCount;
@@ -363,28 +362,25 @@ public partial class DownloadsViewModel : ViewModelBase, IRecipient<ChannelDelet
         var tempIndex = 0;
 
         _movingItems = true;
-        using (Downloads.SuspendNotifications())
+        for (var i = 0; i < selectedDownloadsIndexes.Count; i++)
         {
-            for (var i = 0; i < selectedDownloadsIndexes.Count; i++)
+            if (temp is null)
             {
-                if (temp is null)
-                {
-                    temp = Downloads[selectedDownloadsIndexes[i] - 1];
-                    tempIndex = selectedDownloadsIndexes[i] - 1;
-                }
-
-                Downloads[selectedDownloadsIndexes[i] - 1] = Downloads[selectedDownloadsIndexes[i]];
-                Downloads[selectedDownloadsIndexes[i] - 1].Priority -= 1;
-                changes.Add((Downloads[selectedDownloadsIndexes[i] - 1].Id, -1));
-
-                if (i != selectedDownloadsIndexes.Count - 1
-                    && selectedDownloadsIndexes[i + 1] - selectedDownloadsIndexes[i] <= 1) continue;
-                Downloads[selectedDownloadsIndexes[i]] = temp;
-                var priorityChange = selectedDownloadsIndexes[i] - tempIndex;
-                temp.Priority += priorityChange;
-                changes.Add((temp.Id, priorityChange));
-                temp = null;
+                temp = Downloads[selectedDownloadsIndexes[i] - 1];
+                tempIndex = selectedDownloadsIndexes[i] - 1;
             }
+
+            Downloads[selectedDownloadsIndexes[i] - 1] = Downloads[selectedDownloadsIndexes[i]];
+            Downloads[selectedDownloadsIndexes[i] - 1].Priority -= 1;
+            changes.Add((Downloads[selectedDownloadsIndexes[i] - 1].Id, -1));
+
+            if (i != selectedDownloadsIndexes.Count - 1
+                && selectedDownloadsIndexes[i + 1] - selectedDownloadsIndexes[i] <= 1) continue;
+            Downloads[selectedDownloadsIndexes[i]] = temp;
+            var priorityChange = selectedDownloadsIndexes[i] - tempIndex;
+            temp.Priority += priorityChange;
+            changes.Add((temp.Id, priorityChange));
+            temp = null;
         }
 
         foreach (var i in selectedDownloadsIndexes)
@@ -409,28 +405,25 @@ public partial class DownloadsViewModel : ViewModelBase, IRecipient<ChannelDelet
         var tempIndex = 0;
 
         _movingItems = true;
-        using (Downloads.SuspendNotifications())
+        for (var i = selectedDownloadsIndexes.Count - 1; i >= 0; i--)
         {
-            for (var i = selectedDownloadsIndexes.Count - 1; i >= 0; i--)
+            if (temp is null)
             {
-                if (temp is null)
-                {
-                    temp = Downloads[selectedDownloadsIndexes[i] + 1];
-                    tempIndex = selectedDownloadsIndexes[i] + 1;
-                }
-
-                Downloads[selectedDownloadsIndexes[i] + 1] = Downloads[selectedDownloadsIndexes[i]];
-                Downloads[selectedDownloadsIndexes[i] + 1].Priority += 1;
-                changes.Add((Downloads[selectedDownloadsIndexes[i] + 1].Id, 1));
-
-                if (i != 0
-                    && selectedDownloadsIndexes[i] - selectedDownloadsIndexes[i - 1] <= 1) continue;
-                Downloads[selectedDownloadsIndexes[i]] = temp;
-                var priorityChange = selectedDownloadsIndexes[i] - tempIndex;
-                temp.Priority += priorityChange;
-                changes.Add((temp.Id, priorityChange));
-                temp = null;
+                temp = Downloads[selectedDownloadsIndexes[i] + 1];
+                tempIndex = selectedDownloadsIndexes[i] + 1;
             }
+
+            Downloads[selectedDownloadsIndexes[i] + 1] = Downloads[selectedDownloadsIndexes[i]];
+            Downloads[selectedDownloadsIndexes[i] + 1].Priority += 1;
+            changes.Add((Downloads[selectedDownloadsIndexes[i] + 1].Id, 1));
+
+            if (i != 0
+                && selectedDownloadsIndexes[i] - selectedDownloadsIndexes[i - 1] <= 1) continue;
+            Downloads[selectedDownloadsIndexes[i]] = temp;
+            var priorityChange = selectedDownloadsIndexes[i] - tempIndex;
+            temp.Priority += priorityChange;
+            changes.Add((temp.Id, priorityChange));
+            temp = null;
         }
 
         foreach (var i in selectedDownloadsIndexes)
