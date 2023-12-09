@@ -92,7 +92,7 @@ public partial class DownloadsViewModel : ViewModelBase, IRecipient<ChannelDelet
 
     [ObservableProperty] private ObservableCollection<Download> _selectedDownloads = new();
 
-    public SelectionModel<Download> Selection { get; }
+    public SelectionModel<Download> Selection { get; init; }
 
     [ObservableProperty] private ObservableCollectionExtended<Download> _downloads = new();
 
@@ -195,13 +195,17 @@ public partial class DownloadsViewModel : ViewModelBase, IRecipient<ChannelDelet
 
 
     [RelayCommand]
-    private async Task RemoveButtonPressedAsync()
+    private async Task RemoveAsync()
     {
+        var activeTabIndex = _messenger.Send(new GetActiveTabIndexMessage()).Response;
+        if (activeTabIndex != 0) return;
+
         var selectedIndexes = Selection.SelectedIndexes.ToArray();
+        var selectedItems = Selection.SelectedItems.ToArray();
 
         var temporaryDisabledDownloads = new List<Download>();
 
-        foreach (var dl in Selection.SelectedItems.ToArray())
+        foreach (var dl in selectedItems)
         {
             if (!dl!.Enabled) continue;
             dl.Enabled = false;
@@ -227,12 +231,112 @@ public partial class DownloadsViewModel : ViewModelBase, IRecipient<ChannelDelet
             return;
         }
 
-        _downloaderUtils.DeleteTempFiles(Selection.SelectedItems!);
-        if (result.IsChecked) _downloaderUtils.DeleteCompletedFiles(Selection.SelectedItems);
-        _downloadData.RemoveDownloads(Selection.SelectedItems!);
+        _downloaderUtils.DeleteTempFiles(selectedItems!);
+        if (result.IsChecked) _downloaderUtils.DeleteCompletedFiles(selectedItems);
+        _downloadData.RemoveDownloads(selectedItems!);
 
         var deletedCount = 0;
         foreach (var index in selectedIndexes)
+        {
+            Downloads.RemoveAt(index - deletedCount);
+            deletedCount++;
+        }
+
+        var i = 1;
+        foreach (var dl in Downloads)
+        {
+            dl.Priority = i;
+            i++;
+        }
+    }
+
+    [RelayCommand]
+    private async Task RemoveCompletedAsync()
+    {
+        var completedIndexes = new List<int>();
+        var completedItems = new List<Download>();
+
+        var idx = 0;
+        foreach (var dl in Downloads)
+        {
+            if (dl.Completed)
+            {
+                completedIndexes.Add(idx);
+                completedItems.Add(dl);
+            }
+
+            idx++;
+        }
+
+        if (completedItems.Count == 0) return;
+
+        var result = await _messenger.Send(new ShowMessageBoxCheckboxMessage
+        {
+            Title = "Remove completed download(s)",
+            Message = $"Are you sure you want to remove the {completedItems.Count} completed download(s)?",
+            CheckboxText = "Also permanently delete the files",
+            ButtonDefinitions = ButtonEnum.YesNo,
+            Icon = Icon.Question,
+        });
+
+        if (result.Button != ButtonResult.Yes) return;
+
+        if (result.IsChecked) _downloaderUtils.DeleteCompletedFiles(completedItems);
+        _downloadData.RemoveDownloads(completedItems);
+
+        var deletedCount = 0;
+        foreach (var index in completedIndexes)
+        {
+            Downloads.RemoveAt(index - deletedCount);
+            deletedCount++;
+        }
+
+        var i = 1;
+        foreach (var dl in Downloads)
+        {
+            dl.Priority = i;
+            i++;
+        }
+    }
+
+    [RelayCommand]
+    private async Task RemoveCompletedFilelessAsync()
+    {
+        var completedIndexes = new List<int>();
+        var completedItems = new List<Download>();
+
+        var idx = 0;
+        foreach (var dl in Downloads)
+        {
+            if (dl.Completed)
+            {
+                var filepath = Path.Combine(dl.SaveTo, dl.Filename);
+                if (!File.Exists(filepath))
+                {
+                    completedIndexes.Add(idx);
+                    completedItems.Add(dl);
+                }
+            }
+
+            idx++;
+        }
+
+        if (completedItems.Count == 0) return;
+
+        var result = await _messenger.Send(new ShowMessageBoxMessage
+        {
+            Title = "Remove completed fileless download(s)",
+            Message = $"Are you sure you want to remove the {completedItems.Count} completed fileless download(s)?",
+            ButtonDefinitions = ButtonEnum.YesNo,
+            Icon = Icon.Question,
+        });
+
+        if (result != ButtonResult.Yes) return;
+
+        _downloadData.RemoveDownloads(completedItems);
+
+        var deletedCount = 0;
+        foreach (var index in completedIndexes)
         {
             Downloads.RemoveAt(index - deletedCount);
             deletedCount++;

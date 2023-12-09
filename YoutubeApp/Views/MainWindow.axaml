@@ -35,7 +35,7 @@
 
     <Panel VerticalAlignment="Stretch">
         <!--Tab Bar-->
-        <TabControl>
+        <TabControl Name="Tabs">
             <TabItem Header="Downloads">
                 <views:DownloadsView />
             </TabItem>

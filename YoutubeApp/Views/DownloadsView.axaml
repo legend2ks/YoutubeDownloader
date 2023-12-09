@@ -22,7 +22,6 @@
                 <Styles>
                     <Style Selector="Button">
                         <Setter Property="Background" Value="Transparent" />
-                        <Setter Property="FontSize" Value="20" />
                     </Style>
                     <Style Selector="Button:disabled /template/ ContentPresenter">
                         <Setter Property="Background" Value="Transparent" />
@@ -58,11 +57,26 @@
                     Command="{Binding MoveDownButtonClickedCommand}">
                 <PathIcon Data="{StaticResource arrow_down}" />
             </Button>
-            <Button Grid.Column="7" ToolTip.Tip="Remove" IsEnabled="{Binding RemoveButtonEnabled}"
-                    Margin="0,0,5,0" HotKey="Delete"
-                    Command="{Binding RemoveButtonPressedCommand}">
-                <PathIcon Data="{StaticResource delete_outlined}" />
-            </Button>
+            <StackPanel Grid.Column="7" Orientation="Horizontal">
+                <Button Name="RemoveButton" ToolTip.Tip="Remove" CornerRadius="3 0 0 3"
+                        IsEnabled="{Binding RemoveButtonEnabled}"
+                        Command="{Binding RemoveCommand}">
+                    <PathIcon Data="{StaticResource delete_outlined}" />
+                </Button>
+                <Button ToolTip.Tip="Remove" Margin="0,0,5,0" CornerRadius="0 3 3 0">
+                    <Border Height="{DynamicResource IconElementThemeHeight}">
+                        <PathIcon Height="12" Width="12"
+                                  Data="M1939 486L2029 576L1024 1581L19 576L109 486L1024 1401L1939 486Z" />
+                    </Border>
+                    <Button.Flyout>
+                        <MenuFlyout>
+                            <MenuItem Header="Completed download(s)"
+                                      Command="{Binding RemoveCompletedCommand}" />
+                            <MenuItem Header="Completed fileless download(s)" Command="{Binding RemoveCompletedFilelessCommand}"/>
+                        </MenuFlyout>
+                    </Button.Flyout>
+                </Button>
+            </StackPanel>
         </Grid>
 
         <!--Downloads List-->
@@ -222,7 +236,7 @@
                                           Command="{Binding $parent[UserControl].((vm:DownloadsViewModel)DataContext).MenuDisablePressedCommand}" />
                                 <Separator />
                                 <MenuItem Header="Remove"
-                                          Command="{Binding $parent[UserControl].((vm:DownloadsViewModel)DataContext).RemoveButtonPressedCommand}"
+                                          Command="{Binding $parent[UserControl].((vm:DownloadsViewModel)DataContext).RemoveCommand}"
                                           IsEnabled="{Binding $parent[UserControl].((vm:DownloadsViewModel)DataContext).RemoveButtonEnabled}" />
                             </ContextMenu>
                         </Setter>

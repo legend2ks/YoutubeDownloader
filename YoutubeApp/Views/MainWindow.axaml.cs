@@ -23,7 +23,7 @@ public partial class MainWindow : Window, IRecipient<GrabberListCloseMessage>, I
     IRecipient<ShowChooseFormatWindowMessage>, IRecipient<ShowColumnsWindowMessage>,
     IRecipient<ShowMessageBoxCheckboxMessage>, IRecipient<ShowLogWindowMessage>, IRecipient<OpenFolderPickerMessage>,
     IRecipient<SetClipboardTextMessage>, IRecipient<ShowAddChannelWindowMessage>,
-    IRecipient<ShowMoveChannelWindowMessage>
+    IRecipient<ShowMoveChannelWindowMessage>, IRecipient<GetActiveTabIndexMessage>
 {
     public MainWindow()
     {
@@ -216,5 +216,10 @@ public partial class MainWindow : Window, IRecipient<GrabberListCloseMessage>, I
         };
         var result = moveChannelWindow.ShowDialog<bool>(this);
         message.Reply(result);
+    }
+
+    public void Receive(GetActiveTabIndexMessage message)
+    {
+        message.Reply(Tabs.SelectedIndex);
     }
 }

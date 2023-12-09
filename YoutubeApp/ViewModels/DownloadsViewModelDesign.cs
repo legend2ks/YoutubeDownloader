@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
+using Avalonia.Controls.Selection;
 using DynamicData.Binding;
 using YoutubeApp.Media;
 using YoutubeApp.Models;
@@ -13,6 +14,11 @@ class DownloadsViewModelDesign : DownloadsViewModel
         GridConfig = Settings.ColumnsConfig;
         var columnsSorted = GridConfig.OrderBy(x => x.Value.Order).Select(x => x.Value);
         ColumnOrdered = new ObservableCollection<ColumnConfig>(columnsSorted);
+
+        Selection = new SelectionModel<Download>
+        {
+            SingleSelect = false
+        };
 
         Downloads = new ObservableCollectionExtended<Download>()
         {

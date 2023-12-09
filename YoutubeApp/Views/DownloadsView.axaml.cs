@@ -1,4 +1,5 @@
 ﻿using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Microsoft.Extensions.DependencyInjection;
 using YoutubeApp.ViewModels;
@@ -12,6 +13,8 @@ public partial class DownloadsView : UserControl
         InitializeComponent();
         if (!Design.IsDesignMode)
             DataContext = App.Host.Services.GetRequiredService<DownloadsViewModel>();
+
+        HotKeyManager.SetHotKey(RemoveButton, new KeyGesture(Key.Delete));
     }
 
     private void HeaderOnScrollChanged(object? sender, ScrollChangedEventArgs e)
