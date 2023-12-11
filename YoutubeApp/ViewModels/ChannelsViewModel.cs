@@ -350,8 +350,8 @@ public partial class ChannelsViewModel : ViewModelBase, IRecipient<VideoDownload
                     int addedVideoCount;
                     try
                     {
-                        addedVideoCount =
-                            _channelData.UpdateChannel(channel, playlistInfo, prevVideoIds, updateDateTime);
+                        addedVideoCount = Dispatcher.UIThread.Invoke(() =>
+                            _channelData.UpdateChannel(channel, playlistInfo, prevVideoIds, updateDateTime));
                     }
                     catch (Exception e)
                     {
