@@ -4,7 +4,7 @@
 [![Chat](https://img.shields.io/badge/Chat-on%20Telegram-blue)](https://t.me/+5Kma9lxB0z40Y2M0)
 [![Release](https://img.shields.io/github/v/release/legend2ks/YoutubeDownloader?label=Release&color=2ea043)](https://github.com/legend2ks/YoutubeDownloader/releases)
 [![Downloads](https://img.shields.io/github/downloads/legend2ks/YoutubeDownloader/total?label=Downloads&color=2ea043)](https://github.com/legend2ks/YoutubeDownloader/releases)
-[![Donate](https://img.shields.io/badge/_-Donate-red.svg?logo=undertale&logoColor=ff3333&labelColor=ffcccc&color=ff3333)](https://github.com/legend2ks/YoutubeDownloader/#-support)
+[![Donate](https://img.shields.io/badge/_-Donate-red.svg?logo=undertale&logoColor=ff3333&labelColor=ffcccc&color=ff3333)](DONATE.md)
 </div>
 
 An open-source YouTube video downloader that allows you to easily download videos from YouTube in all available original qualities. It uses yt-dlp, ffmpeg and aria2 under the hood.
@@ -25,14 +25,13 @@ An open-source YouTube video downloader that allows you to easily download video
   <img src="https://github.com/legend2ks/YoutubeDownloader/assets/16824470/b4c253f9-f2d8-41c6-a995-245dff6ebed2" height="170" />
 </div>
 
-
-
 ## Installing
 
 #### Requirements:
 
 - Microsoft Windows 7+ (x64)
-- [.NET 7.0 Desktop Runtime](https://aka.ms/dotnet-core-applaunch?arch=x64&rid=win-x64&apphost_version=7.0.10&gui=true)
+- [.NET 8.0 Desktop Runtime](https://aka.ms/dotnet-core-applaunch?framework=Microsoft.NETCore.App&framework_version=8.0.0&arch=x64&rid=win-x64&gui=true)
+
 
 [Releases](https://github.com/legend2ks/YoutubeDownloader/releases)
 
@@ -49,10 +48,8 @@ An open-source YouTube video downloader that allows you to easily download video
 
 This project is free and open source, if you like my work, please consider:
 * Star this project on GitHub
-* Donate
-<h6>BTC: bc1qvmgasywc8w70nc5ph3vkz5sq55mlnzv5ghce3c<br />
-ETH: 0x1d5F0723591087F19f6336255Fa45bDfAe4c0390<br />
-BCH: qrgc9audu8quq2qyh35dxuaf0eupvlr23qs4alprws</h6>
+* [Donate](DONATE.md)
+
 Your support helps keep the project going.
 
 ## Tech Stack
