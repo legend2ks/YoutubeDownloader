@@ -18,11 +18,11 @@ An open-source YouTube video downloader that allows you to easily download video
 
 ### Screenshots
 
-<img src="https://github.com/legend2ks/YoutubeDownloader/assets/16824470/2e600160-88d4-49f1-af54-f2c47000f87d" />
+<img src="https://github.com/legend2ks/YoutubeDownloader/assets/16824470/bc5afcad-1d5a-48fb-a727-49c95f068de5" />
 <div align="center">
   <img src="https://github.com/legend2ks/YoutubeDownloader/assets/16824470/a464935d-3b5e-47cc-bf83-37195f2c8e9c" height="170" />
   <img src="https://github.com/legend2ks/YoutubeDownloader/assets/16824470/52958fb7-09ce-4921-a571-4291aee4aa47" height="170" />
-  <img src="https://github.com/legend2ks/YoutubeDownloader/assets/16824470/b4c253f9-f2d8-41c6-a995-245dff6ebed2" height="170" />
+  <img src="https://github.com/legend2ks/YoutubeDownloader/assets/16824470/62379871-0d96-49cd-b61f-54058befa7d2" height="170" />
 </div>
 
 ## Installing
