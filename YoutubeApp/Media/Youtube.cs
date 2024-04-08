@@ -78,8 +78,8 @@ public class Youtube
                     }
 
                     var formats = ProcessFormats(videoInfo.formats);
-
                     var variants = GenerateVariants(videoInfo.formats);
+                    var chapters = ProcessChapters(videoInfo.chapters);
 
                     var bestVariant = variants[0];
                     var vformat = formats[bestVariant.VFormatId];
@@ -138,6 +138,7 @@ public class Youtube
                         Container = container,
                         Variants = variants,
                         Formats = formats,
+                        Chapters = chapters,
                         Duration = videoInfo.duration_string,
                         Filename = filename,
                         SaveTo = job.SavePath,
@@ -293,6 +294,7 @@ public class Youtube
         dl.RefreshCancellationTokenSource = new CancellationTokenSource();
         Dictionary<string, Format> formats;
         List<Variant> variants;
+        List<Chapter>? chapters;
         SelectedVariant? selectedVariant = null;
 
         var retriesLeft = 3;
@@ -322,8 +324,8 @@ public class Youtube
             }
 
             formats = ProcessFormats(videoInfo.formats);
-
             variants = GenerateVariants(videoInfo.formats);
+            chapters = ProcessChapters(videoInfo.chapters);
 
             // Find currently selected variant
             var prevVideoFormatId = dl.SelectedVariant.VFormatItagNoDash;
@@ -437,7 +439,7 @@ public class Youtube
         var uploadDate = videoInfo.upload_date.Insert(4, "-").Insert(7, "-");
 
         // Save to Database
-        _downloadData.UpdateDownload(dl.Id, videoInfo.title, selectedVariant, variants, formats,
+        _downloadData.UpdateDownload(dl.Id, videoInfo.title, selectedVariant, variants, formats, chapters,
             videoInfo.duration_string,
             selectedVariant.Id != -1 ? variants[selectedVariant.Id].Filesize : dl.Filesize, videoInfo.channel_id,
             videoInfo.channel, uploadDate, dl.Enabled);
@@ -446,6 +448,7 @@ public class Youtube
         dl.Title = videoInfo.title;
         dl.Variants = variants;
         dl.Formats = formats;
+        dl.Chapters = chapters;
         _downloaderUtils.DeleteUselessFiles(dl, selectedVariant);
         dl.ChangeSelectedVariant(selectedVariant);
         dl.Duration = videoInfo.duration_string;
@@ -623,6 +626,26 @@ public class Youtube
         }
 
         return formats;
+    }
+
+    private static List<Chapter>? ProcessChapters(VideoInfoChapter[]? infoChapters)
+    {
+        if (infoChapters is null) return null;
+
+        var chapters = new List<Chapter>();
+        foreach (var chapter in infoChapters)
+        {
+            if (string.IsNullOrEmpty(chapter.title) || chapter.start_time < 0 || chapter.end_time < 0)
+                continue;
+            chapters.Add(new Chapter
+            {
+                Title = chapter.title,
+                StartTime = chapter.start_time,
+                EndTime = chapter.end_time,
+            });
+        }
+
+        return chapters.Count == 0 ? null : chapters;
     }
 
     /// <summary>

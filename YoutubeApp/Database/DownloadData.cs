@@ -32,8 +32,8 @@ public class DownloadData
     {
         const string stmt = @"
                 INSERT INTO 
-                Downloads (VideoId, Title, SelectedVariant, Uuid, ChannelId, Container, Variants, Formats, Duration, Filename, SaveTo, ChannelTitle, UploadDate, Filesize, BytesLoaded, Priority)
-                VALUES (@VideoId, @Title, @SelectedVariant, @Uuid, @ChannelId, @Container, @Variants, @Formats, @Duration, @Filename, @SaveTo, @ChannelTitle, @UploadDate, @Filesize, @BytesLoaded, (SELECT COUNT(*)+1 FROM Downloads))
+                Downloads (VideoId, Title, SelectedVariant, Uuid, ChannelId, Container, Variants, Formats, Chapters, Duration, Filename, SaveTo, ChannelTitle, UploadDate, Filesize, BytesLoaded, Priority)
+                VALUES (@VideoId, @Title, @SelectedVariant, @Uuid, @ChannelId, @Container, @Variants, @Formats, @Chapters, @Duration, @Filename, @SaveTo, @ChannelTitle, @UploadDate, @Filesize, @BytesLoaded, (SELECT COUNT(*)+1 FROM Downloads))
                 RETURNING Id, Priority";
 
         var parameters = new
@@ -46,6 +46,7 @@ public class DownloadData
             dl.Container,
             Variants = JsonSerializer.Serialize(dl.Variants),
             Formats = JsonSerializer.Serialize(dl.Formats),
+            Chapters = dl.Chapters is not null ? JsonSerializer.Serialize(dl.Chapters) : null,
             dl.Duration,
             dl.Filename,
             dl.SaveTo,
@@ -67,6 +68,7 @@ public class DownloadData
         SelectedVariant selectedVariant,
         List<Variant> variants,
         Dictionary<string, Format> formats,
+        List<Chapter>? chapters,
         string duration,
         long filesize,
         string channelId,
@@ -81,6 +83,7 @@ public class DownloadData
                 SelectedVariant = @SelectedVariant,
                 Variants = @Variants, 
                 Formats = @Formats, 
+                Chapters = @Chapters,
                 Duration = @Duration, 
                 Filesize = @Filesize,
                 ChannelId = @ChannelId,
@@ -96,6 +99,7 @@ public class DownloadData
             SelectedVariant = JsonSerializer.Serialize(selectedVariant),
             Variants = JsonSerializer.Serialize(variants),
             Formats = JsonSerializer.Serialize(formats),
+            Chapters = chapters is not null ? JsonSerializer.Serialize(chapters) : null,
             Duration = duration,
             Filesize = filesize,
             ChannelId = channelId,

@@ -10,6 +10,7 @@ public class DownloadDTO
     public string? SelectedVariant { get; set; }
     public string Variants { get; set; }
     public string Formats { get; set; }
+    public string? Chapters { get; set; }
     public string Duration { get; set; }
     public string Filename { get; set; }
     public string SaveTo { get; set; }

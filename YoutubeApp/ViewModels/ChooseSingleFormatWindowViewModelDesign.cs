@@ -28,7 +28,8 @@ internal class ChooseSingleFormatWindowViewModelDesign : ChooseSingleFormatWindo
         {
             { "301", new Format { Protocol = Protocol.Https } },
             { "289", new Format { Protocol = Protocol.Https } },
-        }
+        },
+        Chapters = null,
     }, null!, null!, null!)
     {
     }

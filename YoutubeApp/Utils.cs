@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Web;
 using DynamicData;
 using YoutubeApp.Media;
+using YoutubeApp.Models;
 
 namespace YoutubeApp;
 
@@ -176,5 +179,26 @@ public static class Utils
             return false;
         return string.Equals(Path.TrimEndingDirectorySeparator(path1), Path.TrimEndingDirectorySeparator(path2),
             StringComparison.OrdinalIgnoreCase);
+    }
+
+    public static string GenerateChapters(List<Chapter> chapters)
+    {
+        const string template = """
+                                [CHAPTER]
+                                TIMEBASE=1/1000
+                                START={0}
+                                END={1}
+                                title={2}
+                                """;
+        var metadata = new StringBuilder();
+        metadata.AppendLine(";FFMETADATA1");
+        foreach (var chapter in chapters)
+        {
+            var start = (int)Math.Round(chapter.StartTime * 1000);
+            var end = (int)Math.Round(chapter.EndTime * 1000);
+            metadata.AppendLine(string.Format(template, start, end, chapter.Title));
+        }
+
+        return metadata.ToString();
     }
 }

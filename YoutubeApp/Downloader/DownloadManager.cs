@@ -330,7 +330,17 @@ public class DownloadManager
         var hasEnoughSpace = _downloaderUtils.CheckAvailableFreeSpace(outputFilepath, (long)(streamsFilesize * 1.05));
         if (!hasEnoughSpace)
             throw new MuxFailedException("No Space");
-        await _ffmpeg.MuxAsync(videoFilepath, audioFilepath, outputFilepath, cancellationToken);
+
+        string? metadataFilepath = null;
+        if (downloadInfo.Chapters is not null)
+        {
+            var chapters = Utils.GenerateChapters(downloadInfo.Chapters);
+            var metadataFilename = $"{downloadInfo.VideoId}_{downloadInfo.Uuid}_metadata";
+            metadataFilepath = Path.Combine(downloadInfo.SaveTo, metadataFilename);
+            await File.WriteAllTextAsync(metadataFilepath, chapters, cancellationToken);
+        }
+
+        await _ffmpeg.MuxAsync(videoFilepath, audioFilepath, outputFilepath, metadataFilepath, cancellationToken);
 
         // Compare sizes
         var muxedFilesize = new FileInfo(outputFilepath).Length;
@@ -338,12 +348,12 @@ public class DownloadManager
         _logger.LogInformation("MuxFileSizeRatio {MuxedToStreamsPercent}", muxedToStreamsPercent);
 
         // Delete stream files
-        var filepaths = new[] { videoFilepath, audioFilepath };
+        var filepaths = new[] { videoFilepath, audioFilepath, metadataFilepath };
         foreach (var filepath in filepaths)
         {
             try
             {
-                File.Delete(filepath);
+                if (filepath is not null) File.Delete(filepath);
             }
             catch (Exception e)
             {

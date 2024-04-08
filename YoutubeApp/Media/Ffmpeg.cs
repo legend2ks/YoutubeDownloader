@@ -18,15 +18,21 @@ public class Ffmpeg
     }
 
     public async Task MuxAsync(string videoFilepath, string audioFilepath, string outputFilepath,
-        CancellationToken cancellationToken)
+        string? metadataFilepath, CancellationToken cancellationToken)
     {
+        var cmd = metadataFilepath is not null
+            ? $"""
+               -y -i "{videoFilepath}" -i "{audioFilepath}" -i "{metadataFilepath}" -map_metadata 2 -c:v copy -c:a copy "{outputFilepath}"
+               """
+            : $"""
+               -y -i "{videoFilepath}" -i "{audioFilepath}" -c:v copy -c:a copy "{outputFilepath}"
+               """;
+
         CommandResult result;
         try
         {
-            result = await Cli.Wrap(FfmpegBinaryPath)
-                .WithArguments(
-                    $"-y -i \"{videoFilepath}\" -i \"{audioFilepath}\" -c:v copy -c:a copy \"{outputFilepath}\"")
-                .WithValidation(CommandResultValidation.None).ExecuteAsync(cancellationToken);
+            result = await Cli.Wrap(FfmpegBinaryPath).WithArguments(cmd).WithValidation(CommandResultValidation.None)
+                .ExecuteAsync(cancellationToken);
         }
         catch (Exception e)
         {

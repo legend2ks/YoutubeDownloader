@@ -54,6 +54,7 @@ class DownloadsViewModelDesign : DownloadsViewModel
                     Fps = 60,
                     Abr = 192,
                 },
+                Chapters = null,
             },
             new()
             {
@@ -87,6 +88,7 @@ class DownloadsViewModelDesign : DownloadsViewModel
                     Fps = 30,
                     Abr = 128,
                 },
+                Chapters = null,
             },
             new()
             {
@@ -123,6 +125,7 @@ class DownloadsViewModelDesign : DownloadsViewModel
                     Fps = 60,
                     Abr = 192,
                 },
+                Chapters = null,
             },
             new()
             {
@@ -156,6 +159,7 @@ class DownloadsViewModelDesign : DownloadsViewModel
                     Fps = 60,
                     Abr = 192,
                 },
+                Chapters = null,
             },
         };
     }

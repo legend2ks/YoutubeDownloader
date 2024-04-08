@@ -11,4 +11,5 @@ public class VideoInfo
     public required string live_status { get; set; }
     public required string channel_id { get; set; }
     public required VideoInfoFormat[] formats { get; set; }
+    public VideoInfoChapter[]? chapters { get; set; }
 }

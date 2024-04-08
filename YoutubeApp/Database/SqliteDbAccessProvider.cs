@@ -37,7 +37,7 @@ public class SqliteDbAccessProvider
         Connection.Execute(CreateVideosTableSql, null, transaction);
         Connection.Execute(CreateChannelCategoriesTableSql, null, transaction);
         Connection.Execute(CreateConfigsTableSql, null, transaction);
-        Connection.Execute("PRAGMA user_version = 1", null, transaction);
+        Connection.Execute($"PRAGMA user_version = {LatestDbVersion}", null, transaction);
         transaction.Commit();
     }
 
@@ -47,13 +47,16 @@ public class SqliteDbAccessProvider
         {
             case 0:
                 Migration1.Apply(Connection);
+                goto case 1;
+            case 1:
+                Migration2.Apply(Connection);
                 break;
         }
     }
 
     public SQLiteConnection Connection { get; }
 
-    private const int LatestDbVersion = 1;
+    private const int LatestDbVersion = 2;
 
     private const string CreateDownloadsTableSql = @"
         CREATE TABLE IF NOT EXISTS Downloads (
@@ -67,6 +70,7 @@ public class SqliteDbAccessProvider
             Container TEXT,
             Formats TEXT,
             Variants TEXT,
+            Chapters TEXT,
             SaveTo TEXT,
             Uuid TEXT NOT NULL,
             UploadDate DATE,

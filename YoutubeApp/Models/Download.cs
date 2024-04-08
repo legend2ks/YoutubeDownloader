@@ -18,6 +18,7 @@ public partial class Download : ObservableObject
     public string Container { get; set; }
     public List<Variant> Variants { get; set; }
     public Dictionary<string, Format> Formats { get; set; }
+    public List<Chapter>? Chapters { get; set; }
     public string Duration { get; set; }
 
     private bool _refreshing;

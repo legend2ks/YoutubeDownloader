@@ -32,6 +32,7 @@ internal static class DatabaseUtils
             Variants = JsonSerializer.Deserialize<List<Variant>>(dto.Variants),
             Formats = JsonSerializer.Deserialize<Dictionary<string, Format>>(dto.Formats),
             SelectedVariant = JsonSerializer.Deserialize<SelectedVariant>(dto.SelectedVariant),
+            Chapters = dto.Chapters is null ? null : JsonSerializer.Deserialize<List<Chapter>>(dto.Chapters)
         };
     }
 
