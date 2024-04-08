@@ -70,7 +70,7 @@
         </Grid>
 
         <ScrollViewer Grid.Row="1" Offset="{Binding VideosScrollOffset, Mode=TwoWay}">
-            <ItemsRepeater ItemsSource="{Binding Videos}" Margin="0 8 0 8" HorizontalAlignment="Center">
+            <ItemsRepeater ItemsSource="{Binding Videos}" Margin="0 24 0 8" HorizontalAlignment="Center">
                 <ItemsRepeater.Layout>
                     <UniformGridLayout />
                 </ItemsRepeater.Layout>
@@ -158,10 +158,13 @@
                             <StackPanel>
                                 <Border CornerRadius="10 10 0 0" ClipToBounds="True">
                                     <Panel>
-                                        <Rectangle Fill="SlateGray" />
+                                        <Rectangle Fill="SlateGray"
+                                                   IsVisible="{Binding Thumbnail, Converter={x:Static ObjectConverters.IsNull}}" />
                                         <PathIcon Data="{StaticResource no_image}" Width="50" Height="50"
+                                                  IsVisible="{Binding Thumbnail, Converter={x:Static ObjectConverters.IsNull}}"
                                                   Foreground="#4fff" />
                                         <Image Height="111" Source="{Binding Thumbnail}" />
+                                        <Rectangle Fill="#6000" IsVisible="{Binding Watched}" />
                                         <Panel IsVisible="{Binding IsCursor}" HorizontalAlignment="Right"
                                                VerticalAlignment="Top" Margin="0">
                                             <Rectangle Stroke="White" Width="40" Height="40" StrokeThickness="3"

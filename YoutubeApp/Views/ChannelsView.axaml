@@ -54,7 +54,7 @@
 
             <!-- Channel Categories -->
             <ScrollViewer Grid.Row="1">
-                <ItemsControl ItemsSource="{Binding ChannelCategories}" Padding="10 0">
+                <ItemsControl ItemsSource="{Binding ChannelCategories}" Padding="10 0 10 16">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <StackPanel>
@@ -82,15 +82,15 @@
 
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
-                                            <Grid RowDefinitions="Auto, Auto" Margin="8">
+                                            <Grid RowDefinitions="Auto, Auto" Margin="4">
                                                 <Button Grid.Row="0" IsEnabled="{Binding !Updating}"
                                                         Command="{Binding $parent[UserControl].((vm:ChannelsViewModel)DataContext).ChannelPressedCommand}"
-                                                        CommandParameter="{Binding}" Width="300" Padding="10 7"
+                                                        CommandParameter="{Binding}" Width="300" Padding="10 6 10 7"
                                                         BorderThickness="0" Background="#282e33"
                                                         CornerRadius="10 10 0 0">
                                                     <StackPanel>
                                                         <TextBlock Text="{Binding Title}" FontSize="16" />
-                                                        <Grid ColumnDefinitions="*,10,Auto" Margin="0 6 0 4">
+                                                        <Grid ColumnDefinitions="*,10,Auto" Margin="0 4 0 0">
                                                             <TextBlock Grid.Column="0" Classes="secondary"
                                                                        Text="{Binding VideoCount, StringFormat={}{0} Video(s)}" />
                                                             <TextBlock Grid.Column="2" Classes="secondary"
