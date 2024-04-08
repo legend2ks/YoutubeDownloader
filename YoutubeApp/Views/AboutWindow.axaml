@@ -53,7 +53,7 @@
             <StackPanel>
                 <TextBlock Text="This project uses:" />
                 <TextBlock>
-                    Avalonia UI (avaloniaui.net)
+                    Avalonia UI <TextBlock Text="{Binding AvaloniaVersion}"/> (avaloniaui.net) 
                     <LineBreak />
                     YT-DLP (github.com/yt-dlp/yt-dlp)
                     <LineBreak />

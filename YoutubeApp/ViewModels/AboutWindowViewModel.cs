@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
+using Avalonia;
 using CommunityToolkit.Mvvm.Input;
 
 namespace YoutubeApp.ViewModels;
@@ -21,4 +22,5 @@ public partial class AboutWindowViewModel
     }
 
     public string Version { get; } = Assembly.GetExecutingAssembly().GetName().Version!.ToString(3);
+    public string AvaloniaVersion { get; } = Assembly.GetAssembly(typeof(Application))!.GetName().Version!.ToString(3);
 }
