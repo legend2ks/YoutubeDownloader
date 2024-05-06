@@ -34,19 +34,26 @@ An open-source YouTube video downloader that allows you to easily download video
 
 [Releases](https://github.com/legend2ks/YoutubeDownloader/releases)
 
-
 ## Building from source code
 
-Clone the repository and the git submodule:  
-`git clone --recursive https://github.com/legend2ks/YoutubeDownloader`
+Clone the repository (including submodules):
 
-Download these project dependencies next to the "`YoutubeApp.exe`" main app,
-create a folder named "utils" and get these 3 files from the internet:
+```
+git clone --recursive https://github.com/legend2ks/YoutubeDownloader
+```
+
+Build the project using the build script, or:
+
+```
+cd YoutubeDownloader
+dotnet publish "YoutubeApp/YoutubeApp.csproj" -c "Release" -o "Publish/app" -p:DebugType=None -p:PublishSingleFile=true --self-contained false
+```
+
+Download these project dependencies and put them in `Publish/app/utils`:
+
 - "aria2c.exe" from https://github.com/aria2/aria2/releases (look for the releases file download `aria2-1.37.0-win-64bit-build1.zip`).
 - "yt-dlp.exe" from https://github.com/yt-dlp/yt-dlp/releases (look for the `yt-dlp.exe` file)
-- "ffmpeg.exe" from https://github.com/BtbN/FFmpeg-Builds/releases (for example the `ffmpeg-master-latest-win64-gpl.zip` and extract the `ffmpeg.exe`)
-
-
+- "ffmpeg.exe" from https://github.com/BtbN/FFmpeg-Builds/releases (for example the `ffmpeg-master-latest-win64-lgpl.zip` and extract the `ffmpeg.exe`)
 
 ## Roadmap
 
