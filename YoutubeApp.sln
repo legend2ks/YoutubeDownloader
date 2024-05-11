@@ -5,9 +5,20 @@ VisualStudioVersion = 17.4.33122.133
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YoutubeApp", "YoutubeApp\YoutubeApp.csproj", "{D8731E42-5487-4304-8CBB-5DB68DDF6A32}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YoutubeApp.Tests", "YoutubeApp.Tests\YoutubeApp.Tests.csproj", "{FBE41C3C-DA78-4D32-8185-82A1231C2000}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YoutubeApp.Tests", "YoutubeApp.Tests\YoutubeApp.Tests.csproj", "{FBE41C3C-DA78-4D32-8185-82A1231C2000}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessageBox.Avalonia", "MessageBox.Avalonia\src\MessageBox.Avalonia\MessageBox.Avalonia.csproj", "{B8D18D54-ECC6-49BF-B897-BDDB1BFD8092}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{76C039DA-C7C7-414F-9B6D-983F5341C4AE}"
+	ProjectSection(SolutionItems) = preProject
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{75801BB8-7117-4172-B48B-AB700F5B36AF}"
+	ProjectSection(SolutionItems) = preProject
+		Scripts\Build.ps1 = Scripts\Build.ps1
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

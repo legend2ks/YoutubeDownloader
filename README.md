@@ -32,8 +32,28 @@ An open-source YouTube video downloader that allows you to easily download video
 - Microsoft Windows 7+ (x64)
 - [.NET 8.0 Desktop Runtime](https://aka.ms/dotnet-core-applaunch?framework=Microsoft.NETCore.App&framework_version=8.0.0&arch=x64&rid=win-x64&gui=true)
 
-
 [Releases](https://github.com/legend2ks/YoutubeDownloader/releases)
+
+## Building from source code
+
+Clone the repository (including submodules):
+
+```
+git clone --recursive https://github.com/legend2ks/YoutubeDownloader
+```
+
+Build the project using the build script, or:
+
+```
+cd YoutubeDownloader
+dotnet publish "YoutubeApp/YoutubeApp.csproj" -c "Release" -o "Publish/app" -p:DebugType=None -p:PublishSingleFile=true --self-contained false
+```
+
+Download these project dependencies and put them in `Publish/app/utils`:
+
+- "aria2c.exe" from https://github.com/aria2/aria2/releases (look for the releases file download `aria2-1.37.0-win-64bit-build1.zip`).
+- "yt-dlp.exe" from https://github.com/yt-dlp/yt-dlp/releases (look for the `yt-dlp.exe` file)
+- "ffmpeg.exe" from https://github.com/BtbN/FFmpeg-Builds/releases (for example the `ffmpeg-master-latest-win64-lgpl.zip` and extract the `ffmpeg.exe`)
 
 ## Roadmap
 
