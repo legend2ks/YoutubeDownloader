@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using NanoidDotNet;
 using YoutubeApp.Comparers;
 using YoutubeApp.Database;
 using YoutubeApp.Downloader;
@@ -124,7 +125,7 @@ public class Youtube
                         bestVariant.Fps, videoInfo.channel, uploadDate, bestVariant.Width, bestVariant.Height,
                         bestVariant.VCodec, bestVariant.ACodec, bestVariant.Abr);
 
-                    var uuid = await Nanoid.Nanoid.GenerateAsync();
+                    var uuid = await Nanoid.GenerateAsync();
 
                     // Save to Database
                     var download = new Download
