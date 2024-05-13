@@ -225,6 +225,7 @@ public partial class ChannelsViewModel : ViewModelBase, IRecipient<VideoDownload
             if (channel.CancellationTokenSource is not null)
             {
                 channel.CancellationTokenSource.Cancel();
+                channel.CancellationTokenSource.Dispose();
                 channel.CancellationTokenSource = null;
             }
             else
@@ -249,6 +250,7 @@ public partial class ChannelsViewModel : ViewModelBase, IRecipient<VideoDownload
             if (channel.CancellationTokenSource is not null)
             {
                 channel.CancellationTokenSource.Cancel();
+                channel.CancellationTokenSource.Dispose();
                 channel.CancellationTokenSource = null;
                 _activeUpdateJobCount--;
                 ProcessUpdateQueue();
@@ -301,8 +303,8 @@ public partial class ChannelsViewModel : ViewModelBase, IRecipient<VideoDownload
         var channel = updateJob.Channel;
         var fullUpdate = updateJob.FullUpdate;
 
-        var cts = new CancellationTokenSource();
-        channel.CancellationTokenSource = cts;
+        channel.CancellationTokenSource = new CancellationTokenSource();
+        var cancellationToken = channel.CancellationTokenSource.Token;
 
         _ = Task.Run(async () =>
         {
@@ -318,7 +320,7 @@ public partial class ChannelsViewModel : ViewModelBase, IRecipient<VideoDownload
                     try
                     {
                         playlistInfo =
-                            await _youtubeCommunicator.GetPlaylistInfoAsync(channel.ListId, cts.Token,
+                            await _youtubeCommunicator.GetPlaylistInfoAsync(channel.ListId, cancellationToken,
                                 fullUpdate ? null : count);
                     }
                     catch (OperationCanceledException)
@@ -371,7 +373,7 @@ public partial class ChannelsViewModel : ViewModelBase, IRecipient<VideoDownload
 
                 try
                 {
-                    await DownloadThumbnailsAsync(channel, playlistInfo, cts.Token);
+                    await DownloadThumbnailsAsync(channel, playlistInfo, cancellationToken);
                 }
                 catch (OperationCanceledException)
                 {
@@ -390,17 +392,18 @@ public partial class ChannelsViewModel : ViewModelBase, IRecipient<VideoDownload
                 SetUpdateDone(channel, "✔ Updated successfully");
                 break;
             }
-        }, cts.Token);
+        }, cancellationToken);
     }
 
     private void SetUpdateDone(Channel channel, string statusText)
     {
         Dispatcher.UIThread.Post(() =>
         {
+            if (channel.CancellationTokenSource is null) return;
+            channel.CancellationTokenSource.Dispose();
+            channel.CancellationTokenSource = null;
             channel.Updating = false;
             channel.StatusText = statusText;
-            channel.CancellationTokenSource!.Dispose();
-            channel.CancellationTokenSource = null;
             _activeUpdateJobCount--;
             TotalUpdateJobCount--;
             ProcessUpdateQueue();
