@@ -4,8 +4,8 @@ using Avalonia.Interactivity;
 using Avalonia.Platform;
 using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.Messaging;
-using MessageBox.Avalonia;
-using MessageBox.Avalonia.DTO;
+using MsBox.Avalonia;
+using MsBox.Avalonia.Dto;
 using YoutubeApp.Enums;
 using YoutubeApp.Messages;
 using YoutubeApp.ViewModels;
@@ -48,7 +48,7 @@ public partial class AddChannelWindow : Window, IRecipient<OpenFolderPickerMessa
     public void Receive(ShowMessageBoxMessage message)
     {
         var result = MessageBoxManager
-            .GetMessageBoxStandardWindow(new MessageBoxStandardParams
+            .GetMessageBoxStandard(new MessageBoxStandardParams
             {
                 ContentTitle = message.Title,
                 ContentMessage = message.Message,
@@ -56,7 +56,7 @@ public partial class AddChannelWindow : Window, IRecipient<OpenFolderPickerMessa
                 Icon = message.Icon,
                 WindowStartupLocation = WindowStartupLocation.CenterScreen,
                 WindowIcon = new WindowIcon(AssetLoader.Open(new Uri("avares://YoutubeApp/Assets/app-logo.ico"))),
-            }).ShowDialog(this);
+            }).ShowWindowDialogAsync(this);
         message.Reply(result);
     }
 

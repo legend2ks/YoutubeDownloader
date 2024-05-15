@@ -4,9 +4,9 @@ using Avalonia.Controls;
 using Avalonia.Platform;
 using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.Messaging;
-using MessageBox.Avalonia;
-using MessageBox.Avalonia.DTO;
 using Microsoft.Extensions.DependencyInjection;
+using MsBox.Avalonia;
+using MsBox.Avalonia.Dto;
 using YoutubeApp.Database;
 using YoutubeApp.Downloader;
 using YoutubeApp.Media;
@@ -71,7 +71,7 @@ public partial class MainWindow : Window, IRecipient<GrabberListCloseMessage>, I
     public void Receive(ShowMessageBoxMessage message)
     {
         var result = MessageBoxManager
-            .GetMessageBoxStandardWindow(new MessageBoxStandardParams
+            .GetMessageBoxStandard(new MessageBoxStandardParams
             {
                 ContentTitle = message.Title,
                 ContentMessage = message.Message,
@@ -79,7 +79,7 @@ public partial class MainWindow : Window, IRecipient<GrabberListCloseMessage>, I
                 Icon = message.Icon,
                 WindowStartupLocation = WindowStartupLocation.CenterScreen,
                 WindowIcon = new WindowIcon(AssetLoader.Open(new Uri("avares://YoutubeApp/Assets/app-logo.ico"))),
-            }).ShowDialog(this);
+            }).ShowWindowDialogAsync(this);
         message.Reply(result);
     }
 
@@ -148,16 +148,17 @@ public partial class MainWindow : Window, IRecipient<GrabberListCloseMessage>, I
 
     public void Receive(ShowMessageBoxCheckboxMessage message)
     {
-        var result = MessageBoxManager.GetMessageBoxCheckboxWindow(new MessageBoxCheckboxParams
+        var result = MessageBoxManager.GetMessageBoxCheckbox(new MessageBoxCheckboxParams
         {
             ContentTitle = message.Title,
             ContentMessage = message.Message,
             CheckboxText = message.CheckboxText,
+            CheckboxDefaultState = message.CheckboxDefaultState,
             Icon = message.Icon,
             ButtonDefinitions = message.ButtonDefinitions,
             WindowStartupLocation = WindowStartupLocation.CenterScreen,
             WindowIcon = new WindowIcon(AssetLoader.Open(new Uri("avares://YoutubeApp/Assets/app-logo.ico"))),
-        }).ShowDialog(this);
+        }).ShowWindowDialogAsync(this);
         message.Reply(result);
     }
 

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using CommunityToolkit.Mvvm.Messaging.Messages;
-using MessageBox.Avalonia.Enums;
-using MessageBox.Avalonia.Models;
+using MsBox.Avalonia.Enums;
+using MsBox.Avalonia.Models;
 
 namespace YoutubeApp.Messages;
 

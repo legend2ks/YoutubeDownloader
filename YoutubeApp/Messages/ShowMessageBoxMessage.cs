@@ -1,5 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Messaging.Messages;
-using MessageBox.Avalonia.Enums;
+using MsBox.Avalonia.Enums;
 
 namespace YoutubeApp.Messages;
 

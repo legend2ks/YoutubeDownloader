@@ -10,7 +10,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using DynamicData;
-using MessageBox.Avalonia.Enums;
+using MsBox.Avalonia.Enums;
 using YoutubeApp.Database;
 using YoutubeApp.Enums;
 using YoutubeApp.Media;

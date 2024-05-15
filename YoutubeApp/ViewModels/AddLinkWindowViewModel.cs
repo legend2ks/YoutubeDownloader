@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using MessageBox.Avalonia.Enums;
+using MsBox.Avalonia.Enums;
 using YoutubeApp.Enums;
 using YoutubeApp.Messages;
 

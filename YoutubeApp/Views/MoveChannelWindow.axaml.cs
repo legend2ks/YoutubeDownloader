@@ -3,8 +3,8 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform;
 using CommunityToolkit.Mvvm.Messaging;
-using MessageBox.Avalonia;
-using MessageBox.Avalonia.DTO;
+using MsBox.Avalonia;
+using MsBox.Avalonia.Dto;
 using YoutubeApp.Enums;
 using YoutubeApp.Messages;
 using YoutubeApp.ViewModels;
@@ -27,7 +27,7 @@ public partial class MoveChannelWindow : Window, IRecipient<ShowMessageBoxCustom
     public void Receive(ShowMessageBoxCustomMessage message)
     {
         var result = MessageBoxManager
-            .GetMessageBoxCustomWindow(new MessageBoxCustomParams
+            .GetMessageBoxCustom(new MessageBoxCustomParams
             {
                 ContentTitle = message.Title,
                 ContentMessage = message.Message,
@@ -35,7 +35,7 @@ public partial class MoveChannelWindow : Window, IRecipient<ShowMessageBoxCustom
                 Icon = message.Icon,
                 WindowStartupLocation = WindowStartupLocation.CenterScreen,
                 WindowIcon = new WindowIcon(AssetLoader.Open(new Uri("avares://YoutubeApp/Assets/app-logo.ico"))),
-            }).ShowDialog(this);
+            }).ShowWindowDialogAsync(this);
         message.Reply(result);
     }
 
@@ -64,7 +64,7 @@ public partial class MoveChannelWindow : Window, IRecipient<ShowMessageBoxCustom
     public void Receive(ShowMessageBoxMessage message)
     {
         var result = MessageBoxManager
-            .GetMessageBoxStandardWindow(new MessageBoxStandardParams
+            .GetMessageBoxStandard(new MessageBoxStandardParams
             {
                 ContentTitle = message.Title,
                 ContentMessage = message.Message,
@@ -72,7 +72,7 @@ public partial class MoveChannelWindow : Window, IRecipient<ShowMessageBoxCustom
                 Icon = message.Icon,
                 WindowStartupLocation = WindowStartupLocation.CenterScreen,
                 WindowIcon = new WindowIcon(AssetLoader.Open(new Uri("avares://YoutubeApp/Assets/app-logo.ico"))),
-            }).ShowDialog(this);
+            }).ShowWindowDialogAsync(this);
         message.Reply(result);
     }
 }

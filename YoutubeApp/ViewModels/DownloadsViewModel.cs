@@ -12,8 +12,8 @@ using Avalonia.Controls.Selection;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using MessageBox.Avalonia.Enums;
 using Microsoft.Extensions.Logging;
+using MsBox.Avalonia.Enums;
 using YoutubeApp.Database;
 using YoutubeApp.Downloader;
 using YoutubeApp.Extensions;
@@ -231,7 +231,7 @@ public partial class DownloadsViewModel : ViewModelBase, IRecipient<ChannelDelet
         }
 
         _downloaderUtils.DeleteTempFiles(selectedItems!);
-        if (result.IsChecked) _downloaderUtils.DeleteCompletedFiles(selectedItems);
+        if (result.IsCheckboxChecked) _downloaderUtils.DeleteCompletedFiles(selectedItems);
         _downloadData.RemoveDownloads(selectedItems!);
 
         var deletedCount = 0;
@@ -280,7 +280,7 @@ public partial class DownloadsViewModel : ViewModelBase, IRecipient<ChannelDelet
 
         if (result.Button != ButtonResult.Yes) return;
 
-        if (result.IsChecked) _downloaderUtils.DeleteCompletedFiles(completedItems);
+        if (result.IsCheckboxChecked) _downloaderUtils.DeleteCompletedFiles(completedItems);
         _downloadData.RemoveDownloads(completedItems);
 
         var deletedCount = 0;
