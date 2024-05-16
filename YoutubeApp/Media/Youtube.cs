@@ -553,8 +553,7 @@ public class Youtube
                         ACodec = audioFormat.acodec,
                         Abr = (float)audioFormat.abr,
                         Filesize = (long)filesize,
-                        IsApproxFilesize = videoFormat.filesize_approx is not null ||
-                                           audioFormat.filesize_approx is not null,
+                        IsApproxFilesize = videoFormat.filesize is null || audioFormat.filesize is null,
                     });
                 }
                 else
