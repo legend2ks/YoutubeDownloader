@@ -39,7 +39,8 @@ internal class Ytdlp : IYoutubeCommunicator
             try
             {
                 result = await Cli.Wrap(YtdlpBinaryPath)
-                    .WithArguments($"-J https://youtube.com/watch?v={videoId}")
+                    .WithArguments(
+                        $"-J --compat-options manifest-filesize-approx https://youtube.com/watch?v={videoId}")
                     .WithValidation(CommandResultValidation.None)
                     .ExecuteBufferedAsync(cts.Token);
             }
