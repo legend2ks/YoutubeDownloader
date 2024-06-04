@@ -30,7 +30,8 @@ using YoutubeApp.Views;
 
 namespace YoutubeApp.ViewModels;
 
-public partial class ChannelsViewModel : ViewModelBase, IRecipient<VideoDownloadCompletedMessage>
+public partial class ChannelsViewModel : ViewModelBase, IRecipient<VideoDownloadCompletedMessage>,
+    IRecipient<ShowVideoInChannelMessage>
 {
     private const string VideoIdPattern = @"^\[.*]\[.*]\[(.*)]";
     private readonly ChannelData _channelData;
@@ -111,9 +112,9 @@ public partial class ChannelsViewModel : ViewModelBase, IRecipient<VideoDownload
     [RelayCommand]
     private void ChannelPressed(Channel channel)
     {
+        // Reset the scroll position if it's not the previous channel
         if (SelectedChannel is not null && SelectedChannel.Id != channel.Id)
         {
-            // Reset scroll position
             VideosScrollOffset = new Vector();
         }
 
@@ -158,7 +159,7 @@ public partial class ChannelsViewModel : ViewModelBase, IRecipient<VideoDownload
     }
 
     [RelayCommand]
-    private void BackToChannelsPressed()
+    private void BackToChannels()
     {
         SelectedVideos.Clear();
         _currentCursor = null;
@@ -692,6 +693,17 @@ public partial class ChannelsViewModel : ViewModelBase, IRecipient<VideoDownload
         var video = _allVideos.FirstOrDefault(x => x.VideoId == dl.VideoId);
         if (video is null) return;
         video.FileName = dl.Filename;
+    }
+
+    public void Receive(ShowVideoInChannelMessage message)
+    {
+        var channel = message.Channel;
+        if (CurrentPage == 1)
+        {
+            BackToChannels();
+        }
+
+        ChannelPressed(channel);
     }
 
     public class UpdateChannelJob

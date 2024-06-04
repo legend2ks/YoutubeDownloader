@@ -33,7 +33,7 @@
 
             <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10">
                 <Button ToolTip.Tip="Back to playlists" Margin="5,0,0,0"
-                        Command="{Binding BackToChannelsPressedCommand}">
+                        Command="{Binding BackToChannelsCommand}">
                     <PathIcon Data="{StaticResource arrow_left}" />
                 </Button>
                 <TextBlock Text="{Binding Videos.Count, StringFormat={}{0} Video(s)}" FontSize="14"
@@ -70,7 +70,7 @@
         </Grid>
 
         <ScrollViewer Grid.Row="1" Offset="{Binding VideosScrollOffset, Mode=TwoWay}">
-            <ItemsRepeater ItemsSource="{Binding Videos}" Margin="0 24 0 8" HorizontalAlignment="Center">
+            <ItemsRepeater Name="Repeater" ItemsSource="{Binding Videos}" Margin="0 24 0 8" HorizontalAlignment="Center">
                 <ItemsRepeater.Layout>
                     <UniformGridLayout />
                 </ItemsRepeater.Layout>

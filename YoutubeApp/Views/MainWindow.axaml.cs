@@ -23,7 +23,8 @@ public partial class MainWindow : Window, IRecipient<GrabberListCloseMessage>, I
     IRecipient<ShowChooseFormatWindowMessage>, IRecipient<ShowColumnsWindowMessage>,
     IRecipient<ShowMessageBoxCheckboxMessage>, IRecipient<ShowLogWindowMessage>, IRecipient<OpenFolderPickerMessage>,
     IRecipient<SetClipboardTextMessage>, IRecipient<ShowAddChannelWindowMessage>,
-    IRecipient<ShowMoveChannelWindowMessage>, IRecipient<GetActiveTabIndexMessage>
+    IRecipient<ShowMoveChannelWindowMessage>, IRecipient<GetActiveTabIndexMessage>,
+    IRecipient<ShowVideoInChannelMessage>
 {
     public MainWindow()
     {
@@ -222,5 +223,10 @@ public partial class MainWindow : Window, IRecipient<GrabberListCloseMessage>, I
     public void Receive(GetActiveTabIndexMessage message)
     {
         message.Reply(Tabs.SelectedIndex);
+    }
+
+    public void Receive(ShowVideoInChannelMessage message)
+    {
+        Tabs.SelectedIndex = 1;
     }
 }

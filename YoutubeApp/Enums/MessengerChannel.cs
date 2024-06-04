@@ -4,5 +4,6 @@ public enum MessengerChannel
 {
     AddLinkWindow,
     AddChannelWindow,
-    MoveChannelWindow
+    MoveChannelWindow,
+    VideosView,
 }

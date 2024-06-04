@@ -367,7 +367,10 @@
                             <Border
                                 Grid.Column="{Binding $parent[UserControl].((vm:DownloadsViewModel)DataContext).GridConfig[ch].Order}"
                                 Padding="0 0 10 0">
-                                <TextBlock Text="{Binding ChannelTitle}" />
+                                <Button Content="{Binding ChannelTitle}"
+                                        IsEnabled="{Binding Channel, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                        Command="{Binding $parent[UserControl].((vm:DownloadsViewModel)DataContext).GoToChannelCommand}"
+                                        CommandParameter="{Binding}" Padding="6 3" />
                             </Border>
                         </Grid>
                     </DataTemplate>

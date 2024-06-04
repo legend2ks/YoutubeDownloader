@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Selection;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -16,6 +17,7 @@ using Microsoft.Extensions.Logging;
 using MsBox.Avalonia.Enums;
 using YoutubeApp.Database;
 using YoutubeApp.Downloader;
+using YoutubeApp.Enums;
 using YoutubeApp.Extensions;
 using YoutubeApp.Media;
 using YoutubeApp.Messages;
@@ -760,6 +762,23 @@ public partial class DownloadsViewModel : ViewModelBase, IRecipient<ChannelDelet
                 Items = errors.ToArray(),
             });
         }
+    }
+
+    [RelayCommand]
+    private void GoToChannel(Download dl)
+    {
+        var channel = dl.Channel;
+        if (channel is null || channel.Updating)
+            return;
+        _messenger.Send(new ShowVideoInChannelMessage(channel, dl.VideoId));
+        _ = Task.Run(() =>
+        {
+            Dispatcher.UIThread.Post(() =>
+            {
+                _messenger.Send(new ShowVideoInChannelMessage(channel, dl.VideoId),
+                    (int)MessengerChannel.VideosView);
+            });
+        });
     }
 
     public void Receive(ChannelDeletedMessage message)
