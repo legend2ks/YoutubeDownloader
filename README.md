@@ -14,7 +14,8 @@ An open-source YouTube video downloader that allows you to easily download video
 * Easy selection of video/audio/container formats
 * Download videos from playlists
 * Listing and downloading channel videos
-* Fast, multi-threaded downloading
+* Embedding chapter markers
+* Fast, multithreaded downloading
 
 ### Screenshots
 
@@ -49,11 +50,11 @@ cd YoutubeDownloader
 dotnet publish "YoutubeApp/YoutubeApp.csproj" -c "Release" -o "Publish/app" -p:DebugType=None -p:PublishSingleFile=true --self-contained false
 ```
 
-Download these project dependencies and put them in `Publish/app/utils`:
+Download the project dependencies and put them in `Publish/app/utils`:
 
-- "aria2c.exe" from https://github.com/aria2/aria2/releases (look for the releases file download `aria2-1.37.0-win-64bit-build1.zip`).
-- "yt-dlp.exe" from https://github.com/yt-dlp/yt-dlp/releases (look for the `yt-dlp.exe` file)
-- "ffmpeg.exe" from https://github.com/BtbN/FFmpeg-Builds/releases (for example the `ffmpeg-master-latest-win64-lgpl.zip` and extract the `ffmpeg.exe`)
+- "yt-dlp.exe" from https://github.com/yt-dlp/yt-dlp/releases
+- "aria2c.exe" from https://github.com/aria2/aria2/releases (`aria2-1.37.0-win-64bit-build1.zip`).
+- "ffmpeg.exe" from https://github.com/BtbN/FFmpeg-Builds/releases (`ffmpeg-master-latest-win64-lgpl.zip`)
 
 ## Roadmap
 
