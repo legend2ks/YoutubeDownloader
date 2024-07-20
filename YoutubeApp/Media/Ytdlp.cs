@@ -63,26 +63,35 @@ internal class Ytdlp : IYoutubeCommunicator
                 if (result.ExitCode == 0)
                     break;
 
+                var errorMsg = result.StandardError.Trim();
+                _logger.LogError("GetVideoInfo: {Error}", errorMsg);
+
                 if (result.StandardError.Contains("This live event will begin in a few moments.")
                     || result.StandardError.Contains("Video unavailable"))
                 {
-                    throw new VideoNotAvailableException("Unavailable");
+                    throw new VideoNotAvailableException("Unavailable", errorMsg);
                 }
 
                 if (result.StandardError.Contains("Private video."))
                 {
-                    throw new VideoNotAvailableException("Private");
+                    throw new VideoNotAvailableException("Private", errorMsg);
                 }
 
-                if (result.StandardError.Contains("This video is available to this channel's members"))
+                if (result.StandardError.Contains("This video is available to this channel's members") ||
+                    result.StandardError.Contains("members-only"))
                 {
-                    throw new VideoNotAvailableException("Members only");
+                    throw new VideoNotAvailableException("Members only", errorMsg);
                 }
 
                 if (result.StandardError.Contains("This live event will begin in ") ||
                     result.StandardError.Contains("Premieres in "))
                 {
-                    throw new VideoNotAvailableException("Upcoming");
+                    throw new VideoNotAvailableException("Upcoming", errorMsg);
+                }
+
+                if (result.StandardError.Contains("confirm you’re not a bot"))
+                {
+                    throw new VideoNotAvailableException("Bot?", errorMsg);
                 }
             }
 
@@ -90,10 +99,14 @@ internal class Ytdlp : IYoutubeCommunicator
             {
                 retriesLeft--;
                 if (retriesLeft == 0)
+                {
+                    if (result is not null)
+                        throw new VideoNotAvailableException(null, result.StandardError.Trim());
                     throw new VideoNotAvailableException();
+                }
             }
 
-            _logger.LogWarning("GetVideoInfo Error, Retrying... ({RetriesLeft} left) VideoId:{VideoId}",
+            _logger.LogError("GetVideoInfo Error, Retrying... ({RetriesLeft} left) VideoId:{VideoId}",
                 infiniteRetries ? "∞" : retriesLeft, videoId);
             await Task.Delay(3000, cancellationToken);
         }
@@ -128,15 +141,18 @@ internal class Ytdlp : IYoutubeCommunicator
             // Retry if failed
             if (result.ExitCode != 0)
             {
+                var errorMsg = result.StandardError.Trim();
+                _logger.LogError("GetPlaylistInfo: {Error}", errorMsg);
+
                 if (result.StandardError.Contains("does not exist"))
                 {
-                    throw new PlaylistNotAvailableException("Unavailable");
+                    throw new PlaylistNotAvailableException("Unavailable", errorMsg);
                 }
 
                 retriesLeft--;
                 if (retriesLeft == 0)
-                    throw new PlaylistNotAvailableException();
-                _logger.LogWarning("GetPlaylistInfo Error, Retrying... ({RetriesLeft} left) PlaylistId:{PlaylistId}",
+                    throw new PlaylistNotAvailableException(null, errorMsg);
+                _logger.LogError("GetPlaylistInfo Error, Retrying... ({RetriesLeft} left) PlaylistId:{PlaylistId}",
                     retriesLeft, playlistId);
                 await Task.Delay(3000, cancellationToken);
                 continue;
@@ -167,15 +183,18 @@ internal class Ytdlp : IYoutubeCommunicator
             // Retry if failed
             if (result.ExitCode != 0)
             {
+                var errorMsg = result.StandardError.Trim();
+                _logger.LogError("GetChannelInfo: {Error}", errorMsg);
+
                 if (result.StandardError.Contains("Not Found"))
                 {
-                    throw new ChannelNotAvailableException("Unavailable");
+                    throw new ChannelNotAvailableException("Unavailable", errorMsg);
                 }
 
                 retriesLeft--;
                 if (retriesLeft == 0)
-                    throw new ChannelNotAvailableException();
-                _logger.LogWarning("GetChannelInfo Error, Retrying... ({RetriesLeft} left) Channel:{ChannelHandle}",
+                    throw new ChannelNotAvailableException(null, errorMsg);
+                _logger.LogError("GetChannelInfo Error, Retrying... ({RetriesLeft} left) Channel:{ChannelHandle}",
                     retriesLeft, handle);
                 await Task.Delay(3000, cancellationToken);
                 continue;

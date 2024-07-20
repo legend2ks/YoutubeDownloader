@@ -60,29 +60,18 @@ public partial class GrabberJob : ObservableObject
         }
     }
 
-    public string StatusText
-    {
-        get
-        {
-            return IsFailed
-                ? "Failed"
-                : $"{(IsFinished ? "Finished" : "Fetching...")} {(IsFinished || TotalCount == 0 ? DoneCount : DoneCount + 1)}/{(TotalCount == 0 ? "-" : TotalCount)}";
-        }
-    }
+    public string StatusText =>
+        IsFailed
+            ? "Failed"
+            : $"{(IsFinished ? "Finished" : "Fetching...")} {(IsFinished || TotalCount == 0 ? DoneCount : DoneCount + 1)}/{(TotalCount == 0 ? "-" : TotalCount)}";
 
     [ObservableProperty] private string _statusTextColor = "White";
 
-    private readonly List<GrabberJobVideo> _failedVideos = new();
+    private readonly List<GrabberJobVideo> _failedVideos = [];
 
-    public string ErrorCountText
-    {
-        get => $"{ErrorCount} Error(s)";
-    }
+    public string ErrorCountText => $"{ErrorCount} Error(s)";
 
-    public bool RetryIsEnabled
-    {
-        get => IsFailed || (IsFinished && ErrorCount > 0);
-    }
+    public bool RetryIsEnabled => IsFailed || (IsFinished && ErrorCount > 0);
 
     public static event EventHandler<CancelledEventArgs>? Cancelled;
     public static event EventHandler? Error;
@@ -141,7 +130,7 @@ public partial class GrabberJob : ObservableObject
         Finished?.Invoke(this, EventArgs.Empty);
     }
 
-    public void SetVideoStatus(GrabberJobVideo video, VideoStatus status, string? desc = null)
+    public void SetVideoStatus(GrabberJobVideo video, VideoStatus status, string? desc = null, string? errorMsg = null)
     {
         switch (status)
         {
@@ -170,6 +159,7 @@ public partial class GrabberJob : ObservableObject
         }
 
         video.Status = status;
+        video.ErrorMessage = errorMsg;
     }
 
     public void TryAgain()
@@ -209,13 +199,15 @@ public class GrabberJobPlaylist
 
 public partial class GrabberJobVideo : ObservableObject
 {
-    public string VideoId { get; set; }
+    public string VideoId { get; init; }
 
     [ObservableProperty] private string _title;
 
     [ObservableProperty] private VideoStatus _status;
 
     [ObservableProperty] private string _statusText;
+
+    [ObservableProperty] private string? _errorMessage;
 }
 
 public enum VideoStatus
@@ -229,5 +221,5 @@ public enum VideoStatus
 
 public class CancelledEventArgs
 {
-    public required bool IsActive { get; set; }
+    public required bool IsActive { get; init; }
 }

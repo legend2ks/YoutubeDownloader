@@ -14,8 +14,16 @@ internal class JobDetailsWindowViewModelDesign : JobDetailsWindowViewModel
                     {
                         Title = "Test Playlist One", Videos = new()
                         {
-                            new() { VideoId = "AAAAAAAAAAA", Title = "Test Video 1", Status = VideoStatus.Done },
-                            new() { VideoId = "BBBBBBBBBBB", Title = "Test Video 2", Status = VideoStatus.Done },
+                            new()
+                            {
+                                VideoId = "AAAAAAAAAAA", Title = "Test Video 1", Status = VideoStatus.Done,
+                                StatusText = "Added ✔"
+                            },
+                            new()
+                            {
+                                VideoId = "BBBBBBBBBBB", Title = "Test Video 2", Status = VideoStatus.Duplicate,
+                                StatusText = "Duplicate ✖"
+                            },
                         }
                     }
                 },
@@ -24,10 +32,22 @@ internal class JobDetailsWindowViewModelDesign : JobDetailsWindowViewModel
                     {
                         Title = "Test Playlist Two", Videos = new()
                         {
-                            new() { VideoId = "CCCCCCCCCCC", Title = "Test Video 1", Status = VideoStatus.Done },
-                            new() { VideoId = "DDDDDDDDDDD", Title = "Test Video 2", Status = VideoStatus.Error },
-                            new() { VideoId = "EEEEEEEEEEE", Title = "Test Video 3", Status = VideoStatus.Waiting },
-                            new() { VideoId = "FFFFFFFFFFF", Title = "Test Video 4", Status = VideoStatus.Waiting },
+                            new()
+                            {
+                                VideoId = "CCCCCCCCCCC", Title = "Test Video 1", Status = VideoStatus.Error,
+                                StatusText = "Error ❌",
+                                ErrorMessage = "This is the error message from YouTube.\nLine two."
+                            },
+                            new()
+                            {
+                                VideoId = "DDDDDDDDDDD", Title = "Test Video 2", Status = VideoStatus.Fetching,
+                                StatusText = "Fetching  ◻ "
+                            },
+                            new()
+                            {
+                                VideoId = "EEEEEEEEEEE", Title = "Test Video 3", Status = VideoStatus.Waiting,
+                                StatusText = "Waiting  ◽ "
+                            },
                         }
                     }
                 },
@@ -35,7 +55,7 @@ internal class JobDetailsWindowViewModelDesign : JobDetailsWindowViewModel
             ErrorCount = 7,
             DuplicateCount = 3,
             IsFinished = true,
-        })
+        }, null!)
     {
     }
 }

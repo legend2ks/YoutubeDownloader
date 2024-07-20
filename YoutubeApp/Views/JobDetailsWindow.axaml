@@ -21,8 +21,8 @@
                 <TextBlock Text="{Binding Job.StatusText}" VerticalAlignment="Center" />
                 <Button Command="{Binding RetryCommand}" IsVisible="{Binding Job.RetryIsEnabled}">
                     <StackPanel Orientation="Horizontal" Spacing="10">
-                        <PathIcon Data="{StaticResource rotate_right}" Width="18" Height="18"/>
-                        <TextBlock Text="Retry" VerticalAlignment="Center"/>
+                        <PathIcon Data="{StaticResource rotate_right}" Width="18" Height="18" />
+                        <TextBlock Text="Retry" VerticalAlignment="Center" />
                     </StackPanel>
                 </Button>
             </StackPanel>
@@ -58,10 +58,50 @@
                                     <DataTemplate>
                                         <Grid ColumnDefinitions="*,14,Auto">
                                             <TextBlock Grid.Column="0" Text="{ReflectionBinding Title}" />
-                                            <TextBlock Grid.Column="2" Text="{ReflectionBinding StatusText}" />
+                                            <Button Grid.Column="2" Classes="Status"
+                                                    Content="{ReflectionBinding StatusText}"
+                                                    IsHitTestVisible="{ReflectionBinding ErrorMessage, Converter={x:Static ObjectConverters.IsNotNull}}">
+                                                <Button.Flyout>
+                                                    <Flyout>
+                                                        <Grid ColumnDefinitions="* 8 auto">
+                                                            <ScrollViewer HorizontalScrollBarVisibility="Auto">
+                                                                <TextBlock Padding="0 8 0 18"
+                                                                           Text="{ReflectionBinding ErrorMessage}" />
+                                                            </ScrollViewer>
+                                                            <Button Grid.Column="2" ToolTip.Tip="Copy"
+                                                                    Command="{Binding $parent[Window].((vm:JobDetailsWindowViewModel)DataContext).CopyErrorCommand}"
+                                                                    CommandParameter="{ReflectionBinding ErrorMessage}">
+                                                                <PathIcon Data="{StaticResource clipboard}" />
+                                                            </Button>
+                                                        </Grid>
+                                                    </Flyout>
+                                                </Button.Flyout>
+                                            </Button>
                                         </Grid>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
+
+                                <ItemsControl.Styles>
+                                    <Styles>
+                                        <Style Selector="FlyoutPresenter">
+                                            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility"
+                                                    Value="Disabled" />
+                                            <Setter Property="ScrollViewer.VerticalScrollBarVisibility"
+                                                    Value="Disabled" />
+                                            <Setter Property="Padding" Value="8 0" />
+                                            <Setter Property="MaxWidth" Value="600" />
+                                        </Style>
+                                        <Style Selector="Button">
+                                            <Setter Property="Background" Value="Transparent" />
+                                        </Style>
+                                        <Style Selector="Button:disabled /template/ ContentPresenter">
+                                            <Setter Property="Background" Value="Transparent" />
+                                        </Style>
+                                        <Style Selector="Button.Status">
+                                            <Setter Property="Padding" Value=" 6 0 4 1" />
+                                        </Style>
+                                    </Styles>
+                                </ItemsControl.Styles>
                             </ItemsControl>
                         </StackPanel>
                     </DataTemplate>

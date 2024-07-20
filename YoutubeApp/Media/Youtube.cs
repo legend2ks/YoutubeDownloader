@@ -159,7 +159,7 @@ public class Youtube
                 }
                 catch (VideoNotAvailableException e)
                 {
-                    job.SetVideoStatus(video, VideoStatus.Error, e.Reason);
+                    job.SetVideoStatus(video, VideoStatus.Error, e.Reason, e.ErrorMessage);
                 }
                 catch (OperationCanceledException)
                 {

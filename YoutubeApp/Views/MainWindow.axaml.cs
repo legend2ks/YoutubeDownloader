@@ -88,7 +88,7 @@ public partial class MainWindow : Window, IRecipient<GrabberListCloseMessage>, I
     {
         var jobDetailsWindow = new JobDetailsWindow
         {
-            DataContext = new JobDetailsWindowViewModel(message.Job)
+            DataContext = new JobDetailsWindowViewModel(message.Job, WeakReferenceMessenger.Default)
         };
         var result = jobDetailsWindow.ShowDialog<bool>(this);
         message.Reply(result);
