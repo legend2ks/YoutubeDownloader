@@ -105,12 +105,12 @@ public class ChannelData
         int rowsAffected;
         foreach (var video in playlistInfo.entries.Reverse())
         {
-            if (prevVideoIds.ContainsKey(video.id))
+            if (prevVideoIds.TryGetValue(video.id, out var id))
             {
                 // Update existing video
                 var updateVideoParams = new
                 {
-                    Id = prevVideoIds[video.id],
+                    Id = id,
                     Title = video.title,
                     Duration =
                         video.duration != null ? Utils.DurationStringFromSeconds((int)video.duration) : "Not Available",

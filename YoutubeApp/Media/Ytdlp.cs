@@ -32,10 +32,10 @@ internal class Ytdlp : IYoutubeCommunicator
 
         while (true)
         {
-            var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            var innerCancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
             if (useTimeout)
             {
-                cts.CancelAfter(TimeSpan.FromSeconds(20));
+                innerCancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(20));
             }
 
             try
@@ -50,11 +50,11 @@ internal class Ytdlp : IYoutubeCommunicator
                         args.Add($"https://youtube.com/watch?v={videoId}");
                     })
                     .WithValidation(CommandResultValidation.None)
-                    .ExecuteBufferedAsync(cts.Token);
+                    .ExecuteBufferedAsync(innerCancellationTokenSource.Token);
             }
             catch (OperationCanceledException)
             {
-                if (!useTimeout)
+                if (cancellationToken.IsCancellationRequested)
                 {
                     throw;
                 }
@@ -63,7 +63,7 @@ internal class Ytdlp : IYoutubeCommunicator
             }
             finally
             {
-                cts.Dispose();
+                innerCancellationTokenSource.Dispose();
             }
 
             if (result is not null)
@@ -126,7 +126,7 @@ internal class Ytdlp : IYoutubeCommunicator
 
         var videoInfo = JsonSerializer.Deserialize<VideoInfo>(result.StandardOutput);
         if (videoInfo is null) throw new JsonException("Deserialize result is null.");
-        new VideoInfoValidator().ValidateAndThrow(videoInfo);
+        await new VideoInfoValidator().ValidateAndThrowAsync(videoInfo, cancellationToken);
 
         return videoInfo;
     }
@@ -179,7 +179,7 @@ internal class Ytdlp : IYoutubeCommunicator
 
         var playlistInfo = JsonSerializer.Deserialize<PlaylistInfo>(result.StandardOutput);
         if (playlistInfo is null) throw new JsonException("Deserialize result is null.");
-        new PlaylistInfoValidator().ValidateAndThrow(playlistInfo);
+        await new PlaylistInfoValidator().ValidateAndThrowAsync(playlistInfo, cancellationToken);
 
         return playlistInfo;
     }
@@ -230,7 +230,7 @@ internal class Ytdlp : IYoutubeCommunicator
 
         var channelInfo = JsonSerializer.Deserialize<ChannelInfo>(result.StandardOutput);
         if (channelInfo is null) throw new JsonException("Deserialize result is null.");
-        new ChannelInfoValidator().ValidateAndThrow(channelInfo);
+        await new ChannelInfoValidator().ValidateAndThrowAsync(channelInfo, cancellationToken);
 
         return channelInfo;
     }
