@@ -87,6 +87,10 @@ public class Settings
             }
         }
 
+        // Cookies Browser Name
+        var cookiesBrowserName = settings.FirstOrDefault(x => x.Key == "CookiesBrowserName")?.Value;
+        CookiesBrowserName = cookiesBrowserName ?? "";
+
         // Window State
         var windowWidthString = settings.FirstOrDefault(x => x.Key == "WindowWidth")?.Value;
         var windowHeightString = settings.FirstOrDefault(x => x.Key == "WindowHeight")?.Value;
@@ -118,6 +122,7 @@ public class Settings
     public static string LastSavePath { get; set; }
     public static int MaxConnections { get; private set; } = 4;
     public static int MaxConcurrentChannelUpdates { get; set; } = 2;
+    public string CookiesBrowserName { get; set; }
     public static int WindowWidth { get; private set; } = 900;
     public static int WindowHeight { get; private set; } = 640;
     public static WindowState WindowState { get; private set; } = WindowState.Normal;
@@ -168,6 +173,12 @@ public class Settings
     {
         MaxConcurrentChannelUpdates = maxConcurrentChannelUpdates;
         _settingsData.SaveSetting("MaxConcurrentChannelUpdates", maxConcurrentChannelUpdates.ToString());
+    }
+
+    public void SaveCookiesBrowserName(string cookiesBrowserName)
+    {
+        CookiesBrowserName = cookiesBrowserName;
+        _settingsData.SaveSetting("CookiesBrowserName", cookiesBrowserName);
     }
 
     public void SaveWindowState(int windowWidth, int windowHeight)

@@ -14,11 +14,13 @@ namespace YoutubeApp.Media;
 internal class Ytdlp : IYoutubeCommunicator
 {
     private readonly ILogger<Ytdlp> _logger;
+    private readonly Settings _settings;
     private const string YtdlpBinaryPath = @"./utils/yt-dlp.exe";
 
-    public Ytdlp(ILogger<Ytdlp> logger)
+    public Ytdlp(ILogger<Ytdlp> logger, Settings settings)
     {
         _logger = logger;
+        _settings = settings;
     }
 
     public async Task<VideoInfo> GetVideoInfoAsync(string videoId, int retries, bool useTimeout,
@@ -39,8 +41,14 @@ internal class Ytdlp : IYoutubeCommunicator
             try
             {
                 result = await Cli.Wrap(YtdlpBinaryPath)
-                    .WithArguments(
-                        $"-J --compat-options manifest-filesize-approx https://youtube.com/watch?v={videoId}")
+                    .WithArguments(args =>
+                    {
+                        args.Add("-J")
+                            .Add("--compat-options").Add("manifest-filesize-approx");
+                        if (_settings.CookiesBrowserName != "")
+                            args.Add("--cookies-from-browser").Add(_settings.CookiesBrowserName);
+                        args.Add($"https://youtube.com/watch?v={videoId}");
+                    })
                     .WithValidation(CommandResultValidation.None)
                     .ExecuteBufferedAsync(cts.Token);
             }
@@ -133,8 +141,16 @@ internal class Ytdlp : IYoutubeCommunicator
         while (true)
         {
             result = await Cli.Wrap(YtdlpBinaryPath)
-                .WithArguments(
-                    $"-J --flat-playlist --extractor-args youtubetab:approximate_date -I :{stop} https://youtube.com/playlist?list={playlistId}")
+                .WithArguments(args =>
+                {
+                    args.Add("-J")
+                        .Add("--flat-playlist")
+                        .Add("--extractor-args").Add("youtubetab:approximate_date")
+                        .Add("-I").Add($":{stop}");
+                    if (_settings.CookiesBrowserName != "")
+                        args.Add("--cookies-from-browser").Add(_settings.CookiesBrowserName);
+                    args.Add($"https://youtube.com/playlist?list={playlistId}");
+                })
                 .WithValidation(CommandResultValidation.None)
                 .ExecuteBufferedAsync(cancellationToken);
 
@@ -176,7 +192,16 @@ internal class Ytdlp : IYoutubeCommunicator
         while (true)
         {
             result = await Cli.Wrap(YtdlpBinaryPath)
-                .WithArguments($"-J --flat-playlist -I 0:0 https://youtube.com/{handle}/featured")
+                .WithArguments(args =>
+                    {
+                        args.Add("-J")
+                            .Add("--flat-playlist")
+                            .Add("-I").Add("0:0");
+                        if (_settings.CookiesBrowserName != "")
+                            args.Add("--cookies-from-browser").Add(_settings.CookiesBrowserName);
+                        args.Add($"https://youtube.com/{handle}/featured");
+                    }
+                )
                 .WithValidation(CommandResultValidation.None)
                 .ExecuteBufferedAsync(cancellationToken);
 

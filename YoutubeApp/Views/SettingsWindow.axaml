@@ -3,9 +3,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="using:YoutubeApp.ViewModels"
-        mc:Ignorable="d" d:DesignWidth="680" d:DesignHeight="510"
-        MinWidth="580" MinHeight="510"
-        Width="680" Height="510"
+        mc:Ignorable="d" d:DesignWidth="680" d:DesignHeight="610"
+        MinWidth="680" MinHeight="610"
+        Width="680" Height="610"
         x:Class="YoutubeApp.Views.SettingsWindow"
         x:DataType="vm:SettingsWindowViewModel"
         x:CompileBindings="True"
@@ -15,6 +15,7 @@
 
     <Grid Margin="10">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -163,8 +164,46 @@
             </Grid>
         </HeaderedContentControl>
 
+        <!-- Authentication -->
+        <HeaderedContentControl Grid.Row="3" Header="Authentication" Background="#5fff">
+            <StackPanel>
+                <StackPanel.Styles>
+                    <Styles>
+                        <Style Selector="Button">
+                            <Setter Property="Padding" Value="3 -1 3 1" />
+                            <Setter Property="Background" Value="Transparent" />
+                        </Style>
+                    </Styles>
+                </StackPanel.Styles>
+                <Grid ColumnDefinitions="Auto,Auto,70,Auto" Margin="0 0 0 7">
+                    <TextBlock Grid.Column="0" Text="Load cookies from browser:" Margin="0 0 10 0"
+                               VerticalAlignment="Center" />
+                    <TextBox Grid.Column="1" Text="{Binding CookiesBrowserName}"
+                             Watermark="(none)" Width="100" MaxLength="24" />
+                    <Button Grid.Column="2" ToolTip.Tip="Clear" Padding="6" Margin="6 0 0 0"
+                            IsVisible="{Binding CookiesBrowserName, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                            Command="{Binding SetBrowserNameCommand}" CommandParameter="">
+                        <PathIcon Data="{StaticResource dismiss}" Width="14" Height="14" />
+                    </Button>
+                    <TextBlock Grid.Column="3" Foreground="#afff" VerticalAlignment="Center">(only use if necessary)</TextBlock>
+                </Grid>
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                    <TextBlock Margin="0 0 2 0">Supported browsers:</TextBlock>
+                    <Button Command="{Binding SetBrowserNameCommand}" CommandParameter="brave">brave</Button>
+                    <Button Command="{Binding SetBrowserNameCommand}" CommandParameter="chrome">chrome</Button>
+                    <Button Command="{Binding SetBrowserNameCommand}" CommandParameter="chromium">chromium</Button>
+                    <Button Command="{Binding SetBrowserNameCommand}" CommandParameter="edge">edge</Button>
+                    <Button Command="{Binding SetBrowserNameCommand}" CommandParameter="firefox">firefox</Button>
+                    <Button Command="{Binding SetBrowserNameCommand}" CommandParameter="opera">opera</Button>
+                    <Button Command="{Binding SetBrowserNameCommand}" CommandParameter="safari">safari</Button>
+                    <Button Command="{Binding SetBrowserNameCommand}" CommandParameter="vivaldi">vivaldi</Button>
+                    <Button Command="{Binding SetBrowserNameCommand}" CommandParameter="whale">whale</Button>
+                </StackPanel>
+            </StackPanel>
+        </HeaderedContentControl>
+
         <!--Action Buttons-->
-        <Grid Grid.Row="3" ColumnDefinitions="*,Auto,Auto" Margin="0 10 0 0">
+        <Grid Grid.Row="4" ColumnDefinitions="*,Auto,Auto" Margin="0 10 0 0">
             <Button Grid.Column="1" Content="Apply" Command="{Binding ApplyButtonClickedCommand}"
                     CommandParameter="{Binding $parent[Window]}" IsEnabled="{Binding ApplyButtonEnabled}" Width="80"
                     IsDefault="True" HorizontalContentAlignment="Center" Margin="0,0,6,0" Classes="Primary" />

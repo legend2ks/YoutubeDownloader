@@ -17,6 +17,7 @@ public partial class SettingsWindowViewModel : ViewModelBase
         FilenameTemplate = _settings.FilenameTemplate;
         MaxConnections.Find(x => x.MaxCount == Settings.MaxConnections)!.Checked = true;
         MaxConcurrentChannelUpdates.Find(x => x.MaxCount == Settings.MaxConcurrentChannelUpdates)!.Checked = true;
+        CookiesBrowserName = _settings.CookiesBrowserName;
     }
 
     private readonly ILogger<SettingsWindowViewModel> _logger;
@@ -58,6 +59,8 @@ public partial class SettingsWindowViewModel : ViewModelBase
         new NumberOption { MaxCount = 4, Checked = false },
     };
 
+    [ObservableProperty] private string _cookiesBrowserName;
+
 
     [RelayCommand]
     private void ApplyButtonClicked(Window window)
@@ -70,6 +73,8 @@ public partial class SettingsWindowViewModel : ViewModelBase
         var selectedMaxConcurrentChannelUpdates = MaxConcurrentChannelUpdates.First(x => x.Checked).MaxCount;
         _settings.SaveMaxConcurrentChannelUpdates(selectedMaxConcurrentChannelUpdates);
 
+        _settings.SaveCookiesBrowserName(CookiesBrowserName.Trim());
+
         window.Close();
     }
 
@@ -77,5 +82,11 @@ public partial class SettingsWindowViewModel : ViewModelBase
     private void ResetFilenameTemplateButtonPressed()
     {
         FilenameTemplate = Settings.DefaultFilenameTemplate;
+    }
+
+    [RelayCommand]
+    private void SetBrowserName(string browserName)
+    {
+        CookiesBrowserName = browserName;
     }
 }
