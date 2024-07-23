@@ -39,7 +39,7 @@
             <TextBlock Text="{Binding ListId}" FontSize="12" Foreground="#cfff" />
             <TextBlock Text="{Binding VideoCount, StringFormat={}{0} Video(s)}" Foreground="#cfff" />
         </StackPanel>
-        <progRing:ProgressRing Grid.Row="1" Width="50" Height="50" IsActive="{Binding Loading}" />
+        <progRing:ProgressRing Grid.Row="1" Width="50" Height="50" Foreground="#fff" IsActive="{Binding Loading}" />
         <Border Grid.Row="1" IsVisible="{Binding Error}" BorderThickness="1" BorderBrush="#d27570" CornerRadius="6"
                 Padding="6" HorizontalAlignment="Center" VerticalAlignment="Center">
             <TextBlock Text="Failed" Foreground="#d27570" />
