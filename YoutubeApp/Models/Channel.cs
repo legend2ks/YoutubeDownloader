@@ -16,6 +16,7 @@ public partial class Channel : ObservableObject
     [ObservableProperty] private int _addedVideoCount;
 
     [ObservableProperty] private string _lastUpdate;
+    [ObservableProperty] private string _localLastUpdate;
 
     [ObservableProperty] private string _title;
 

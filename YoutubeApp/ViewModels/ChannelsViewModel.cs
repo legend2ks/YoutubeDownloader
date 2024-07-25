@@ -310,7 +310,7 @@ public partial class ChannelsViewModel : ViewModelBase, IRecipient<VideoDownload
         _ = Task.Run(async () =>
         {
             var lastUpdate = DateTime.Parse(channel.LastUpdate);
-            var daysSinceLastUpdate = (DateTime.Now - lastUpdate).Days;
+            var daysSinceLastUpdate = (DateTime.UtcNow - lastUpdate).Days;
             var count = Math.Max((int)(daysSinceLastUpdate * 1.5), 10) + channel.IncompleteCount;
 
             while (true)
@@ -367,9 +367,10 @@ public partial class ChannelsViewModel : ViewModelBase, IRecipient<VideoDownload
                     channel.VideoCount = prevVideoIds.Count + addedVideoCount;
                     channel.IncompleteCount += addedVideoCount;
                     channel.AddedVideoCount += addedVideoCount;
-                    channel.LastUpdate =
+                    channel.LastUpdate = updateDateTime;
+                    channel.LocalLastUpdate =
                         DateTime.Parse(updateDateTime, CultureInfo.InvariantCulture).ToLocalTime()
-                            .ToString(CultureInfo.CurrentCulture);
+                            .ToString(Settings.ChannelDateFormat);
                 }
 
                 try
@@ -426,7 +427,7 @@ public partial class ChannelsViewModel : ViewModelBase, IRecipient<VideoDownload
             var filePath = Path.Combine(thumbsPath, $"{video.id}.jpg");
             if (File.Exists(filePath)) continue;
 
-            channel.StatusText = $"Getting Thumbnails... {i}/{playlistInfo.entries.Length}";
+            channel.StatusText = $"Thumbnail {i}/{playlistInfo.entries.Length}";
             var thumbUrl = video.thumbnails[0].url;
             try
             {

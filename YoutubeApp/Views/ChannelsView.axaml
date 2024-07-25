@@ -85,7 +85,7 @@
                                             <Grid RowDefinitions="Auto, Auto" Margin="4">
                                                 <Button Grid.Row="0" IsEnabled="{Binding !Updating}"
                                                         Command="{Binding $parent[UserControl].((vm:ChannelsViewModel)DataContext).ChannelPressedCommand}"
-                                                        CommandParameter="{Binding}" Width="300" Padding="10 6 10 7"
+                                                        CommandParameter="{Binding}" Width="250" Padding="10 6 10 7"
                                                         BorderThickness="0" Background="#282e33"
                                                         CornerRadius="10 10 0 0">
                                                     <StackPanel>
@@ -94,12 +94,11 @@
                                                             <TextBlock Grid.Column="0" Classes="secondary"
                                                                        Text="{Binding VideoCount, StringFormat={}{0} Video(s)}" />
                                                             <TextBlock Grid.Column="2" Classes="secondary"
-                                                                       Text="{Binding LastUpdate}" />
+                                                                       Text="{Binding LocalLastUpdate}" />
                                                         </Grid>
                                                     </StackPanel>
                                                 </Button>
-                                                <Border Grid.Row="1" Background="#282e33" Padding="2"
-                                                        CornerRadius="0 0 10 10">
+                                                <Border Grid.Row="1" Background="#282e33" CornerRadius="0 0 10 10">
                                                     <Grid ColumnDefinitions="*,Auto,Auto">
                                                         <Grid.Styles>
                                                             <Styles>
@@ -109,7 +108,7 @@
                                                             </Styles>
                                                         </Grid.Styles>
                                                         <TextBlock Grid.Column="0" Text="{Binding StatusText}"
-                                                                   Margin="8 0" VerticalAlignment="Center" />
+                                                                   Margin="8 0 0 0" VerticalAlignment="Center" />
                                                         <Button Grid.Column="1" IsVisible="{Binding !Updating}"
                                                                 ToolTip.Tip="Update" Classes="ActionBtn"
                                                                 Background="Transparent"

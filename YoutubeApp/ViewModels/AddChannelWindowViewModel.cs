@@ -216,8 +216,9 @@ public partial class AddChannelWindowViewModel : ObservableObject
                     Path = SaveTo,
                     VideoCount = VideoCount,
                     IncompleteCount = VideoCount,
-                    LastUpdate = DateTime.Parse(updateDateTime, CultureInfo.InvariantCulture).ToLocalTime()
-                        .ToString(CultureInfo.CurrentCulture),
+                    LastUpdate = updateDateTime,
+                    LocalLastUpdate = DateTime.Parse(updateDateTime, CultureInfo.InvariantCulture).ToLocalTime()
+                        .ToString(Settings.ChannelDateFormat),
                 };
 
             var idx = ChannelCategories[0].Channels
