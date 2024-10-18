@@ -144,7 +144,7 @@ public class Settings
         { "sv", new(11, "100", 100, true) },
     };
 
-    public static string ChannelDateFormat => "yy/M/d h:mm:ss tt";
+    public static string ChannelDateFormat => "yy/M/d h:mm tt";
 
     public void SaveColumnConfig(KeyValuePair<string, ColumnConfig>[] columnConfigs)
     {
