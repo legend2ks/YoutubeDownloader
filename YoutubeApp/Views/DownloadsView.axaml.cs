@@ -13,8 +13,6 @@ public partial class DownloadsView : UserControl
         InitializeComponent();
         if (!Design.IsDesignMode)
             DataContext = App.Host.Services.GetRequiredService<DownloadsViewModel>();
-
-        HotKeyManager.SetHotKey(RemoveButton, new KeyGesture(Key.Delete));
     }
 
     private void HeaderOnScrollChanged(object? sender, ScrollChangedEventArgs e)
@@ -35,5 +33,13 @@ public partial class DownloadsView : UserControl
 
         ((ScrollViewer)DownloadList.Scroll!).ScrollChanged += DownloadListOnScrollChanged;
         HeaderSV.ScrollChanged += HeaderOnScrollChanged;
+        HotKeyManager.SetHotKey(RemoveButton, new KeyGesture(Key.Delete));
+    }
+
+    protected override void OnUnloaded(RoutedEventArgs e)
+    {
+        base.OnUnloaded(e);
+
+        HotKeyManager.SetHotKey(RemoveButton, null!);
     }
 }
