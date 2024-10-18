@@ -23,7 +23,7 @@ internal class Ytdlp : IYoutubeCommunicator
         _settings = settings;
     }
 
-    public async Task<VideoInfo> GetVideoInfoAsync(string videoId, int retries, bool useTimeout,
+    public async Task<(VideoInfo, bool)> GetVideoInfoAsync(string videoId, int retries, bool useTimeout,
         CancellationToken cancellationToken)
     {
         var retriesLeft = retries;
@@ -119,16 +119,18 @@ internal class Ytdlp : IYoutubeCommunicator
             await Task.Delay(3000, cancellationToken);
         }
 
-        if (result.StandardError.Contains("Some formats may be missing"))
+        var missingFormats = false;
+        if (result.StandardError.Contains("Some formats may be missing", StringComparison.OrdinalIgnoreCase))
         {
-            _logger.LogWarning("GetVideoInfo: Some formats may be missing VideoId:{VideoId}", videoId);
+            missingFormats = true;
+            _logger.LogWarning("GetVideoInfo: Some formats may be missing. VideoId: {VideoId}", videoId);
         }
 
         var videoInfo = JsonSerializer.Deserialize<VideoInfo>(result.StandardOutput);
         if (videoInfo is null) throw new JsonException("Deserialize result is null.");
         await new VideoInfoValidator().ValidateAndThrowAsync(videoInfo, cancellationToken);
 
-        return videoInfo;
+        return (videoInfo, missingFormats);
     }
 
     public async Task<PlaylistInfo> GetPlaylistInfoAsync(string playlistId, CancellationToken cancellationToken,

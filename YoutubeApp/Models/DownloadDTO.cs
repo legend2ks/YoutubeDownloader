@@ -21,5 +21,6 @@ public class DownloadDTO
     public long BytesLoaded { get; set; }
     public bool Enabled { get; set; }
     public bool Completed { get; set; }
+    public bool MissingFormats { get; set; }
     public int Priority { get; set; }
 }

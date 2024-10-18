@@ -20,6 +20,7 @@ public partial class Download : ObservableObject
     public Dictionary<string, Format> Formats { get; set; }
     public List<Chapter>? Chapters { get; set; }
     public string Duration { get; set; }
+    [ObservableProperty] private bool _missingFormats;
 
     private bool _refreshing;
 

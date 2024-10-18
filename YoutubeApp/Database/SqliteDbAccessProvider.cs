@@ -51,12 +51,15 @@ public class SqliteDbAccessProvider
             case 1:
                 Migration2.Apply(Connection);
                 break;
+            case 2:
+                Migration3.Apply(Connection);
+                break;
         }
     }
 
     public SQLiteConnection Connection { get; }
 
-    private const int LatestDbVersion = 2;
+    private const int LatestDbVersion = 3;
 
     private const string CreateDownloadsTableSql = @"
         CREATE TABLE IF NOT EXISTS Downloads (
@@ -80,6 +83,7 @@ public class SqliteDbAccessProvider
             Completed INTEGER NOT NULL DEFAULT 0,
             ChannelTitle TEXT,
             Filesize NUMBER,
+            MissingFormats INTEGER NOT NULL DEFAULT 0,
             PRIMARY KEY (Id)
         )";
 

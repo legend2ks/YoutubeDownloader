@@ -30,11 +30,12 @@ public class DownloadData
 
     public void AddDownload(Download dl)
     {
-        const string stmt = @"
-                INSERT INTO 
-                Downloads (VideoId, Title, SelectedVariant, Uuid, ChannelId, Container, Variants, Formats, Chapters, Duration, Filename, SaveTo, ChannelTitle, UploadDate, Filesize, BytesLoaded, Priority)
-                VALUES (@VideoId, @Title, @SelectedVariant, @Uuid, @ChannelId, @Container, @Variants, @Formats, @Chapters, @Duration, @Filename, @SaveTo, @ChannelTitle, @UploadDate, @Filesize, @BytesLoaded, (SELECT COUNT(*)+1 FROM Downloads))
-                RETURNING Id, Priority";
+        const string stmt = """
+                            INSERT INTO
+                            Downloads (VideoId, Title, SelectedVariant, Uuid, ChannelId, Container, Variants, Formats, Chapters, Duration, Filename, SaveTo, ChannelTitle, UploadDate, Filesize, BytesLoaded, MissingFormats, Priority)
+                            VALUES (@VideoId, @Title, @SelectedVariant, @Uuid, @ChannelId, @Container, @Variants, @Formats, @Chapters, @Duration, @Filename, @SaveTo, @ChannelTitle, @UploadDate, @Filesize, @BytesLoaded, @MissingFormats, (SELECT COUNT(*)+1 FROM Downloads))
+                            RETURNING Id, Priority
+                            """;
 
         var parameters = new
         {
@@ -54,6 +55,7 @@ public class DownloadData
             dl.UploadDate,
             dl.Filesize,
             BytesLoaded = 0,
+            dl.MissingFormats,
         };
 
         var (id, priority) = _dbConn.QuerySingle<(int id, int priority)>(stmt, parameters);
@@ -70,6 +72,7 @@ public class DownloadData
         Dictionary<string, Format> formats,
         List<Chapter>? chapters,
         string duration,
+        bool missingFormats,
         long filesize,
         string channelId,
         string channelTitle,
@@ -77,20 +80,22 @@ public class DownloadData
         bool enabled
     )
     {
-        const string stmt = @"
-                UPDATE Downloads SET
-                Title = @Title,
-                SelectedVariant = @SelectedVariant,
-                Variants = @Variants, 
-                Formats = @Formats, 
-                Chapters = @Chapters,
-                Duration = @Duration, 
-                Filesize = @Filesize,
-                ChannelId = @ChannelId,
-                ChannelTitle = @ChannelTitle,
-                UploadDate = @UploadDate,
-                Enabled = @Enabled
-                WHERE Id = @Id";
+        const string stmt = """
+                            UPDATE Downloads SET
+                            Title = @Title,
+                            SelectedVariant = @SelectedVariant,
+                            Variants = @Variants,
+                            Formats = @Formats,
+                            Chapters = @Chapters,
+                            Duration = @Duration,
+                            Filesize = @Filesize,
+                            ChannelId = @ChannelId,
+                            ChannelTitle = @ChannelTitle,
+                            UploadDate = @UploadDate,
+                            MissingFormats = @MissingFormats,
+                            Enabled = @Enabled
+                            WHERE Id = @Id
+                            """;
 
         var parameters = new
         {
@@ -105,6 +110,7 @@ public class DownloadData
             ChannelId = channelId,
             ChannelTitle = channelTitle,
             UploadDate = uploadDate,
+            MissingFormats = missingFormats,
             Enabled = enabled,
         };
 

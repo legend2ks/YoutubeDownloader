@@ -309,6 +309,17 @@
                                 CommandParameter="{Binding}" HorizontalContentAlignment="Center"
                                 HorizontalAlignment="Stretch" FontSize="12.4" Padding="3"
                                 Classes.novariant="{Binding NoVariant}" />
+                            <Button
+                                Grid.Column="{Binding $parent[UserControl].((vm:DownloadsViewModel)DataContext).GridConfig[vr].Order}"
+                                Padding="0" VerticalAlignment="Top" BorderThickness="0" Margin="-7 -3 ">
+                                <PathIcon Data="{StaticResource alert}" Foreground="DarkKhaki" Width="18"
+                                          IsVisible="{Binding MissingFormats}" />
+                                <Button.Flyout>
+                                    <Flyout>
+                                        <TextBlock Text="Some formats may be missing"/>
+                                    </Flyout>
+                                </Button.Flyout>
+                            </Button>
                             <Border
                                 Grid.Column="{Binding $parent[UserControl].((vm:DownloadsViewModel)DataContext).GridConfig[fs].Order}"
                                 Padding="0 0 10 0">

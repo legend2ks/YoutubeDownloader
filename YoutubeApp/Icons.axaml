@@ -54,6 +54,7 @@
 			<PathIcon Data="{StaticResource no_image}" />
 			<PathIcon Data="{StaticResource title}" />
 			<PathIcon Data="{StaticResource clipboard}" />
+			<PathIcon Data="{StaticResource alert}" />
 		</WrapPanel>
 	</Design.PreviewWith>
 
@@ -108,6 +109,7 @@
 			<StreamGeometry x:Key="no_image">M22 20.7L3.3 2L2 3.3L3 4.3V19C3 20.1 3.9 21 5 21H19.7L20.7 22L22 20.7M5 19V6.3L12.6 13.9L11.1 15.8L9 13.1L6 17H15.7L17.7 19H5M8.8 5L6.8 3H19C20.1 3 21 3.9 21 5V17.2L19 15.2V5H8.8</StreamGeometry>
 			<StreamGeometry x:Key="title">M5,4V7H10.5V19H13.5V7H19V4H5Z</StreamGeometry>
 			<StreamGeometry x:Key="clipboard">M336 64h-80c0-35.3-28.7-64-64-64s-64 28.7-64 64H48C21.5 64 0 85.5 0 112v352c0 26.5 21.5 48 48 48h288c26.5 0 48-21.5 48-48V112c0-26.5-21.5-48-48-48zM192 40c13.3 0 24 10.7 24 24s-10.7 24-24 24-24-10.7-24-24 10.7-24 24-24zm144 418c0 3.3-2.7 6-6 6H54c-3.3 0-6-2.7-6-6V118c0-3.3 2.7-6 6-6h42v36c0 6.6 5.4 12 12 12h168c6.6 0 12-5.4 12-12v-36h42c3.3 0 6 2.7 6 6z</StreamGeometry>
+			<StreamGeometry x:Key="alert">M 38,22.1667C 41.1666,22.1667 57,52.25 55.4166,53.8333C 53.8333,55.4167 22.1667,55.4167 20.5833,53.8333C 19,52.25 34.8333,22.1667 38,22.1667 Z M 38,45.9167C 36.6883,45.9167 35.625,46.98 35.625,48.2917C 35.625,49.6034 36.6883,50.6667 38,50.6667C 39.3116,50.6667 40.375,49.6034 40.375,48.2917C 40.375,46.98 39.3116,45.9167 38,45.9167 Z M 35.625,31.6667L 36.4166,44.3333L 39.5833,44.3333L 40.375,31.6667L 35.625,31.6667 Z</StreamGeometry>
 		</Style.Resources>
 	</Style>
 </Styles>

@@ -65,8 +65,8 @@ public class Youtube
 
                 try
                 {
-                    var videoInfo = await _youtubeCommunicator.GetVideoInfoAsync(video.VideoId, 3, false,
-                        job.CancellationToken);
+                    var (videoInfo, missingFormats) =
+                        await _youtubeCommunicator.GetVideoInfoAsync(video.VideoId, 3, false, job.CancellationToken);
 
                     // Live status
                     if (videoInfo.live_status != "not_live" && videoInfo.live_status != "was_live")
@@ -147,6 +147,7 @@ public class Youtube
                         UploadDate = uploadDate,
                         Filesize = bestVariant.Filesize,
                         BytesLoaded = 0,
+                        MissingFormats = missingFormats,
                     };
 
                     if (job.CancellationToken.IsCancellationRequested) return;
@@ -300,13 +301,14 @@ public class Youtube
 
         var retriesLeft = 3;
         VideoInfo? videoInfo;
+        bool missingFormats;
 
         while (true)
         {
             try
             {
-                videoInfo = await _youtubeCommunicator.GetVideoInfoAsync(dl.VideoId, dl.Downloading ? -1 : 3,
-                    !dl.Downloading, dl.RefreshCancellationTokenSource.Token);
+                (videoInfo, missingFormats) = await _youtubeCommunicator.GetVideoInfoAsync(dl.VideoId,
+                    dl.Downloading ? -1 : 3, !dl.Downloading, dl.RefreshCancellationTokenSource.Token);
             }
             catch (VideoNotAvailableException e)
             {
@@ -441,7 +443,7 @@ public class Youtube
 
         // Save to Database
         _downloadData.UpdateDownload(dl.Id, videoInfo.title, selectedVariant, variants, formats, chapters,
-            videoInfo.duration_string,
+            videoInfo.duration_string, missingFormats,
             selectedVariant.Id != -1 ? variants[selectedVariant.Id].Filesize : dl.Filesize, videoInfo.channel_id,
             videoInfo.channel, uploadDate, dl.Enabled);
 
@@ -457,6 +459,7 @@ public class Youtube
         dl.ChannelId = videoInfo.channel_id;
         dl.ChannelTitle = videoInfo.channel;
         dl.UploadDate = uploadDate;
+        dl.MissingFormats = missingFormats;
 
         return true;
     }
