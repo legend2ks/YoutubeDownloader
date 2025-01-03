@@ -11,7 +11,6 @@ public class PlaylistInfoValidator : AbstractValidator<PlaylistInfo>
         RuleFor(x => x.title).NotEmpty();
         RuleFor(x => x.channel).NotEmpty();
         RuleFor(x => x.uploader).NotEmpty();
-        RuleFor(x => x.availability).NotEmpty();
         RuleFor(x => x.entries).NotNull()
             .ForEach(x => x.SetValidator(new PlaylistInfoEntryValidator()));
     }
