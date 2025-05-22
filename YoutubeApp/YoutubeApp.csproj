@@ -25,11 +25,11 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Avalonia" Version="11.2.5"/>
+        <PackageReference Include="Avalonia" Version="11.3.0"/>
         <PackageReference Include="Avalonia.Controls.ItemsRepeater" Version="11.1.5"/>
-        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.2.5"/>
-        <PackageReference Include="Avalonia.Desktop" Version="11.2.5"/>
-        <PackageReference Include="Avalonia.ReactiveUI" Version="11.2.5"/>
+        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.0"/>
+        <PackageReference Include="Avalonia.Desktop" Version="11.3.0"/>
+        <PackageReference Include="Avalonia.ReactiveUI" Version="11.3.0"/>
         <PackageReference Include="CliWrap" Version="3.6.6"/>
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0"/>
         <PackageReference Include="Dapper" Version="2.1.66"/>
@@ -46,7 +46,7 @@
         <PackageReference Include="StreamJsonRpc" Version="2.17.11"/>
         <PackageReference Include="System.Data.SQLite.Core" Version="1.0.117"/>
         <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.2.5"/>
+        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.3.0"/>
     </ItemGroup>
 
     <ItemGroup>
