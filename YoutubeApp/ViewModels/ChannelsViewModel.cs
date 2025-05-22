@@ -33,7 +33,7 @@ namespace YoutubeApp.ViewModels;
 public partial class ChannelsViewModel : ViewModelBase, IRecipient<VideoDownloadCompletedMessage>,
     IRecipient<ShowVideoInChannelMessage>
 {
-    private const string VideoIdPattern = @"^\[.*]\[.*]\[(.*)]";
+    private const string VideoIdPattern = @"^\[.*?]\[.*?]\[([^\[\s\]]+)]";
     private readonly ChannelData _channelData;
     private readonly Grabber _grabber;
 
